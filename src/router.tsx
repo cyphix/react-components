@@ -4,9 +4,9 @@ import {
   createRouter,
 } from '@tanstack/react-router'
 
-import { RootLayout } from '@/pages/RootLayout'
-import { HomePage } from '@/pages/HomePage'
-import { ComponentPage } from '@/pages/ComponentPage'
+import { RootLayout } from '@/pages/root-layout'
+import { HomePage } from '@/pages/home-page'
+import { ComponentPage } from '@/pages/component-page'
 
 const rootRoute = createRootRoute({
   component: RootLayout,
