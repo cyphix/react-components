@@ -1,10 +1,11 @@
-import { Link, Outlet } from '@tanstack/react-router'
+import { Link, Outlet, createRootRoute } from '@tanstack/react-router'
 import { Moon, Sun, Boxes } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Toaster } from '@/components/ui/sonner'
 import { useThemeStore } from '@/store/theme-store'
 
-export function RootLayout() {
+function RootLayout() {
   const theme = useThemeStore((s) => s.theme)
   const toggleTheme = useThemeStore((s) => s.toggleTheme)
 
@@ -33,6 +34,11 @@ export function RootLayout() {
       <main className="mx-auto max-w-5xl px-4 py-8">
         <Outlet />
       </main>
+      <Toaster />
     </div>
   )
 }
+
+export const Route = createRootRoute({
+  component: RootLayout,
+})

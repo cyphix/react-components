@@ -1,6 +1,11 @@
 import { queryOptions } from '@tanstack/react-query'
 
-import { componentListSchema, type ComponentSummary } from '@/lib/schemas'
+import {
+  buttonPressResponseSchema,
+  componentListSchema,
+  type ButtonPressResponse,
+  type ComponentSummary,
+} from '@/lib/schemas'
 
 async function fetchComponents(): Promise<ComponentSummary[]> {
   const res = await fetch('/api/components')
@@ -17,3 +22,12 @@ export const componentsQueryOptions = queryOptions({
   queryKey: ['components'],
   queryFn: fetchComponents,
 })
+
+export async function postButtonPress(): Promise<ButtonPressResponse> {
+  const res = await fetch('/api/setup-test/button-press', { method: 'POST' })
+  if (!res.ok) {
+    throw new Error(`Button press failed (${res.status})`)
+  }
+  const json = await res.json()
+  return buttonPressResponseSchema.parse(json)
+}

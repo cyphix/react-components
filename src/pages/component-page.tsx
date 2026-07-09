@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 import { componentsQueryOptions } from '@/lib/api'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
-import { showcases } from '@/pages/showcases'
+import { showcases } from '@/internal/showcases'
 
 export function ComponentPage() {
   const { componentId } = useParams({ from: '/components/$componentId' })

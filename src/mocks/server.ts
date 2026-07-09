@@ -45,6 +45,10 @@ export function makeServer({ environment = 'development' } = {}) {
         }
         return new Response(200, {}, { component: found })
       })
+
+      this.post('/setup-test/button-press', () => {
+        return new Response(200, {}, { message: 'Button was pressed' })
+      })
     },
   })
 }
