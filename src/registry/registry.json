@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "items": [
+    {
+      "name": "callout",
+      "type": "registry:ui",
+      "title": "Callout",
+      "description": "An attention-drawing callout with info, success, warning, and destructive variants.",
+      "dependencies": ["class-variance-authority", "lucide-react"],
+      "files": [
+        {
+          "path": "callout/callout.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    }
+  ]
+}

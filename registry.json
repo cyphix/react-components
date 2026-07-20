@@ -2,5 +2,5 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "react-components",
   "homepage": "https://github.com/cyphix/react-components",
-  "include": ["src/components/ui/registry.json"]
+  "include": ["src/registry/registry.json"]
 }

@@ -4,10 +4,20 @@ import type { ComponentSummary } from '@/lib/schemas'
 
 const seedComponents: ComponentSummary[] = [
   {
+    id: 'callout',
+    name: 'Callout',
+    description:
+      'An attention-drawing callout with info, success, warning, and destructive variants.',
+    category: 'Feedback',
+    source: 'cyphix',
+    variants: ['info', 'success', 'warning', 'destructive'],
+  },
+  {
     id: 'button',
     name: 'Button',
     description: 'Displays a button or a component that looks like a button.',
     category: 'Actions',
+    source: 'shadcn',
     variants: ['default', 'secondary', 'destructive', 'outline', 'ghost', 'link'],
   },
   {
@@ -15,6 +25,7 @@ const seedComponents: ComponentSummary[] = [
     name: 'Badge',
     description: 'Displays a badge or a component that looks like a badge.',
     category: 'Data Display',
+    source: 'shadcn',
     variants: ['default', 'secondary', 'destructive', 'outline'],
   },
   {
@@ -22,6 +33,7 @@ const seedComponents: ComponentSummary[] = [
     name: 'Card',
     description: 'Displays a card with header, content, and footer.',
     category: 'Layout',
+    source: 'shadcn',
     variants: ['default'],
   },
 ]

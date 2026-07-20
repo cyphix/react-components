@@ -25,14 +25,23 @@ Dependencies are installed automatically by the startup update script (`pnpm ins
 - Path alias `@/` maps to `src/` (configured in both `vite.config.ts` and
   `tsconfig.app.json`). `tsconfig` uses TypeScript 6 — avoid `baseUrl` (deprecated);
   `paths` works without it under `moduleResolution: bundler`.
-- The `Button` component does not support shadcn's `asChild` prop (Radix Slot is not
-  installed). To style a link/anchor like a button, apply `buttonVariants({ ... })`
-  to the element's `className` instead.
 
 ## Architecture
 
-- **UI components** (`src/components/ui/`): shadcn primitives tracked by
-  `registry.json` / `src/components/ui/registry.json` for CLI distribution.
+This repo is a **GitHub source registry** for the shadcn CLI: consumers install
+custom components with `pnpm dlx shadcn@latest add cyphix/react-components/<name>`.
+The CLI reads the root `registry.json` (which `include`s
+`src/registry/registry.json`) directly from GitHub — no build or hosting step.
+
+- **Registry components** (`src/registry/<name>/`): custom (Cyphix) components
+  published by this registry. Each is declared as an item in
+  `src/registry/registry.json` with file paths relative to that manifest.
+- **UI components** (`src/components/ui/`): vendored shadcn/ui primitives used by
+  the app and custom components. These are **not** published by the registry.
+  Custom components that need a shadcn primitive list it as a plain name in
+  `registryDependencies` (e.g. `"button"`), which resolves to the official shadcn
+  registry; dependencies on other custom components use the full address
+  `cyphix/react-components/<name>`.
 - **Dev/test pages** (`src/internal/`): internal showcase and integration pages.
   These are **not** included in the shadcn registry manifest.
 - **Routes** (`src/routes/`): thin TanStack Router file routes that import page
@@ -42,14 +51,17 @@ Dependencies are installed automatically by the startup update script (`pnpm ins
   (e.g. `src/internal/button/button-showcase.tsx`), registered in
   `src/internal/showcases.ts` for `/components/$componentId` pages.
 
-## Adding a component
+## Adding a custom (registry) component
 
-1. Create it under `src/components/ui/`.
-2. Add its metadata to the seed list in `src/mocks/server.ts`.
-3. Create a showcase in `src/internal/<component>/<component>-showcase.tsx` and
+1. Create it under `src/registry/<name>/<name>.tsx`.
+2. Add a registry item to `src/registry/registry.json` with npm `dependencies` and
+   `registryDependencies` as needed (plain names for shadcn primitives,
+   `cyphix/react-components/<name>` for other custom components).
+3. Add its metadata to the seed list in `src/mocks/server.ts` with
+   `source: 'cyphix'` (shadcn primitives use `source: 'shadcn'`).
+4. Create a showcase in `src/internal/<component>/<component>-showcase.tsx` and
    register it in `src/internal/showcases.ts`.
-4. Add a registry item to `src/components/ui/registry.json` with `dependencies` and
-   `registryDependencies` as needed.
+5. Validate with `pnpm dlx shadcn@latest registry validate`.
 
 ## Adding a dev/test page
 

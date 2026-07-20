@@ -5,6 +5,7 @@ export const componentSummarySchema = z.object({
   name: z.string(),
   description: z.string(),
   category: z.string(),
+  source: z.enum(['cyphix', 'shadcn']),
   variants: z.array(z.string()),
 })
 
