@@ -12,7 +12,16 @@ type InfoboxValue = string | number | InfoboxLink | Array<string | InfoboxLink>
 
 type InfoboxRow = { label: string; value: InfoboxValue }
 
-type InfoboxSection = { title?: string; rows: InfoboxRow[] }
+type InfoboxSection = {
+  title?: string
+  /**
+   * Label of the tab the section is grouped under. Sections without a tab
+   * always render above the tab bar; if fewer than two distinct tab labels
+   * exist, everything renders inline as if no tabs were set.
+   */
+  tab?: string
+  rows: InfoboxRow[]
+}
 
 type InfoboxImage = {
   src: string
@@ -154,6 +163,86 @@ function InfoboxImages({
   )
 }
 
+function InfoboxSectionList({ sections }: { sections: InfoboxSection[] }) {
+  return (
+    <>
+      {sections.map((section, sectionIndex) => (
+        <section
+          data-slot="infobox-section"
+          key={section.title ?? sectionIndex}
+        >
+          {section.title ? (
+            <div
+              data-slot="infobox-section-title"
+              className="bg-[var(--infobox-section)] px-4 py-1.5 text-center text-sm font-semibold text-[var(--infobox-section-foreground)]"
+            >
+              {section.title}
+            </div>
+          ) : (
+            sectionIndex > 0 && <Separator />
+          )}
+          {section.rows.map((row, rowIndex) => (
+            <React.Fragment key={row.label}>
+              {rowIndex > 0 && <Separator />}
+              <div
+                data-slot="infobox-row"
+                className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-2 px-4 py-2 text-sm"
+              >
+                <div className="font-medium">{row.label}</div>
+                <div className="text-muted-foreground">
+                  <InfoboxValueContent value={row.value} />
+                </div>
+              </div>
+            </React.Fragment>
+          ))}
+        </section>
+      ))}
+    </>
+  )
+}
+
+function InfoboxSections({ sections }: { sections: InfoboxSection[] }) {
+  const untabbed = sections.filter((section) => section.tab === undefined)
+  const tabLabels = [
+    ...new Set(
+      sections.flatMap((section) =>
+        section.tab === undefined ? [] : [section.tab]
+      )
+    ),
+  ]
+
+  // A single tab renders inline as if no tabs were set.
+  if (tabLabels.length < 2) {
+    return <InfoboxSectionList sections={sections} />
+  }
+
+  return (
+    <>
+      <InfoboxSectionList sections={untabbed} />
+      <Tabs
+        data-slot="infobox-section-tabs"
+        defaultValue={tabLabels[0]}
+        className="gap-0"
+      >
+        <TabsList className="w-full rounded-none">
+          {tabLabels.map((label) => (
+            <TabsTrigger key={label} value={label} className="rounded-none">
+              {label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {tabLabels.map((label) => (
+          <TabsContent key={label} value={label}>
+            <InfoboxSectionList
+              sections={sections.filter((section) => section.tab === label)}
+            />
+          </TabsContent>
+        ))}
+      </Tabs>
+    </>
+  )
+}
+
 function Infobox({
   data,
   accentColor,
@@ -182,7 +271,7 @@ function Infobox({
   return (
     <Card
       data-slot="infobox"
-      className={cn("w-full max-w-xs gap-0 overflow-hidden py-0", className)}
+      className={cn("w-80 max-w-full gap-0 overflow-hidden py-0", className)}
       style={{ ...colorVars, ...style }}
       {...props}
     >
@@ -199,37 +288,7 @@ function Infobox({
         <InfoboxImages images={data.images} fit={imageFit} ratio={imageRatio} />
       )}
       <div data-slot="infobox-body">
-        {data.sections.map((section, sectionIndex) => (
-          <section
-            data-slot="infobox-section"
-            key={section.title ?? sectionIndex}
-          >
-            {section.title ? (
-              <div
-                data-slot="infobox-section-title"
-                className="bg-[var(--infobox-section)] px-4 py-1.5 text-center text-sm font-semibold text-[var(--infobox-section-foreground)]"
-              >
-                {section.title}
-              </div>
-            ) : (
-              sectionIndex > 0 && <Separator />
-            )}
-            {section.rows.map((row, rowIndex) => (
-              <React.Fragment key={row.label}>
-                {rowIndex > 0 && <Separator />}
-                <div
-                  data-slot="infobox-row"
-                  className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-2 px-4 py-2 text-sm"
-                >
-                  <div className="font-medium">{row.label}</div>
-                  <div className="text-muted-foreground">
-                    <InfoboxValueContent value={row.value} />
-                  </div>
-                </div>
-              </React.Fragment>
-            ))}
-          </section>
-        ))}
+        <InfoboxSections sections={data.sections} />
       </div>
     </Card>
   )

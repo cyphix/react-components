@@ -79,6 +79,47 @@ const wideImageData: InfoboxData = {
   ],
 }
 
+const sectionTabsData: InfoboxData = {
+  title: 'Aria Voss',
+  subtitle: 'The Wandering Blade',
+  sections: [
+    {
+      title: 'Biographical information',
+      rows: [
+        { label: 'Born', value: '3rd Age, 412' },
+        { label: 'Homeland', value: { label: 'Ashenfall', href: '#ashenfall' } },
+      ],
+    },
+    {
+      title: 'Early years',
+      tab: 'History',
+      rows: [
+        { label: 'Academy', value: 'Silver Order, 3rd Age 428' },
+        { label: 'Mentor', value: { label: 'Ser Calden', href: '#calden' } },
+      ],
+    },
+    {
+      tab: 'History',
+      rows: [{ label: 'Exile', value: '3rd Age, 439' }],
+    },
+    {
+      title: 'Combat',
+      tab: 'Abilities',
+      rows: [
+        { label: 'Weapon', value: 'Twin sabers' },
+        { label: 'Styles', value: ['Riverdance', 'Ash Step'] },
+      ],
+    },
+  ],
+}
+
+const singleTabData: InfoboxData = {
+  ...sectionTabsData,
+  sections: sectionTabsData.sections.map((section) =>
+    section.tab === undefined ? section : { ...section, tab: 'History' }
+  ),
+}
+
 export function InfoboxShowcase() {
   return (
     <StateGrid
@@ -106,6 +147,14 @@ export function InfoboxShowcase() {
         {
           label: 'square image box (imageRatio: 1)',
           node: <Infobox data={wideImageData} imageRatio={1} imageFit="contain" />,
+        },
+        {
+          label: 'section tabs (history / abilities)',
+          node: <Infobox data={sectionTabsData} />,
+        },
+        {
+          label: 'single section tab (renders inline)',
+          node: <Infobox data={singleTabData} />,
         },
       ]}
     />

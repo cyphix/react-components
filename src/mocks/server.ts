@@ -16,10 +16,10 @@ const seedComponents: ComponentSummary[] = [
     id: 'infobox',
     name: 'Infobox',
     description:
-      'A fandom-style infobox that renders titled sections, tabbed images, and label/value rows from a JSON data object.',
+      'A fandom-style infobox that renders titled sections, tabbed images, tabbed section groups, and label/value rows from a JSON data object.',
     category: 'Data Display',
     source: 'cyphix',
-    variants: ['default', 'accent', 'contain', 'cover'],
+    variants: ['default', 'accent', 'contain', 'cover', 'section-tabs'],
   },
   {
     id: 'button',

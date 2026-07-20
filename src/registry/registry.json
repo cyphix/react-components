@@ -18,7 +18,7 @@
       "name": "infobox",
       "type": "registry:ui",
       "title": "Infobox",
-      "description": "A fandom-style infobox that renders titled sections, tabbed images, and label/value rows from a JSON data object.",
+      "description": "A fandom-style infobox that renders titled sections, tabbed images, tabbed section groups, and label/value rows from a JSON data object.",
       "registryDependencies": ["card", "tabs", "aspect-ratio", "separator"],
       "files": [
         {
