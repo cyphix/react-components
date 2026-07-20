@@ -62,8 +62,12 @@ function ComponentGrid({
 export function HomePage() {
   const { data, isPending, isError, error } = useQuery(componentsQueryOptions)
 
-  const cyphixComponents = data?.filter((c) => c.source === 'cyphix') ?? []
-  const shadcnComponents = data?.filter((c) => c.source === 'shadcn') ?? []
+  const byName = (a: ComponentSummary, b: ComponentSummary) =>
+    a.name.localeCompare(b.name)
+  const cyphixComponents =
+    data?.filter((c) => c.source === 'cyphix').toSorted(byName) ?? []
+  const shadcnComponents =
+    data?.filter((c) => c.source === 'shadcn').toSorted(byName) ?? []
 
   return (
     <div className="space-y-10">
