@@ -13,6 +13,15 @@ const seedComponents: ComponentSummary[] = [
     variants: ['info', 'success', 'warning', 'destructive'],
   },
   {
+    id: 'infobox',
+    name: 'Infobox',
+    description:
+      'A fandom-style infobox that renders titled sections, tabbed images, and label/value rows from a JSON data object.',
+    category: 'Data Display',
+    source: 'cyphix',
+    variants: ['default', 'accent', 'contain', 'cover'],
+  },
+  {
     id: 'button',
     name: 'Button',
     description: 'Displays a button or a component that looks like a button.',
