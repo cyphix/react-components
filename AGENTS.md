@@ -47,9 +47,10 @@ The CLI reads the root `registry.json` (which `include`s
 - **Routes** (`src/routes/`): thin TanStack Router file routes that import page
   components from `src/pages/` or `src/internal/`. Route tree is auto-generated
   to `src/routeTree.gen.ts` by `@tanstack/router-plugin`.
-- **Showcase states** (`src/internal/<component>/`): per-component state demos
-  (e.g. `src/internal/button/button-showcase.tsx`), registered in
-  `src/internal/showcases.ts` for `/components/$componentId` pages.
+- **Showcase states** (`src/internal/shadcn/<component>/` for shadcn primitives,
+  `src/internal/cyphix/<component>/` for custom registry components): per-component
+  state demos (e.g. `src/internal/shadcn/button/button-showcase.tsx`), registered
+  in `src/internal/showcases.ts` for `/components/$componentId` pages.
 
 ## Adding a custom (registry) component
 
@@ -59,8 +60,9 @@ The CLI reads the root `registry.json` (which `include`s
    `cyphix/react-components/<name>` for other custom components).
 3. Add its metadata to the seed list in `src/mocks/server.ts` with
    `source: 'cyphix'` (shadcn primitives use `source: 'shadcn'`).
-4. Create a showcase in `src/internal/<component>/<component>-showcase.tsx` and
-   register it in `src/internal/showcases.ts`.
+4. Create a showcase in `src/internal/cyphix/<component>/<component>-showcase.tsx`
+   (shadcn primitives live under `src/internal/shadcn/<component>/`) and register
+   it in `src/internal/showcases.ts`.
 5. Validate with `pnpm dlx shadcn@latest registry validate`.
 
 ## Adding a dev/test page
