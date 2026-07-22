@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
 
 import { CalloutShowcase } from '@/internal/cyphix/callout/callout-showcase'
+import { ChatPanelShowcase } from '@/internal/cyphix/chat-panel/chat-panel-showcase'
 import { InfoboxShowcase } from '@/internal/cyphix/infobox/infobox-showcase'
+import { SidePanelShowcase } from '@/internal/cyphix/side-panel/side-panel-showcase'
 import { AccordionShowcase } from '@/internal/shadcn/accordion/accordion-showcase'
 import { AlertShowcase } from '@/internal/shadcn/alert/alert-showcase'
 import { AlertDialogShowcase } from '@/internal/shadcn/alert-dialog/alert-dialog-showcase'
@@ -67,6 +69,8 @@ import { TooltipShowcase } from '@/internal/shadcn/tooltip/tooltip-showcase'
 export const showcases: Record<string, () => ReactNode> = {
   callout: CalloutShowcase,
   infobox: InfoboxShowcase,
+  'side-panel': SidePanelShowcase,
+  'chat-panel': ChatPanelShowcase,
   accordion: AccordionShowcase,
   alert: AlertShowcase,
   'alert-dialog': AlertDialogShowcase,

@@ -26,6 +26,38 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "side-panel",
+      "type": "registry:ui",
+      "title": "Side Panel",
+      "description": "An in-flow side panel layout primitive that pushes main content beside it when open, with provider, inset, and trigger.",
+      "dependencies": ["lucide-react"],
+      "registryDependencies": ["button"],
+      "files": [
+        {
+          "path": "side-panel/side-panel.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "chat-panel",
+      "type": "registry:ui",
+      "title": "Chat Panel",
+      "description": "A presentational chat shell composed on the Side Panel push-layout primitive.",
+      "dependencies": ["lucide-react"],
+      "registryDependencies": [
+        "button",
+        "input",
+        "cyphix/react-components/side-panel"
+      ],
+      "files": [
+        {
+          "path": "chat-panel/chat-panel.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }

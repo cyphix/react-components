@@ -22,6 +22,32 @@ const seedComponents: ComponentSummary[] = [
     variants: ['default', 'accent', 'contain', 'cover', 'section-tabs'],
   },
   {
+    id: 'side-panel',
+    name: 'Side Panel',
+    description:
+      'An in-flow side panel layout primitive that pushes main content beside it when open, with provider, inset, and trigger.',
+    category: 'Layout',
+    source: 'cyphix',
+    variants: [
+      'right',
+      'left',
+      'controlled',
+      'closed',
+      'icon-tab',
+      'icon-tab-top',
+      'icon-tab-bottom',
+    ],
+  },
+  {
+    id: 'chat-panel',
+    name: 'Chat Panel',
+    description:
+      'A presentational chat shell composed on the Side Panel push-layout primitive.',
+    category: 'Chat',
+    source: 'cyphix',
+    variants: ['default', 'loading', 'disabled', 'icon-tab'],
+  },
+  {
     id: 'button',
     name: 'Button',
     description: 'Displays a button or a component that looks like a button.',

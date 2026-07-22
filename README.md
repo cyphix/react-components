@@ -34,6 +34,8 @@ pnpm dlx shadcn@latest add cyphix/react-components/callout#main
 | --- | --- |
 | `callout` | Attention callout with info, success, warning, and destructive variants |
 | `infobox` | Fandom-style infobox rendered from a JSON data object: titled sections, label/value rows, tabbed images with contain/cover fit, tabbed section groups, and an optional accent color |
+| `side-panel` | In-flow side panel layout primitive that pushes main content beside it when open (provider, inset, trigger, icon tab) |
+| `chat-panel` | Presentational chat shell composed on the Side Panel push-layout primitive |
 
 Vendored shadcn/ui primitives in `src/components/ui/` are used by this app and by custom components during development. They are **not** published by this registry. When a custom component depends on a shadcn primitive, it lists a plain name in `registryDependencies` (e.g. `"button"`), which resolves to the official shadcn registry for consumers.
 
