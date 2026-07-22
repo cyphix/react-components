@@ -26,6 +26,9 @@ function ChatPanel({
   renderMessage,
   children,
   onSend,
+  draft: draftProp,
+  defaultDraft = "",
+  onDraftChange,
   loading = false,
   disabled = false,
   placeholder = "Type a message…",
@@ -40,20 +43,32 @@ function ChatPanel({
   renderMessage?: (message: ChatPanelMessage) => React.ReactNode
   children?: React.ReactNode
   onSend?: (value: string) => void
+  draft?: string
+  defaultDraft?: string
+  onDraftChange?: (value: string) => void
   loading?: boolean
   disabled?: boolean
   placeholder?: string
   emptyState?: React.ReactNode
 }) {
-  const [draft, setDraft] = React.useState("")
+  const [uncontrolledDraft, setUncontrolledDraft] = React.useState(defaultDraft)
+  const isControlled = draftProp !== undefined
+  const draftValue = isControlled ? draftProp : uncontrolledDraft
   const composerDisabled = disabled || loading
+
+  function updateDraft(next: string) {
+    if (!isControlled) {
+      setUncontrolledDraft(next)
+    }
+    onDraftChange?.(next)
+  }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const value = draft.trim()
+    const value = draftValue.trim()
     if (!value || composerDisabled) return
     onSend?.(value)
-    setDraft("")
+    updateDraft("")
   }
 
   return (
@@ -102,8 +117,8 @@ function ChatPanel({
           onSubmit={handleSubmit}
         >
           <Input
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
+            value={draftValue}
+            onChange={(event) => updateDraft(event.target.value)}
             placeholder={placeholder}
             disabled={composerDisabled}
             aria-label="Message"
@@ -111,7 +126,7 @@ function ChatPanel({
           <Button
             type="submit"
             size="icon"
-            disabled={composerDisabled || !draft.trim()}
+            disabled={composerDisabled || !draftValue.trim()}
             aria-label="Send message"
           >
             <SendIcon />
