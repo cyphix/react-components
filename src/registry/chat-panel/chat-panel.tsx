@@ -42,7 +42,7 @@ function ChatPanel({
   messages?: ChatPanelMessage[]
   renderMessage?: (message: ChatPanelMessage) => React.ReactNode
   children?: React.ReactNode
-  onSend?: (value: string) => void
+  onSend?: (value: string) => void | Promise<void>
   draft?: string
   defaultDraft?: string
   onDraftChange?: (value: string) => void
@@ -52,9 +52,10 @@ function ChatPanel({
   emptyState?: React.ReactNode
 }) {
   const [uncontrolledDraft, setUncontrolledDraft] = React.useState(defaultDraft)
+  const [sending, setSending] = React.useState(false)
   const isControlled = draftProp !== undefined
   const draftValue = isControlled ? draftProp : uncontrolledDraft
-  const composerDisabled = disabled || loading
+  const composerDisabled = disabled || loading || sending
 
   function updateDraft(next: string) {
     if (!isControlled) {
@@ -63,12 +64,19 @@ function ChatPanel({
     onDraftChange?.(next)
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const value = draftValue.trim()
-    if (!value || composerDisabled) return
-    onSend?.(value)
-    updateDraft("")
+    if (!value || composerDisabled || !onSend) return
+    setSending(true)
+    try {
+      await onSend(value)
+      updateDraft("")
+    } catch {
+      // Caller surfaces errors (e.g. toast); keep draft for retry.
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
