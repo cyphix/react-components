@@ -31,7 +31,7 @@
       "name": "side-panel",
       "type": "registry:ui",
       "title": "Side Panel",
-      "description": "An in-flow side panel layout primitive that pushes main content beside it when open, with provider, inset, and trigger.",
+      "description": "A viewport-stable side panel layout primitive (fixed rail + in-flow gap) that pushes main content beside it when open, with provider, inset, trigger, and icon tab.",
       "dependencies": ["lucide-react"],
       "registryDependencies": ["button"],
       "files": [
@@ -45,7 +45,7 @@
       "name": "chat-panel",
       "type": "registry:ui",
       "title": "Chat Panel",
-      "description": "A presentational chat shell composed on the Side Panel push-layout primitive.",
+      "description": "A presentational chat shell composed on the Side Panel viewport-stable layout primitive.",
       "dependencies": ["lucide-react"],
       "registryDependencies": [
         "button",

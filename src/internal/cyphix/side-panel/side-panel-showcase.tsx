@@ -32,12 +32,16 @@ function SidePanelDemo({
 }) {
   const [clicks, setClicks] = useState(0)
   const tab = showTab ? (
-    <SidePanelTab align={tabAlign} aria-label="Toggle AI chat">
+    <SidePanelTab
+      align={tabAlign}
+      aria-label="Toggle AI chat"
+      className="absolute"
+    >
       <SparklesIcon />
     </SidePanelTab>
   ) : null
   const panel = (
-    <SidePanel side={side}>
+    <SidePanel side={side} className="absolute h-full">
       <SidePanelHeader>
         <span className="text-sm font-medium">{label}</span>
       </SidePanelHeader>
@@ -83,28 +87,27 @@ function SidePanelDemo({
   )
 
   return (
-    <div className="h-[360px] w-full overflow-hidden rounded-lg border">
+    // relative + absolute/h-full overrides keep the fixed rail contained in the demo
+    <div className="relative h-[360px] w-full overflow-hidden rounded-lg border">
       <SidePanelProvider
         defaultOpen={defaultOpen}
         side={side}
         width={width}
-        className="h-full"
+        className="relative h-full min-h-full"
       >
-        <div className="flex h-full min-h-0 w-full">
-          {side === 'left' ? (
-            <>
-              {panel}
-              {tab}
-              {inset}
-            </>
-          ) : (
-            <>
-              {inset}
-              {tab}
-              {panel}
-            </>
-          )}
-        </div>
+        {side === 'left' ? (
+          <>
+            {panel}
+            {tab}
+            {inset}
+          </>
+        ) : (
+          <>
+            {inset}
+            {tab}
+            {panel}
+          </>
+        )}
       </SidePanelProvider>
     </div>
   )
@@ -125,27 +128,25 @@ function ControlledSidePanelDemo() {
           Parent toggle ({open ? 'open' : 'closed'})
         </Button>
       </div>
-      <div className="h-[280px] w-full overflow-hidden rounded-lg border">
+      <div className="relative h-[280px] w-full overflow-hidden rounded-lg border">
         <SidePanelProvider
           open={open}
           onOpenChange={setOpen}
-          className="h-full"
+          className="relative h-full min-h-full"
         >
-          <div className="flex h-full min-h-0 w-full">
-            <SidePanelInset className="items-center justify-center p-4">
-              <SidePanelTrigger />
-            </SidePanelInset>
-            <SidePanel side="right">
-              <SidePanelHeader>
-                <span className="text-sm font-medium">Controlled</span>
-              </SidePanelHeader>
-              <SidePanelContent className="p-4">
-                <p className="text-muted-foreground text-sm">
-                  Open state owned by the parent.
-                </p>
-              </SidePanelContent>
-            </SidePanel>
-          </div>
+          <SidePanelInset className="items-center justify-center p-4">
+            <SidePanelTrigger />
+          </SidePanelInset>
+          <SidePanel side="right" className="absolute h-full">
+            <SidePanelHeader>
+              <span className="text-sm font-medium">Controlled</span>
+            </SidePanelHeader>
+            <SidePanelContent className="p-4">
+              <p className="text-muted-foreground text-sm">
+                Open state owned by the parent.
+              </p>
+            </SidePanelContent>
+          </SidePanel>
         </SidePanelProvider>
       </div>
     </div>

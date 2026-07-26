@@ -25,7 +25,7 @@ const seedComponents: ComponentSummary[] = [
     id: 'side-panel',
     name: 'Side Panel',
     description:
-      'An in-flow side panel layout primitive that pushes main content beside it when open, with provider, inset, and trigger.',
+      'A viewport-stable side panel layout primitive (fixed rail + in-flow gap) that pushes main content beside it when open, with provider, inset, and trigger.',
     category: 'Layout',
     source: 'cyphix',
     variants: [
@@ -42,7 +42,7 @@ const seedComponents: ComponentSummary[] = [
     id: 'chat-panel',
     name: 'Chat Panel',
     description:
-      'A presentational chat shell composed on the Side Panel push-layout primitive.',
+      'A presentational chat shell composed on the Side Panel viewport-stable layout primitive.',
     category: 'Chat',
     source: 'cyphix',
     variants: ['default', 'loading', 'disabled', 'icon-tab'],

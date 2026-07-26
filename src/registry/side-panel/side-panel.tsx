@@ -86,7 +86,7 @@ function SidePanelProvider({
             ...style,
           } as React.CSSProperties
         }
-        className={cn("flex min-h-0 w-full flex-1 flex-col", className)}
+        className={cn("flex min-h-svh w-full", className)}
         {...props}
       >
         {children}
@@ -102,7 +102,7 @@ function SidePanel({
   style,
   children,
   ...props
-}: React.ComponentProps<"aside"> & {
+}: React.ComponentProps<"div"> & {
   side?: "left" | "right"
   width?: string
 }) {
@@ -111,31 +111,55 @@ function SidePanel({
   const state = open ? "open" : "closed"
 
   return (
-    <aside
-      id={panelId}
-      data-slot="side-panel"
+    <div
+      className="group peer"
       data-state={state}
       data-side={side}
-      role="complementary"
-      aria-hidden={!open}
+      data-slot="side-panel"
       style={
         {
           ...(width ? { "--side-panel-width": width } : {}),
           ...style,
         } as React.CSSProperties
       }
-      className={cn(
-        "flex h-full min-h-0 shrink-0 flex-col overflow-hidden bg-background transition-[width] duration-200 ease-linear",
-        "data-[state=open]:w-(--side-panel-width)",
-        "data-[state=closed]:pointer-events-none data-[state=closed]:w-0",
-        "data-[side=left]:border-r data-[side=right]:border-l",
-        "data-[state=closed]:border-0",
-        className
-      )}
-      {...props}
     >
-      {children}
-    </aside>
+      {/* In-flow spacer — reserves width so main content reflows */}
+      <div
+        data-slot="side-panel-gap"
+        className={cn(
+          "relative w-(--side-panel-width) bg-transparent transition-[width] duration-200 ease-linear",
+          "group-data-[state=closed]:w-0"
+        )}
+      />
+      <div
+        data-slot="side-panel-container"
+        className={cn(
+          "fixed inset-y-0 z-10 flex h-svh w-(--side-panel-width) transition-[left,right,width] duration-200 ease-linear",
+          "group-data-[state=closed]:pointer-events-none",
+          side === "left"
+            ? "left-0 group-data-[state=closed]:left-[calc(var(--side-panel-width)*-1)]"
+            : "right-0 group-data-[state=closed]:right-[calc(var(--side-panel-width)*-1)]",
+          className
+        )}
+        {...props}
+      >
+        <aside
+          id={panelId}
+          data-slot="side-panel-inner"
+          data-state={state}
+          data-side={side}
+          role="complementary"
+          aria-hidden={!open}
+          className={cn(
+            "flex h-full w-full flex-col overflow-hidden bg-background",
+            "data-[side=left]:border-r data-[side=right]:border-l",
+            "data-[state=closed]:border-0"
+          )}
+        >
+          {children}
+        </aside>
+      </div>
+    </div>
   )
 }
 
@@ -247,12 +271,12 @@ function SidePanelTab({
         toggle()
       }}
       className={cn(
-        "relative z-10 flex h-24 w-9 shrink-0 items-center justify-center border bg-background text-foreground shadow-xs transition-colors",
+        "fixed z-20 flex h-24 w-9 items-center justify-center border bg-background text-foreground shadow-xs transition-[left,right,background-color,color] duration-200 ease-linear",
         "hover:bg-accent hover:text-accent-foreground",
         "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
-        "data-[side=right]:rounded-l-lg data-[side=right]:border-r-0",
-        "data-[side=left]:rounded-r-lg data-[side=left]:border-l-0",
-        "data-[align=top]:self-start data-[align=middle]:self-center data-[align=bottom]:self-end",
+        "data-[side=right]:right-0 data-[side=right]:rounded-l-lg data-[side=right]:border-r-0 data-[side=right]:data-[state=open]:right-(--side-panel-width)",
+        "data-[side=left]:left-0 data-[side=left]:rounded-r-lg data-[side=left]:border-l-0 data-[side=left]:data-[state=open]:left-(--side-panel-width)",
+        "data-[align=top]:top-4 data-[align=middle]:top-1/2 data-[align=middle]:-translate-y-1/2 data-[align=bottom]:bottom-4",
         "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
         className
       )}
