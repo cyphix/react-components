@@ -55,6 +55,8 @@ type InfoboxProps = React.ComponentProps<typeof Card> & {
   imageFit?: InfoboxImageFit
   /** Aspect ratio (width / height) of the image box. */
   imageRatio?: number
+  /** Called when an image is clicked. Makes the image area interactive. */
+  onImageClick?: (image: InfoboxImage, index: number) => void
 }
 
 function isInfoboxLink(value: unknown): value is InfoboxLink {
@@ -94,23 +96,42 @@ function InfoboxImageFigure({
   image,
   fit,
   ratio,
+  index,
+  onImageClick,
 }: {
   image: InfoboxImage
   fit: InfoboxImageFit
   ratio: number
+  index: number
+  onImageClick?: (image: InfoboxImage, index: number) => void
 }) {
+  const imageContent = (
+    <AspectRatio ratio={ratio} className="bg-muted">
+      <img
+        src={image.src}
+        alt={image.alt ?? ""}
+        className={cn(
+          "size-full",
+          fit === "contain" ? "object-contain" : "object-cover"
+        )}
+      />
+    </AspectRatio>
+  )
+
   return (
     <figure data-slot="infobox-image">
-      <AspectRatio ratio={ratio} className="bg-muted">
-        <img
-          src={image.src}
-          alt={image.alt ?? ""}
-          className={cn(
-            "size-full",
-            fit === "contain" ? "object-contain" : "object-cover"
-          )}
-        />
-      </AspectRatio>
+      {onImageClick ? (
+        <button
+          type="button"
+          data-slot="infobox-image-button"
+          className="block w-full cursor-pointer transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={() => onImageClick(image, index)}
+        >
+          {imageContent}
+        </button>
+      ) : (
+        imageContent
+      )}
       {image.caption && (
         <figcaption className="px-3 py-1.5 text-center text-xs text-muted-foreground">
           {image.caption}
@@ -124,14 +145,24 @@ function InfoboxImages({
   images,
   fit,
   ratio,
+  onImageClick,
 }: {
   images: InfoboxImage[]
   fit: InfoboxImageFit
   ratio: number
+  onImageClick?: (image: InfoboxImage, index: number) => void
 }) {
   if (images.length === 0) return null
   if (images.length === 1) {
-    return <InfoboxImageFigure image={images[0]} fit={fit} ratio={ratio} />
+    return (
+      <InfoboxImageFigure
+        image={images[0]}
+        fit={fit}
+        ratio={ratio}
+        index={0}
+        onImageClick={onImageClick}
+      />
+    )
   }
 
   const tabValue = (image: InfoboxImage, index: number) =>
@@ -156,7 +187,13 @@ function InfoboxImages({
       </TabsList>
       {images.map((image, index) => (
         <TabsContent key={tabValue(image, index)} value={tabValue(image, index)}>
-          <InfoboxImageFigure image={image} fit={fit} ratio={ratio} />
+          <InfoboxImageFigure
+            image={image}
+            fit={fit}
+            ratio={ratio}
+            index={index}
+            onImageClick={onImageClick}
+          />
         </TabsContent>
       ))}
     </Tabs>
@@ -248,6 +285,7 @@ function Infobox({
   accentColor,
   imageFit = "cover",
   imageRatio = 3 / 4,
+  onImageClick,
   className,
   style,
   ...props
@@ -285,7 +323,12 @@ function Infobox({
         )}
       </div>
       {data.images && (
-        <InfoboxImages images={data.images} fit={imageFit} ratio={imageRatio} />
+        <InfoboxImages
+          images={data.images}
+          fit={imageFit}
+          ratio={imageRatio}
+          onImageClick={onImageClick}
+        />
       )}
       <div data-slot="infobox-body">
         <InfoboxSections sections={data.sections} />

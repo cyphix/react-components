@@ -1,4 +1,7 @@
-import { Infobox, type InfoboxData } from '@/registry/infobox/infobox'
+import { useState } from 'react'
+
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Infobox, type InfoboxData, type InfoboxImage } from '@/registry/infobox/infobox'
 import { StateGrid } from '@/internal/state-grid'
 
 function svgImage(label: string, background: string, width: number, height: number) {
@@ -120,6 +123,35 @@ const singleTabData: InfoboxData = {
   ),
 }
 
+function InfoboxWithLightbox({ data }: { data: InfoboxData }) {
+  const [lightboxImage, setLightboxImage] = useState<InfoboxImage | null>(null)
+
+  return (
+    <>
+      <Infobox
+        data={data}
+        onImageClick={(image) => setLightboxImage(image)}
+      />
+      <Dialog
+        open={lightboxImage !== null}
+        onOpenChange={(open) => {
+          if (!open) setLightboxImage(null)
+        }}
+      >
+        <DialogContent className="max-w-3xl border-none bg-transparent p-0 shadow-none sm:max-w-3xl">
+          {lightboxImage && (
+            <img
+              src={lightboxImage.src}
+              alt={lightboxImage.alt ?? ''}
+              className="max-h-[90vh] w-full object-contain"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
+
 export function InfoboxShowcase() {
   return (
     <StateGrid
@@ -155,6 +187,10 @@ export function InfoboxShowcase() {
         {
           label: 'single section tab (renders inline)',
           node: <Infobox data={singleTabData} />,
+        },
+        {
+          label: 'onImageClick (lightbox demo)',
+          node: <InfoboxWithLightbox data={characterData} />,
         },
       ]}
     />
