@@ -42,6 +42,28 @@
       ]
     },
     {
+      "name": "collection-view",
+      "type": "registry:ui",
+      "title": "Collection View",
+      "description": "A data collection that flips between a TanStack Table data table and a card grid, with centered top/bottom pagination, customizable page-size options, column visibility toggles, and grid-only infinite scroll.",
+      "dependencies": ["@tanstack/react-table@^8.21.3", "lucide-react"],
+      "registryDependencies": [
+        "button",
+        "table",
+        "select",
+        "dropdown-menu",
+        "pagination",
+        "toggle-group",
+        "spinner"
+      ],
+      "files": [
+        {
+          "path": "collection-view/collection-view.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "chat-panel",
       "type": "registry:ui",
       "title": "Chat Panel",

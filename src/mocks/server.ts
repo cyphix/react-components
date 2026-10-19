@@ -48,6 +48,22 @@ const seedComponents: ComponentSummary[] = [
     variants: ['default', 'loading', 'disabled', 'icon-tab'],
   },
   {
+    id: 'collection-view',
+    name: 'Collection View',
+    description:
+      'A data collection that flips between a data table and a card grid, with centered top/bottom pagination, column toggles, and grid infinite scroll.',
+    category: 'Data Display',
+    source: 'cyphix',
+    variants: [
+      'table',
+      'grid',
+      'pagination-top',
+      'pagination-both',
+      'custom-page-sizes',
+      'infinite-scroll',
+    ],
+  },
+  {
     id: 'button',
     name: 'Button',
     description: 'Displays a button or a component that looks like a button.',
