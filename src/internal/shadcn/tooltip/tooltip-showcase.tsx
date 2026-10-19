@@ -16,8 +16,8 @@ export function TooltipShowcase() {
             label: 'default',
             node: (
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline">Hover me</Button>
+                <TooltipTrigger render={<Button variant="outline" />}>
+                  Hover me
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Add to library</p>
@@ -29,8 +29,8 @@ export function TooltipShowcase() {
             label: 'side: bottom',
             node: (
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline">Hover me</Button>
+                <TooltipTrigger render={<Button variant="outline" />}>
+                  Hover me
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
                   <p>Opens below the trigger</p>
@@ -42,8 +42,8 @@ export function TooltipShowcase() {
             label: 'side: right',
             node: (
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline">Hover me</Button>
+                <TooltipTrigger render={<Button variant="outline" />}>
+                  Hover me
                 </TooltipTrigger>
                 <TooltipContent side="right">
                   <p>Opens to the right</p>

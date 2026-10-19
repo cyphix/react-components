@@ -1,7 +1,7 @@
 import { act } from 'react'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { ColumnDef } from '@tanstack/react-table'
+import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { CollectionView } from '@/registry/collection-view/collection-view'
@@ -20,7 +20,7 @@ const items: Item[] = Array.from({ length: 30 }, (_, index) => ({
   price: index + 1,
 }))
 
-const columns: ColumnDef<Item>[] = [
+const columns: LegacyColumnDef<Item>[] = [
   { accessorKey: 'name', header: 'Name' },
   { accessorKey: 'status', header: 'Status' },
   { accessorKey: 'price', header: 'Price' },
@@ -87,14 +87,14 @@ describe('CollectionView', () => {
       container.querySelector('[data-slot="collection-view-grid"]'),
     ).not.toBeInTheDocument()
 
-    await user.click(screen.getByRole('radio', { name: 'Grid view' }))
+    await user.click(screen.getByRole('button', { name: 'Grid view' }))
 
     expect(
       container.querySelector('[data-slot="collection-view-table"]'),
     ).not.toBeInTheDocument()
     expect(gridCardCount(container)).toBe(10)
 
-    await user.click(screen.getByRole('radio', { name: 'Table view' }))
+    await user.click(screen.getByRole('button', { name: 'Table view' }))
     expect(
       container.querySelector('[data-slot="collection-view-table"]'),
     ).toBeInTheDocument()
@@ -168,7 +168,7 @@ describe('CollectionView', () => {
     expect(screen.getAllByRole('row')).toHaveLength(6) // header + 5 rows
     expect(screen.getByText('Page 1 of 6')).toBeInTheDocument()
 
-    await user.click(screen.getByRole('link', { name: '2' }))
+    await user.click(screen.getByRole('button', { name: '2' }))
     expect(screen.getByText('Page 2 of 6')).toBeInTheDocument()
 
     await user.click(
@@ -202,7 +202,8 @@ describe('CollectionView', () => {
 
     expect(screen.getByRole('columnheader', { name: 'Status' })).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: /columns/i }))
+    // Base UI menus don't respond to userEvent's pointer sequence in jsdom.
+    fireEvent.click(screen.getByRole('button', { name: /columns/i }))
     await user.click(screen.getByRole('menuitemcheckbox', { name: 'Status' }))
     // Menu stays open while toggling; close it so the table is not aria-hidden.
     await user.keyboard('{Escape}')

@@ -2,14 +2,17 @@
 
 import * as React from "react"
 import {
-  type Column,
-  type ColumnDef,
+  type ColumnVisibilityState,
   flexRender,
+  type RowData,
+} from "@tanstack/react-table"
+import {
   getCoreRowModel,
   getPaginationRowModel,
-  useReactTable,
-  type VisibilityState,
-} from "@tanstack/react-table"
+  type LegacyColumn,
+  type LegacyColumnDef,
+  useLegacyTable,
+} from "@tanstack/react-table/legacy"
 import {
   ChevronDownIcon,
   LayoutGridIcon,
@@ -22,6 +25,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -67,7 +71,9 @@ const DEFAULT_PAGE_SIZE_OPTIONS: CollectionViewPageSizeOption[] = [
   "all",
 ]
 
-function columnLabel<TData>(column: Column<TData, unknown>) {
+function columnLabel<TData extends RowData>(
+  column: LegacyColumn<TData, unknown>
+) {
   const header = column.columnDef.header
   return typeof header === "string" ? header : column.id
 }
@@ -116,7 +122,12 @@ function CollectionViewPagination({
     >
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground">Rows per page</span>
-        <Select value={pageSizeOption} onValueChange={onPageSizeOptionChange}>
+        <Select
+          value={pageSizeOption}
+          onValueChange={(value) => {
+            if (value != null) onPageSizeOptionChange(value)
+          }}
+        >
           <SelectTrigger
             size="sm"
             className="w-20"
@@ -192,7 +203,7 @@ function CollectionViewPagination({
   )
 }
 
-function CollectionView<TData, TValue>({
+function CollectionView<TData extends RowData, TValue>({
   data,
   columns,
   renderCard,
@@ -216,7 +227,7 @@ function CollectionView<TData, TValue>({
   ...props
 }: React.ComponentProps<"div"> & {
   data: TData[]
-  columns: ColumnDef<TData, TValue>[]
+  columns: LegacyColumnDef<TData, TValue>[]
   /** Render an item as a card in the grid view. */
   renderCard: (item: TData) => React.ReactNode
   /** Key for grid items. Defaults to the table row id. */
@@ -270,16 +281,16 @@ function CollectionView<TData, TValue>({
     return String(initial)
   })
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<ColumnVisibilityState>({})
 
   const pageSize =
     pageSizeOption === "all" ? Math.max(data.length, 1) : Number(pageSizeOption)
   const effectivePageSize =
     pagination === "none" ? Math.max(data.length, 1) : pageSize
 
-  const table = useReactTable({
+  const table = useLegacyTable({
     data,
-    columns,
+    columns: columns as LegacyColumnDef<TData>[],
     getRowId,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -377,12 +388,12 @@ function CollectionView<TData, TValue>({
         >
           {showViewToggle ? (
             <ToggleGroup
-              type="single"
               variant="outline"
               size="sm"
-              value={view}
+              value={[view]}
               onValueChange={(value) => {
-                if (value) setView(value as CollectionViewMode)
+                const next = value[0]
+                if (next) setView(next as CollectionViewMode)
               }}
               data-slot="collection-view-toggle"
             >
@@ -399,34 +410,38 @@ function CollectionView<TData, TValue>({
 
           {view === "table" && (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  data-slot="collection-view-columns-trigger"
-                >
-                  Columns
-                  <ChevronDownIcon />
-                </Button>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    data-slot="collection-view-columns-trigger"
+                  />
+                }
+              >
+                Columns
+                <ChevronDownIcon />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {table
-                  .getAllLeafColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(checked) =>
-                        column.toggleVisibility(!!checked)
-                      }
-                      onSelect={(event) => event.preventDefault()}
-                    >
-                      {columnLabel(column)}
-                    </DropdownMenuCheckboxItem>
-                  ))}
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {table
+                    .getAllLeafColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(checked) =>
+                          column.toggleVisibility(!!checked)
+                        }
+                        closeOnClick={false}
+                      >
+                        {columnLabel(column)}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
           )}

@@ -10,7 +10,7 @@ export function ToggleGroupShowcase() {
         {
           label: 'multiple',
           node: (
-            <ToggleGroup type="multiple" defaultValue={['bold']}>
+            <ToggleGroup multiple defaultValue={['bold']}>
               <ToggleGroupItem value="bold" aria-label="Toggle bold">
                 <Bold />
               </ToggleGroupItem>
@@ -26,7 +26,7 @@ export function ToggleGroupShowcase() {
         {
           label: 'single',
           node: (
-            <ToggleGroup type="single" defaultValue="center">
+            <ToggleGroup defaultValue={["center"]}>
               <ToggleGroupItem value="left" aria-label="Align left">
                 <AlignLeft />
               </ToggleGroupItem>
@@ -42,7 +42,7 @@ export function ToggleGroupShowcase() {
         {
           label: 'outline',
           node: (
-            <ToggleGroup type="single" variant="outline" defaultValue="left">
+            <ToggleGroup variant="outline" defaultValue={["left"]}>
               <ToggleGroupItem value="left">Left</ToggleGroupItem>
               <ToggleGroupItem value="center">Center</ToggleGroupItem>
               <ToggleGroupItem value="right">Right</ToggleGroupItem>
@@ -52,7 +52,7 @@ export function ToggleGroupShowcase() {
         {
           label: 'size: sm',
           node: (
-            <ToggleGroup type="multiple" size="sm" variant="outline">
+            <ToggleGroup multiple size="sm" variant="outline">
               <ToggleGroupItem value="bold" aria-label="Toggle bold">
                 <Bold />
               </ToggleGroupItem>
@@ -65,7 +65,7 @@ export function ToggleGroupShowcase() {
         {
           label: 'disabled',
           node: (
-            <ToggleGroup type="multiple" disabled>
+            <ToggleGroup multiple disabled>
               <ToggleGroupItem value="bold" aria-label="Toggle bold">
                 <Bold />
               </ToggleGroupItem>

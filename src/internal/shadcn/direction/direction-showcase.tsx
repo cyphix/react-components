@@ -35,7 +35,7 @@ export function DirectionShowcase() {
         <span className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
           ltr
         </span>
-        <DirectionProvider dir="ltr">
+        <DirectionProvider direction="ltr">
           <div dir="ltr">
             <DirectionDemo />
           </div>
@@ -45,7 +45,7 @@ export function DirectionShowcase() {
         <span className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
           rtl
         </span>
-        <DirectionProvider dir="rtl">
+        <DirectionProvider direction="rtl">
           <div dir="rtl">
             <DirectionDemo />
           </div>

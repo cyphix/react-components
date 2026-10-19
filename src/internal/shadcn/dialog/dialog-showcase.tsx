@@ -21,8 +21,8 @@ export function DialogShowcase() {
           label: 'default',
           node: (
             <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline">Open dialog</Button>
+              <DialogTrigger render={<Button variant="outline" />}>
+                Open dialog
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -32,8 +32,8 @@ export function DialogShowcase() {
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
+                  <DialogClose render={<Button variant="outline" />}>
+                    Cancel
                   </DialogClose>
                   <Button>Copy link</Button>
                 </DialogFooter>
@@ -45,8 +45,8 @@ export function DialogShowcase() {
           label: 'with form',
           node: (
             <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline">Edit profile</Button>
+              <DialogTrigger render={<Button variant="outline" />}>
+                Edit profile
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -66,8 +66,8 @@ export function DialogShowcase() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
+                  <DialogClose render={<Button variant="outline" />}>
+                    Cancel
                   </DialogClose>
                   <Button>Save changes</Button>
                 </DialogFooter>

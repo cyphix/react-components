@@ -8,7 +8,7 @@ import {
 export function AccordionShowcase() {
   return (
     <div className="max-w-md">
-      <Accordion type="single" collapsible defaultValue="item-1">
+      <Accordion defaultValue={["item-1"]}>
         <AccordionItem value="item-1">
           <AccordionTrigger>Is it accessible?</AccordionTrigger>
           <AccordionContent>

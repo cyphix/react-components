@@ -30,8 +30,8 @@ export function DropdownMenuShowcase() {
           label: 'default',
           node: (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">Open menu</Button>
+              <DropdownMenuTrigger render={<Button variant="outline" />}>
+                Open menu
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-52" align="start">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -62,8 +62,8 @@ export function DropdownMenuShowcase() {
           label: 'checkbox items',
           node: (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">View options</Button>
+              <DropdownMenuTrigger render={<Button variant="outline" />}>
+                View options
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-52" align="start">
                 <DropdownMenuLabel>Appearance</DropdownMenuLabel>
@@ -86,8 +86,8 @@ export function DropdownMenuShowcase() {
           label: 'radio group',
           node: (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">Panel position</Button>
+              <DropdownMenuTrigger render={<Button variant="outline" />}>
+                Panel position
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-52" align="start">
                 <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
@@ -112,8 +112,8 @@ export function DropdownMenuShowcase() {
           label: 'with submenu',
           node: (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">More actions</Button>
+              <DropdownMenuTrigger render={<Button variant="outline" />}>
+                More actions
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-52" align="start">
                 <DropdownMenuItem>New Tab</DropdownMenuItem>

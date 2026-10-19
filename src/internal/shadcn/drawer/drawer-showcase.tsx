@@ -18,10 +18,16 @@ function DemoDrawer({
   direction: 'top' | 'bottom' | 'left' | 'right'
   label: string
 }) {
+  const swipeDirections = {
+    top: 'up',
+    bottom: 'down',
+    left: 'left',
+    right: 'right',
+  } as const
   return (
-    <Drawer direction={direction}>
-      <DrawerTrigger asChild>
-        <Button variant="outline">{label}</Button>
+    <Drawer swipeDirection={swipeDirections[direction]}>
+      <DrawerTrigger render={<Button variant="outline" />}>
+        {label}
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
@@ -35,8 +41,8 @@ function DemoDrawer({
         </div>
         <DrawerFooter>
           <Button>Submit</Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+          <DrawerClose render={<Button variant="outline" />}>
+            Cancel
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

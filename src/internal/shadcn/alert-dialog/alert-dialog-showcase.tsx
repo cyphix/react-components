@@ -20,8 +20,8 @@ export function AlertDialogShowcase() {
           label: 'default',
           node: (
             <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline">Show dialog</Button>
+              <AlertDialogTrigger render={<Button variant="outline" />}>
+                Show dialog
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -43,8 +43,8 @@ export function AlertDialogShowcase() {
           label: 'destructive',
           node: (
             <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete account</Button>
+              <AlertDialogTrigger render={<Button variant="destructive" />}>
+                Delete account
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
@@ -68,8 +68,8 @@ export function AlertDialogShowcase() {
           label: 'size: sm',
           node: (
             <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline">Small dialog</Button>
+              <AlertDialogTrigger render={<Button variant="outline" />}>
+                Small dialog
               </AlertDialogTrigger>
               <AlertDialogContent size="sm">
                 <AlertDialogHeader>

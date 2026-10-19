@@ -21,7 +21,12 @@ export function SelectShowcase() {
         {
           label: 'default',
           node: (
-            <Select value={fruit} onValueChange={setFruit}>
+            <Select
+              value={fruit}
+              onValueChange={(value) => {
+                if (value != null) setFruit(value)
+              }}
+            >
               <SelectTrigger className="w-44">
                 <SelectValue placeholder="Select a fruit" />
               </SelectTrigger>

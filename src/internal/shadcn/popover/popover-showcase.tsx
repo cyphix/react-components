@@ -19,8 +19,8 @@ export function PopoverShowcase() {
           label: 'default',
           node: (
             <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">Open popover</Button>
+              <PopoverTrigger render={<Button variant="outline" />}>
+                Open popover
               </PopoverTrigger>
               <PopoverContent className="w-72">
                 <PopoverHeader>
@@ -37,8 +37,8 @@ export function PopoverShowcase() {
           label: 'with form',
           node: (
             <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">Edit dimensions</Button>
+              <PopoverTrigger render={<Button variant="outline" />}>
+                Edit dimensions
               </PopoverTrigger>
               <PopoverContent className="w-72">
                 <div className="grid gap-4">
@@ -73,8 +73,8 @@ export function PopoverShowcase() {
           label: 'side: right',
           node: (
             <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">Open right</Button>
+              <PopoverTrigger render={<Button variant="outline" />}>
+                Open right
               </PopoverTrigger>
               <PopoverContent side="right" className="w-56">
                 <PopoverDescription>

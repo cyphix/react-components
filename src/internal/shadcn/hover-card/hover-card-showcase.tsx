@@ -16,8 +16,8 @@ export function HoverCardShowcase() {
           label: 'default',
           node: (
             <HoverCard>
-              <HoverCardTrigger asChild>
-                <Button variant="link">@nextjs</Button>
+              <HoverCardTrigger render={<Button variant="link" />}>
+                @nextjs
               </HoverCardTrigger>
               <HoverCardContent className="w-80">
                 <div className="flex flex-col gap-2">
@@ -38,8 +38,8 @@ export function HoverCardShowcase() {
           label: 'side: right',
           node: (
             <HoverCard>
-              <HoverCardTrigger asChild>
-                <Button variant="link">Hover me</Button>
+              <HoverCardTrigger render={<Button variant="link" />}>
+                Hover me
               </HoverCardTrigger>
               <HoverCardContent side="right" className="w-64">
                 <p className="text-sm">

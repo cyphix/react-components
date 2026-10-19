@@ -11,7 +11,7 @@ import {
 export function NavigationMenuShowcase() {
   return (
     <div className="min-h-64">
-      <NavigationMenu viewport={false}>
+      <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>

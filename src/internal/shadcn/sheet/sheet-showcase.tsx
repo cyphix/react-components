@@ -20,8 +20,8 @@ function DemoSheet({
 }) {
   return (
     <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="outline">{label}</Button>
+      <SheetTrigger render={<Button variant="outline" />}>
+        {label}
       </SheetTrigger>
       <SheetContent side={side}>
         <SheetHeader>
@@ -32,8 +32,8 @@ function DemoSheet({
         </SheetHeader>
         <SheetFooter>
           <Button>Save changes</Button>
-          <SheetClose asChild>
-            <Button variant="outline">Close</Button>
+          <SheetClose render={<Button variant="outline" />}>
+            Close
           </SheetClose>
         </SheetFooter>
       </SheetContent>
