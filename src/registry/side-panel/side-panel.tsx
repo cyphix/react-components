@@ -4,7 +4,7 @@ import * as React from "react"
 import { PanelRightIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 const SIDE_PANEL_WIDTH = "24rem"
 
