@@ -2,6 +2,19 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "items": [
     {
+      "name": "creatable-combobox",
+      "type": "registry:ui",
+      "title": "Creatable Combobox",
+      "description": "A searchable combobox with grouped options, free-form values, and a create-new action.",
+      "registryDependencies": ["button", "combobox"],
+      "files": [
+        {
+          "path": "creatable-combobox/creatable-combobox.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "callout",
       "type": "registry:ui",
       "title": "Callout",
