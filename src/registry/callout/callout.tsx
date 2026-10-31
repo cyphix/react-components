@@ -7,7 +7,7 @@ import {
   TriangleAlert,
 } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 const calloutVariants = cva(
   "relative flex w-full items-start gap-3 rounded-lg border p-4 text-sm [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:translate-y-0.5",

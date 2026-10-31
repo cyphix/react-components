@@ -11,7 +11,7 @@ import {
   SidePanelFooter,
   SidePanelHeader,
 } from "@/registry/side-panel/side-panel"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 type ChatPanelMessage = {
   id: string
