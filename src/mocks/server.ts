@@ -4,6 +4,15 @@ import type { ComponentSummary } from '@/lib/schemas'
 
 const seedComponents: ComponentSummary[] = [
   {
+    id: 'creatable-combobox',
+    name: 'Creatable Combobox',
+    description:
+      'A searchable combobox with grouped options, free-form values, and a create-new action.',
+    category: 'Forms',
+    source: 'cyphix',
+    variants: ['basic', 'grouped options', 'free-form custom values', 'create new', 'disabled', 'empty options'],
+  },
+  {
     id: 'callout',
     name: 'Callout',
     description:

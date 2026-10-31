@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { CreatableComboboxShowcase } from '@/internal/cyphix/creatable-combobox/creatable-combobox-showcase'
 
 import { CalloutShowcase } from '@/internal/cyphix/callout/callout-showcase'
 import { ChatPanelShowcase } from '@/internal/cyphix/chat-panel/chat-panel-showcase'
@@ -68,6 +69,7 @@ import { ToggleGroupShowcase } from '@/internal/shadcn/toggle-group/toggle-group
 import { TooltipShowcase } from '@/internal/shadcn/tooltip/tooltip-showcase'
 
 export const showcases: Record<string, () => ReactNode> = {
+  'creatable-combobox': CreatableComboboxShowcase,
   callout: CalloutShowcase,
   infobox: InfoboxShowcase,
   'side-panel': SidePanelShowcase,
