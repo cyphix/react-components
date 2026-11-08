@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react'
-import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
 
 import { Badge } from '@/components/ui/badge'
 import {
@@ -9,7 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { CollectionView } from '@/registry/collection-view/collection-view'
+import {
+  CollectionView,
+  type CollectionViewColumnDef,
+} from '@/registry/collection-view/collection-view'
 
 type Product = {
   id: string
@@ -35,7 +37,7 @@ const products: Product[] = Array.from({ length: 64 }, (_, index) => {
   }
 })
 
-const columns: LegacyColumnDef<Product>[] = [
+const columns: CollectionViewColumnDef<Product>[] = [
   {
     accessorKey: 'name',
     header: 'Name',

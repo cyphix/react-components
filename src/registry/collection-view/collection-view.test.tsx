@@ -1,10 +1,12 @@
 import { act } from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { LegacyColumnDef } from '@tanstack/react-table/legacy'
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { CollectionView } from '@/registry/collection-view/collection-view'
+import {
+  CollectionView,
+  type CollectionViewColumnDef,
+} from '@/registry/collection-view/collection-view'
 
 type Item = {
   id: string
@@ -20,7 +22,7 @@ const items: Item[] = Array.from({ length: 30 }, (_, index) => ({
   price: index + 1,
 }))
 
-const columns: LegacyColumnDef<Item>[] = [
+const columns: CollectionViewColumnDef<Item>[] = [
   { accessorKey: 'name', header: 'Name' },
   { accessorKey: 'status', header: 'Status' },
   { accessorKey: 'price', header: 'Price' },
@@ -174,7 +176,7 @@ describe('CollectionView', () => {
     await user.click(
       screen.getByRole('combobox', { name: 'Rows per page' }),
     )
-    await user.click(screen.getByRole('option', { name: '12' }))
+    await user.click(await screen.findByRole('option', { name: '12' }))
     expect(screen.getAllByRole('row')).toHaveLength(13)
     expect(screen.getByText('Page 1 of 3')).toBeInTheDocument()
   })
@@ -188,7 +190,7 @@ describe('CollectionView', () => {
     await user.click(
       screen.getByRole('combobox', { name: 'Rows per page' }),
     )
-    await user.click(screen.getByRole('option', { name: 'All' }))
+    await user.click(await screen.findByRole('option', { name: 'All' }))
 
     expect(screen.getAllByRole('row')).toHaveLength(31)
     expect(screen.getByText('Page 1 of 1')).toBeInTheDocument()

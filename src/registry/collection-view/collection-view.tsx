@@ -2,17 +2,17 @@
 
 import * as React from "react"
 import {
+  type Column,
+  type ColumnDef,
   type ColumnVisibilityState,
+  columnVisibilityFeature,
+  createPaginatedRowModel,
   flexRender,
   type RowData,
+  rowPaginationFeature,
+  tableFeatures,
+  useTable,
 } from "@tanstack/react-table"
-import {
-  getCoreRowModel,
-  getPaginationRowModel,
-  type LegacyColumn,
-  type LegacyColumnDef,
-  useLegacyTable,
-} from "@tanstack/react-table/legacy"
 import {
   ChevronDownIcon,
   LayoutGridIcon,
@@ -63,6 +63,17 @@ type CollectionViewPaginationPosition = "top" | "bottom" | "both" | "none"
 
 type CollectionViewPageSizeOption = number | "all"
 
+const collectionViewFeatures = tableFeatures({
+  columnVisibilityFeature,
+  rowPaginationFeature,
+  paginatedRowModel: createPaginatedRowModel(),
+})
+
+type CollectionViewFeatures = typeof collectionViewFeatures
+
+type CollectionViewColumnDef<TData extends RowData, TValue = unknown> =
+  ColumnDef<CollectionViewFeatures, TData, TValue>
+
 const DEFAULT_PAGE_SIZE_OPTIONS: CollectionViewPageSizeOption[] = [
   10,
   25,
@@ -72,7 +83,7 @@ const DEFAULT_PAGE_SIZE_OPTIONS: CollectionViewPageSizeOption[] = [
 ]
 
 function columnLabel<TData extends RowData>(
-  column: LegacyColumn<TData, unknown>
+  column: Column<CollectionViewFeatures, TData, unknown>
 ) {
   const header = column.columnDef.header
   return typeof header === "string" ? header : column.id
@@ -227,7 +238,7 @@ function CollectionView<TData extends RowData, TValue>({
   ...props
 }: React.ComponentProps<"div"> & {
   data: TData[]
-  columns: LegacyColumnDef<TData, TValue>[]
+  columns: CollectionViewColumnDef<TData, TValue>[]
   /** Render an item as a card in the grid view. */
   renderCard: (item: TData) => React.ReactNode
   /** Key for grid items. Defaults to the table row id. */
@@ -288,12 +299,11 @@ function CollectionView<TData extends RowData, TValue>({
   const effectivePageSize =
     pagination === "none" ? Math.max(data.length, 1) : pageSize
 
-  const table = useLegacyTable({
+  const table = useTable({
+    features: collectionViewFeatures,
     data,
-    columns: columns as LegacyColumnDef<TData>[],
+    columns: columns as CollectionViewColumnDef<TData>[],
     getRowId,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     state: {
       pagination: { pageIndex, pageSize: effectivePageSize },
       columnVisibility,
@@ -564,8 +574,10 @@ function CollectionView<TData extends RowData, TValue>({
   )
 }
 
-export { CollectionView, DEFAULT_PAGE_SIZE_OPTIONS }
+export { CollectionView, collectionViewFeatures, DEFAULT_PAGE_SIZE_OPTIONS }
 export type {
+  CollectionViewColumnDef,
+  CollectionViewFeatures,
   CollectionViewMode,
   CollectionViewPageSizeOption,
   CollectionViewPaginationPosition,
