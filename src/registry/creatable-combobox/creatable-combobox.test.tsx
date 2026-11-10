@@ -39,6 +39,49 @@ async function openCombobox() {
 }
 
 describe("CreatableCombobox", () => {
+  it("hides the clear button when search is empty", async () => {
+    renderCombobox({ clearable: true })
+    await openCombobox()
+    expect(screen.queryByRole("button", { name: "Clear search" })).not.toBeInTheDocument()
+  })
+
+  it("does not show a clear button by default even with search text", async () => {
+    renderCombobox()
+    const search = await openCombobox()
+    await userEvent.type(search, "ap")
+    expect(screen.queryByRole("button", { name: "Clear search" })).not.toBeInTheDocument()
+  })
+
+  it("clears only search, restores options and keeps focus and keyboard navigation", async () => {
+    const onValueChange = vi.fn()
+    renderCombobox({ clearable: true, value: "pear", onValueChange })
+    const search = await openCombobox()
+    await userEvent.type(search, "ap")
+    expect(screen.queryByRole("option", { name: "Pear" })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole("button", { name: "Clear search" }))
+    expect(search).toHaveValue("")
+    expect(search).toHaveFocus()
+    expect(search).toBeVisible()
+    expect(screen.getByRole("option", { name: "Pear" })).toBeVisible()
+    expect(screen.getByRole("option", { name: "Apple" })).toBeVisible()
+    expect(screen.queryByRole("button", { name: "Clear search" })).not.toBeInTheDocument()
+    expect(onValueChange).not.toHaveBeenCalled()
+    await userEvent.type(search, "ap")
+    await userEvent.keyboard("{ArrowDown}{Enter}")
+    expect(onValueChange).toHaveBeenCalledWith("apple")
+  })
+
+  it("clears a query with no matches", async () => {
+    renderCombobox({ clearable: true })
+    const search = await openCombobox()
+    await userEvent.type(search, "unknown")
+    expect(screen.getByText("No options found.")).toBeVisible()
+    await userEvent.click(screen.getByRole("button", { name: "Clear search" }))
+    expect(screen.queryByText("No options found.")).not.toBeInTheDocument()
+    expect(screen.getByRole("option", { name: "Apple" })).toBeVisible()
+    expect(search).toHaveFocus()
+  })
+
   it("shows a free-form value that is not in options", () => {
     renderCombobox({ value: "Dragonfruit" })
     expect(screen.getByRole("combobox")).toHaveTextContent("Dragonfruit")

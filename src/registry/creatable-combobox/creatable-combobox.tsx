@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react"
+import { useMemo, useRef, useState } from "react"
+import { X } from "lucide-react"
 import { cn } from "cn"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,6 +12,7 @@ import {
   ComboboxList,
   ComboboxTrigger,
 } from "@/components/ui/combobox"
+import { InputGroupAddon, InputGroupButton } from "@/components/ui/input-group"
 
 export type ComboboxOption = {
   value: string
@@ -31,6 +33,7 @@ type CreatableComboboxProps = {
   createLabel?: string
   className?: string
   disabled?: boolean
+  clearable?: boolean
 }
 
 const CUSTOM_VALUE = "\u0000creatable-custom-value"
@@ -47,10 +50,12 @@ export function CreatableCombobox({
   onCreateNew,
   createLabel = "Create new…",
   disabled = false,
+  clearable = false,
   className,
 }: CreatableComboboxProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const filteredOptions = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase()
@@ -92,6 +97,7 @@ export function CreatableCombobox({
     <Combobox
       disabled={disabled}
       filter={null}
+      inputValue={query}
       onInputValueChange={setQuery}
       onOpenChange={(nextOpen) => {
         setOpen(nextOpen)
@@ -139,7 +145,24 @@ export function CreatableCombobox({
           showClear={false}
           showTrigger={false}
           value={query}
-        />
+          ref={inputRef}
+        >
+          {clearable && query !== "" && (
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton
+                aria-label="Clear search"
+                size="icon-xs"
+                onPointerDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  setQuery("")
+                  inputRef.current?.focus()
+                }}
+              >
+                <X />
+              </InputGroupButton>
+            </InputGroupAddon>
+          )}
+        </ComboboxInput>
         <ComboboxList>
           {Array.from(groupedOptions, ([group, groupOptions]) =>
             group ? (

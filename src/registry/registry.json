@@ -6,8 +6,8 @@
       "type": "registry:ui",
       "title": "Creatable Combobox",
       "description": "A searchable combobox with grouped options, free-form values, and a create-new action.",
-      "dependencies": ["cn"],
-      "registryDependencies": ["button", "combobox"],
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": ["button", "combobox", "input-group"],
       "files": [
         {
           "path": "creatable-combobox/creatable-combobox.tsx",
