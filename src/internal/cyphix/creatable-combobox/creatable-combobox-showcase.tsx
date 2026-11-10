@@ -29,6 +29,7 @@ function Example({
   allowCustom = false,
   disabled = false,
   empty = false,
+  clearable = false,
 }) {
   const [value, setValue] = useState('')
   return (
@@ -39,6 +40,7 @@ function Example({
       onValueChange={setValue}
       allowCustom={allowCustom}
       disabled={disabled}
+      clearable={clearable}
     />
   )
 }
@@ -97,6 +99,7 @@ export function CreatableComboboxShowcase() {
     <StateGrid
       states={[
         { label: 'basic', node: <Example /> },
+        { label: 'clearable search', node: <Example clearable /> },
         { label: 'grouped options', node: <Example grouped /> },
         { label: 'free-form custom values', node: <Example allowCustom /> },
         { label: 'create new', node: <CreateNewExample /> },

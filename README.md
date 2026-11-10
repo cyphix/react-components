@@ -41,6 +41,11 @@ pnpm dlx shadcn@latest add cyphix/react-components/callout#main
 
 Vendored shadcn/ui primitives in `src/components/ui/` are used by this app and by custom components during development. They are **not** published by this registry. When a custom component depends on a shadcn primitive, it lists a plain name in `registryDependencies` (e.g. `"button"`), which resolves to the official shadcn registry for consumers.
 
+`CreatableCombobox` accepts an optional `clearable` boolean (default `false`).
+When enabled, a **Clear search** button appears for non-empty search text. It
+clears only the query, restores the option list, and keeps the popover open with
+focus on the search input; the selected value is unchanged.
+
 ## Local development
 
 ```bash
