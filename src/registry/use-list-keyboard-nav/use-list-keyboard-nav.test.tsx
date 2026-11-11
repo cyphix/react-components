@@ -31,20 +31,34 @@ it('honors maxLength on transfer while allowing replacement, deletion, and unlim
   expect(input).toHaveValue('a')
 })
 
-it('skips items in aria-disabled ancestors and disabled fieldsets', async () => {
+it('skips aria-disabled descendants and disabled fieldset controls but allows links', async () => {
   render(<Demo names={['Aria disabled', 'Fieldset disabled', 'Enabled']} />)
   const ariaItem = screen.getByRole('checkbox', { name: 'Aria disabled' })
   ariaItem.parentElement!.setAttribute('aria-disabled', 'true')
-  const fieldsetItem = screen.getByRole('checkbox', { name: 'Fieldset disabled' })
+  const placeholder = screen.getByRole('checkbox', { name: 'Fieldset disabled' })
+  const fieldsetItem = document.createElement('button')
+  fieldsetItem.textContent = 'Fieldset disabled'
+  fieldsetItem.setAttribute('data-list-nav-item', '')
+  placeholder.replaceWith(fieldsetItem)
   const fieldset = document.createElement('fieldset')
   fieldset.disabled = true
   fieldsetItem.parentElement!.append(fieldset)
   fieldset.append(fieldsetItem)
+  const link = document.createElement('a')
+  link.href = '#example'
+  link.textContent = 'Focusable link'
+  link.setAttribute('data-list-nav-item', '')
+  fieldset.append(link)
   const input = screen.getByRole('textbox')
   input.focus()
   await userEvent.keyboard('{ArrowDown}')
+  expect(fieldsetItem).toBeDisabled()
+  expect(link).toHaveFocus()
+  fireEvent.keyDown(link, { key: 'ArrowDown' })
   expect(screen.getByRole('checkbox', { name: 'Enabled' })).toHaveFocus()
   await userEvent.keyboard('{ArrowUp}')
+  expect(link).toHaveFocus()
+  fireEvent.keyDown(link, { key: 'ArrowUp' })
   expect(input).toHaveFocus()
 })
 

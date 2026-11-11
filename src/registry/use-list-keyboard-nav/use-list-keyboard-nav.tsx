@@ -13,7 +13,7 @@ export function useListKeyboardNav({ itemSelector = '[data-list-nav-item]' } = {
   const items = () => Array.from(
     listRef.current?.querySelectorAll<HTMLElement>(itemSelector) ?? [],
   ).filter(item => !item.matches(':disabled, [aria-disabled="true"], [data-disabled]')
-    && !item.closest('[hidden], [inert], [aria-hidden="true"], [aria-disabled="true"], fieldset:disabled')
+    && !item.closest('[hidden], [inert], [aria-hidden="true"], [aria-disabled="true"]')
     && (item.checkVisibility?.() ?? true))
 
   function onInputKeyDown(event: KeyboardEvent<HTMLInputElement>) {
