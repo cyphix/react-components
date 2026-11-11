@@ -7,6 +7,23 @@ import { useListKeyboardNav } from './use-list-keyboard-nav'
 
 afterEach(cleanup)
 
+it('skips items in aria-disabled ancestors and disabled fieldsets', async () => {
+  render(<Demo names={['Aria disabled', 'Fieldset disabled', 'Enabled']} />)
+  const ariaItem = screen.getByRole('checkbox', { name: 'Aria disabled' })
+  ariaItem.parentElement!.setAttribute('aria-disabled', 'true')
+  const fieldsetItem = screen.getByRole('checkbox', { name: 'Fieldset disabled' })
+  const fieldset = document.createElement('fieldset')
+  fieldset.disabled = true
+  fieldsetItem.parentElement!.append(fieldset)
+  fieldset.append(fieldsetItem)
+  const input = screen.getByRole('textbox')
+  input.focus()
+  await userEvent.keyboard('{ArrowDown}')
+  expect(screen.getByRole('checkbox', { name: 'Enabled' })).toHaveFocus()
+  await userEvent.keyboard('{ArrowUp}')
+  expect(input).toHaveFocus()
+})
+
 it('skips CSS-hidden items when entering and moving through the list', async () => {
   render(<Demo names={['Hidden', 'Alpha', 'Also hidden', 'Beta']} />)
   for (const name of ['Hidden', 'Also hidden']) {
