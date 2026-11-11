@@ -7,6 +7,30 @@ import { useListKeyboardNav } from './use-list-keyboard-nav'
 
 afterEach(cleanup)
 
+it('honors maxLength on transfer while allowing replacement, deletion, and unlimited inputs', async () => {
+  render(<Demo />)
+  const input = screen.getByRole('textbox') as HTMLInputElement
+  input.maxLength = 2
+  await userEvent.type(input, 'ab')
+  await userEvent.keyboard('{ArrowDown}c')
+  expect(input).toHaveFocus()
+  expect(input).toHaveValue('ab')
+  input.setSelectionRange(0, 1)
+  await userEvent.keyboard('{ArrowDown}Z')
+  expect(input).toHaveValue('Zb')
+  input.setSelectionRange(2, 2)
+  await userEvent.keyboard('{ArrowDown}{Backspace}')
+  expect(input).toHaveValue('Z')
+  input.maxLength = 0
+  await userEvent.clear(input)
+  await userEvent.keyboard('{ArrowDown}a')
+  expect(input).toHaveFocus()
+  expect(input).toHaveValue('')
+  input.removeAttribute('maxlength')
+  await userEvent.keyboard('{ArrowDown}a')
+  expect(input).toHaveValue('a')
+})
+
 it('skips items in aria-disabled ancestors and disabled fieldsets', async () => {
   render(<Demo names={['Aria disabled', 'Fieldset disabled', 'Enabled']} />)
   const ariaItem = screen.getByRole('checkbox', { name: 'Aria disabled' })

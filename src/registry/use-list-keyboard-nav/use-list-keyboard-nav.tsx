@@ -47,6 +47,7 @@ export function useListKeyboardNav({ itemSelector = '[data-list-nav-item]' } = {
         const from = event.key === 'Backspace' && start === end ? Math.max(0, start - 1) : start
         const text = event.key === 'Backspace' ? '' : event.key
         const value = input.value.slice(0, from) + text + input.value.slice(end)
+        if (text && input.maxLength >= 0 && value.length > input.maxLength) return
         // Use the native setter so React's controlled-input tracking sees the edit.
         const setter = Object.getOwnPropertyDescriptor(input.ownerDocument.defaultView!.HTMLInputElement.prototype, 'value')!.set!
         setter.call(input, value)
