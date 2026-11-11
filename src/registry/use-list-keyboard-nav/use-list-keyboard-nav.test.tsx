@@ -7,6 +7,21 @@ import { useListKeyboardNav } from './use-list-keyboard-nav'
 
 afterEach(cleanup)
 
+it('skips CSS-hidden items when entering and moving through the list', async () => {
+  render(<Demo names={['Hidden', 'Alpha', 'Also hidden', 'Beta']} />)
+  for (const name of ['Hidden', 'Also hidden']) {
+    const item = screen.getByRole('checkbox', { name })
+    item.style.display = 'none'
+    Object.defineProperty(item, 'checkVisibility', { value: () => false })
+  }
+  const input = screen.getByRole('textbox')
+  input.focus()
+  await userEvent.keyboard('{ArrowDown}')
+  expect(screen.getByRole('checkbox', { name: 'Alpha' })).toHaveFocus()
+  await userEvent.keyboard('{ArrowDown}')
+  expect(screen.getByRole('checkbox', { name: 'Beta' })).toHaveFocus()
+})
+
 function Demo({ names = ['Alpha', 'Disabled', 'Beta'], selector, cancel = false }: {
   names?: string[]; selector?: string; cancel?: boolean
 }) {
