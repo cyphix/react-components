@@ -2,6 +2,18 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "items": [
     {
+      "name": "use-list-keyboard-nav",
+      "type": "registry:hook",
+      "title": "List Keyboard Navigation",
+      "description": "Native-focus keyboard navigation between a search input and a dynamic list of focusable items.",
+      "files": [
+        {
+          "path": "use-list-keyboard-nav/use-list-keyboard-nav.tsx",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "creatable-combobox",
       "type": "registry:ui",
       "title": "Creatable Combobox",

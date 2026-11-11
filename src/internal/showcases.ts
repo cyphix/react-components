@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { UseListKeyboardNavShowcase } from '@/internal/cyphix/use-list-keyboard-nav/use-list-keyboard-nav-showcase'
 import { CreatableComboboxShowcase } from '@/internal/cyphix/creatable-combobox/creatable-combobox-showcase'
 
 import { CalloutShowcase } from '@/internal/cyphix/callout/callout-showcase'
@@ -69,6 +70,7 @@ import { ToggleGroupShowcase } from '@/internal/shadcn/toggle-group/toggle-group
 import { TooltipShowcase } from '@/internal/shadcn/tooltip/tooltip-showcase'
 
 export const showcases: Record<string, () => ReactNode> = {
+  'use-list-keyboard-nav': UseListKeyboardNavShowcase,
   'creatable-combobox': CreatableComboboxShowcase,
   callout: CalloutShowcase,
   infobox: InfoboxShowcase,

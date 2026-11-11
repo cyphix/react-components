@@ -4,6 +4,14 @@ import type { ComponentSummary } from '@/lib/schemas'
 
 const seedComponents: ComponentSummary[] = [
   {
+    id: 'use-list-keyboard-nav',
+    name: 'List Keyboard Navigation',
+    description: 'Native-focus keyboard navigation between a search input and a dynamic list of focusable items.',
+    category: 'Forms',
+    source: 'cyphix',
+    variants: ['searchable grouped checkboxes'],
+  },
+  {
     id: 'creatable-combobox',
     name: 'Creatable Combobox',
     description:
