@@ -7,6 +7,34 @@ import { useListKeyboardNav } from './use-list-keyboard-nav'
 
 afterEach(cleanup)
 
+it.each(['😀', '👨‍👩‍👧‍👦'])('deletes the whole grapheme %s before the caret', async emoji => {
+  render(<Demo />)
+  const input = screen.getByRole('textbox') as HTMLInputElement
+  fireEvent.change(input, { target: { value: `a${emoji}b` } })
+  input.focus()
+  input.setSelectionRange(1 + emoji.length, 1 + emoji.length)
+  await userEvent.keyboard('{ArrowDown}{Backspace}')
+  expect(input).toHaveFocus()
+  expect(input).toHaveValue('ab')
+  expect(input.selectionStart).toBe(1)
+})
+
+it('falls back to deleting a whole code point without Intl.Segmenter', async () => {
+  render(<Demo />)
+  const input = screen.getByRole('textbox') as HTMLInputElement
+  fireEvent.change(input, { target: { value: 'a😀' } })
+  input.focus()
+  input.setSelectionRange(3, 3)
+  const descriptor = Object.getOwnPropertyDescriptor(Intl, 'Segmenter')!
+  Object.defineProperty(Intl, 'Segmenter', { ...descriptor, value: undefined })
+  try {
+    await userEvent.keyboard('{ArrowDown}{Backspace}')
+    expect(input).toHaveValue('a')
+  } finally {
+    Object.defineProperty(Intl, 'Segmenter', descriptor)
+  }
+})
+
 it('honors maxLength on transfer while allowing replacement, deletion, and unlimited inputs', async () => {
   render(<Demo />)
   const input = screen.getByRole('textbox') as HTMLInputElement

@@ -44,7 +44,16 @@ export function useListKeyboardNav({ itemSelector = '[data-list-nav-item]' } = {
         input.focus()
         const start = input.selectionStart ?? input.value.length
         const end = input.selectionEnd ?? start
-        const from = event.key === 'Backspace' && start === end ? Math.max(0, start - 1) : start
+        let from = start
+        if (event.key === 'Backspace' && start === end && start > 0) {
+          const before = input.value.slice(0, start)
+          if (typeof Intl.Segmenter === 'function') {
+            const segments = new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(before)
+            from = Array.from(segments).at(-1)?.index ?? 0
+          } else {
+            from = start - (Array.from(before).at(-1)?.length ?? 0)
+          }
+        }
         const text = event.key === 'Backspace' ? '' : event.key
         const value = input.value.slice(0, from) + text + input.value.slice(end)
         if (text && input.maxLength >= 0 && value.length > input.maxLength) return
