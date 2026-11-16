@@ -81,6 +81,15 @@ const seedComponents: ComponentSummary[] = [
     ],
   },
   {
+    id: 'sortable',
+    name: 'Sortable',
+    description:
+      'A drag-and-drop reorderable list (pointer + keyboard) built on dnd-kit, with item wrappers and a Button grip handle.',
+    category: 'Interaction',
+    source: 'cyphix',
+    variants: ['chips', 'vertical rows', 'card grid', 'disabled', 'custom handle'],
+  },
+  {
     id: 'button',
     name: 'Button',
     description: 'Displays a button or a component that looks like a button.',

@@ -7,6 +7,7 @@ import { ChatPanelShowcase } from '@/internal/cyphix/chat-panel/chat-panel-showc
 import { CollectionViewShowcase } from '@/internal/cyphix/collection-view/collection-view-showcase'
 import { InfoboxShowcase } from '@/internal/cyphix/infobox/infobox-showcase'
 import { SidePanelShowcase } from '@/internal/cyphix/side-panel/side-panel-showcase'
+import { SortableShowcase } from '@/internal/cyphix/sortable/sortable-showcase'
 import { AccordionShowcase } from '@/internal/shadcn/accordion/accordion-showcase'
 import { AlertShowcase } from '@/internal/shadcn/alert/alert-showcase'
 import { AlertDialogShowcase } from '@/internal/shadcn/alert-dialog/alert-dialog-showcase'
@@ -77,6 +78,7 @@ export const showcases: Record<string, () => ReactNode> = {
   'side-panel': SidePanelShowcase,
   'chat-panel': ChatPanelShowcase,
   'collection-view': CollectionViewShowcase,
+  sortable: SortableShowcase,
   accordion: AccordionShowcase,
   alert: AlertShowcase,
   'alert-dialog': AlertDialogShowcase,

@@ -38,6 +38,7 @@ pnpm dlx shadcn@latest add cyphix/react-components/callout#main
 | `chat-panel` | Presentational chat shell composed on the Side Panel viewport-stable layout primitive |
 | `collection-view` | Data collection that flips between a TanStack Table v9 data table and a card grid — centered top/bottom pagination with customizable page-size options, column visibility toggles (table), and grid-only infinite scroll (local or async). Type columns with the exported `CollectionViewColumnDef<T>` |
 | `creatable-combobox` | Searchable combobox with grouped options, free-form custom values, and a create-new action |
+| `sortable` | Drag-and-drop reorderable list built on dnd-kit (pointer + keyboard): `SortableList` owns sensors and calls `onReorder` with the reordered items, `SortableItem` wraps each item, and `SortableHandle` is a `Button` grip that drags its enclosing item. Pass any `@dnd-kit/sortable` strategy (default `rectSortingStrategy`) |
 
 Vendored shadcn/ui primitives in `src/components/ui/` are used by this app and by custom components during development. They are **not** published by this registry. When a custom component depends on a shadcn primitive, it lists a plain name in `registryDependencies` (e.g. `"button"`), which resolves to the official shadcn registry for consumers.
 
