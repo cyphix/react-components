@@ -102,8 +102,14 @@ function SortableItem({
   const setRefs = React.useCallback(
     (node: HTMLDivElement | null) => {
       setNodeRef(node)
-      if (typeof ref === "function") ref(node)
-      else if (ref) ref.current = node
+      const cleanup = typeof ref === "function" ? ref(node) : undefined
+      if (ref && typeof ref !== "function") ref.current = node
+      return () => {
+        setNodeRef(null)
+        if (typeof cleanup === "function") cleanup()
+        else if (typeof ref === "function") ref(null)
+        else if (ref) ref.current = null
+      }
     },
     [setNodeRef, ref]
   )

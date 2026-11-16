@@ -97,6 +97,22 @@ describe("Sortable", () => {
     expect(ref.current).toHaveAttribute("data-slot", "sortable-item")
   })
 
+  it("runs a callback ref's cleanup on unmount", () => {
+    const cleanup = vi.fn()
+    const ref = vi.fn(() => cleanup)
+    const { unmount } = render(
+      <SortableList items={items} getId={(item) => item.id} onReorder={vi.fn()}>
+        <SortableItem id="a" ref={ref}>
+          <SortableHandle aria-label="Reorder Alpha" />
+        </SortableItem>
+      </SortableList>
+    )
+    expect(ref).toHaveBeenCalledWith(expect.any(HTMLDivElement))
+    unmount()
+    expect(cleanup).toHaveBeenCalledOnce()
+    expect(ref).not.toHaveBeenCalledWith(null)
+  })
+
   it("throws when a handle is rendered outside an item", () => {
     vi.spyOn(console, "error").mockImplementation(() => {})
     expect(() => render(<SortableHandle aria-label="Orphan" />)).toThrow(
