@@ -1,5 +1,6 @@
 import type { DragEndEvent } from "@dnd-kit/core"
 import { cleanup, render, screen } from "@testing-library/react"
+import * as React from "react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import {
   SortableHandle,
@@ -81,6 +82,19 @@ describe("Sortable", () => {
       </SortableList>
     )
     expect(screen.getByRole("button", { name: "Reorder Alpha" })).toBeDisabled()
+  })
+
+  it("forwards an item ref while keeping it sortable", () => {
+    const ref = React.createRef<HTMLDivElement>()
+    render(
+      <SortableList items={items} getId={(item) => item.id} onReorder={vi.fn()}>
+        <SortableItem id="a" ref={ref} data-testid="item">
+          <SortableHandle aria-label="Reorder Alpha" />
+        </SortableItem>
+      </SortableList>
+    )
+    expect(ref.current).toBe(screen.getByTestId("item"))
+    expect(ref.current).toHaveAttribute("data-slot", "sortable-item")
   })
 
   it("throws when a handle is rendered outside an item", () => {

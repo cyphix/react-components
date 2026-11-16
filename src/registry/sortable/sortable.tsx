@@ -85,6 +85,7 @@ type SortableItemProps = Omit<React.ComponentProps<"div">, "id"> & {
 function SortableItem({
   id,
   disabled,
+  ref,
   style,
   children,
   ...props
@@ -98,11 +99,20 @@ function SortableItem({
     transition,
     isDragging,
   } = useSortable({ id, disabled })
+  const setRefs = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      setNodeRef(node)
+      if (typeof ref === "function") ref(node)
+      else if (ref) ref.current = node
+    },
+    [setNodeRef, ref]
+  )
   return (
     <div
+      {...props}
       data-slot="sortable-item"
       data-dragging={isDragging || undefined}
-      ref={setNodeRef}
+      ref={setRefs}
       style={{
         transform: transform
           ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
@@ -110,7 +120,6 @@ function SortableItem({
         transition,
         ...style,
       }}
-      {...props}
     >
       <SortableHandleContext.Provider
         value={{ attributes, listeners, setActivatorNodeRef }}
