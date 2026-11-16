@@ -1,5 +1,5 @@
 import type { DragEndEvent } from "@dnd-kit/core"
-import { cleanup, render, screen } from "@testing-library/react"
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import * as React from "react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import {
@@ -23,7 +23,10 @@ vi.mock("@dnd-kit/core", async (importOriginal) => {
   }
 })
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.restoreAllMocks()
+})
 
 const items = [
   { id: "a", label: "Alpha" },
@@ -45,6 +48,36 @@ function renderList(onReorder = vi.fn()) {
   return onReorder
 }
 
+function stackItemRects(height = 40) {
+  vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(
+    function (this: Element) {
+      const item = this.closest("[data-slot=sortable-item]")
+      const index = item
+        ? Array.from(item.parentElement?.children ?? []).indexOf(item)
+        : 0
+      const top = index * height
+      return {
+        x: 0,
+        y: top,
+        top,
+        left: 0,
+        right: 200,
+        bottom: top + height,
+        width: 200,
+        height,
+        toJSON: () => ({}),
+      } as DOMRect
+    }
+  )
+}
+
+async function pressKey(target: Element | Window, code: string) {
+  await act(async () => {
+    fireEvent.keyDown(target, { code })
+    await new Promise((resolve) => setTimeout(resolve, 0))
+  })
+}
+
 function drop(active: string, over: string | null) {
   dnd.onDragEnd?.({
     active: { id: active },
@@ -64,6 +97,17 @@ describe("Sortable", () => {
     const onReorder = renderList()
     drop("c", "a")
     expect(onReorder).toHaveBeenCalledWith([items[2], items[0], items[1]])
+  })
+
+  it("reorders with the keyboard through the handle", async () => {
+    stackItemRects()
+    const onReorder = renderList()
+    const handle = screen.getByRole("button", { name: "Reorder Alpha" })
+    handle.focus()
+    await pressKey(handle, "Space")
+    await pressKey(handle, "ArrowDown")
+    await pressKey(handle, "Space")
+    expect(onReorder).toHaveBeenCalledWith([items[1], items[0], items[2]])
   })
 
   it("ignores drops outside the list or onto the same item", () => {
