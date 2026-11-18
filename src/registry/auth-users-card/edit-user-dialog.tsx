@@ -100,6 +100,7 @@ export function EditUserDialog({
         </DialogHeader>
         <form
           id={formId}
+          className="flex flex-col gap-4"
           onSubmit={(event) => {
             event.preventDefault();
             form.handleSubmit();
@@ -186,7 +187,6 @@ export function EditUserDialog({
               )}
             </form.Field>
           </FieldGroup>
-        </form>
         <DialogFooter>
           <Button onClick={() => onOpenChange(false)} variant="outline">
             Cancel
@@ -198,6 +198,7 @@ export function EditUserDialog({
             {update.isPending ? "Saving…" : "Save"}
           </Button>
         </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

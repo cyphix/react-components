@@ -79,6 +79,7 @@ export function PasswordDialog({
         </DialogHeader>
         <form
           id={formId}
+          className="flex flex-col gap-4"
           onSubmit={(event) => {
             event.preventDefault();
             form.handleSubmit();
@@ -155,7 +156,6 @@ export function PasswordDialog({
               <p className="text-destructive text-sm">{serverError}</p>
             )}
           </FieldGroup>
-        </form>
         <DialogFooter>
           <Button onClick={() => onOpenChange(false)} variant="outline">
             Cancel
@@ -164,6 +164,7 @@ export function PasswordDialog({
             {isPending ? "Saving…" : submitLabel}
           </Button>
         </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

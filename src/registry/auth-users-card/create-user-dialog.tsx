@@ -110,6 +110,7 @@ export function CreateUserDialog({
         </DialogHeader>
         <form
           id={formId}
+          className="flex flex-col gap-4"
           onSubmit={(event) => {
             event.preventDefault();
             form.handleSubmit();
@@ -223,7 +224,6 @@ export function CreateUserDialog({
               )}
             </form.Field>
           </FieldGroup>
-        </form>
         <DialogFooter>
           <Button onClick={() => onOpenChange(false)} variant="outline">
             Cancel
@@ -235,6 +235,7 @@ export function CreateUserDialog({
             {createUser.isPending ? "Saving…" : "Create user"}
           </Button>
         </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
