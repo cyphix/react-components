@@ -12,7 +12,7 @@ SettingsNav needs a TanStack Router provider.
 | --- | --- |
 | settings-nav / SettingsNav | `sections: {to: string; label: string; icon: LucideIcon; admin?: boolean}[]`, `isAdmin?: boolean` (false) |
 | settings-layout / SettingsLayout | `title`, `description`, `nav`, `children` (ReactNode) |
-| auth-admin-guard / requireAdminBeforeLoad | `{context: {queryClient}, redirectTo?: string, client?: AuthClient}`; defaults to /settings/profile and defaultAuthClient |
+| auth-admin-guard / requireAdminBeforeLoad | `{context: {queryClient}, location: {href}, redirectTo?: string, loginTo?: string, client?: AuthClient}`; non-admins go to /settings/profile, missing/401 sessions to /login with `?redirect=` (auth-react convention); other errors propagate to the route error boundary. Defaults to defaultAuthClient. |
 | auth-login-form / LoginForm | `appName: string`, optional `logo`, `title`, `description` (ReactNode), `onSuccess(user)`, `next` ("/"), `className` |
 | auth-profile-card / ProfileCard | `user: AuthUser`, `avatarPath?: string` (/api/me/avatar), `avatarBaseUrl?: string`, `accept?: string` (image/png,image/jpeg,image/gif,image/webp) |
 | auth-passkeys-card / PasskeysCard | No props; uses AuthClientContext |
