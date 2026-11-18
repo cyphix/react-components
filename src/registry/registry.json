@@ -262,9 +262,8 @@
           "type": "registry:ui"
         },
         {
-          "path": "auth-account/auth-account.ts",
-          "type": "registry:lib",
-          "target": "~/lib/auth-account.ts"
+          "path": "lib/auth-account.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -345,9 +344,8 @@
           "type": "registry:ui"
         },
         {
-          "path": "auth-account/auth-account.ts",
-          "type": "registry:lib",
-          "target": "~/lib/auth-account.ts"
+          "path": "lib/auth-account.ts",
+          "type": "registry:lib"
         }
       ]
     }
