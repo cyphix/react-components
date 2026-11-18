@@ -14,7 +14,7 @@ SettingsNav needs a TanStack Router provider.
 | settings-layout / SettingsLayout | `title`, `description`, `nav`, `children` (ReactNode) |
 | auth-admin-guard / requireAdminBeforeLoad | `{context: {queryClient}, redirectTo?: string, client?: AuthClient}`; defaults to /settings/profile and defaultAuthClient |
 | auth-login-form / LoginForm | `appName: string`, optional `logo`, `title`, `description` (ReactNode), `onSuccess(user)`, `next` ("/"), `className` |
-| auth-profile-card / ProfileCard | `user: AuthUser`, `avatarPath?: string` (/api/me/avatar), `avatarBaseUrl?: string` |
+| auth-profile-card / ProfileCard | `user: AuthUser`, `avatarPath?: string` (/api/me/avatar), `avatarBaseUrl?: string`, `accept?: string` (image/png,image/jpeg,image/gif,image/webp) |
 | auth-passkeys-card / PasskeysCard | No props; uses AuthClientContext |
 | auth-users-card / UsersCard | Optional `adminAvatarPath: (id: number) => string` (defaults to /api/admin/users/:id/avatar), `avatarBaseUrl?: string` |
 
@@ -24,6 +24,11 @@ Profile and users each include the same shared auth-account library file.
 Its avatarUrl, adminAvatarUrl, useUploadAvatar and useDeleteAvatar accept
 overridden paths; for Worldbuilder pass `id => "/admin/users/" + id + "/avatar"`
 to UsersCard's adminAvatarPath.
+
+ProfileCard's `accept` configures the avatar file picker. Apps whose server supports
+other formats can pass `accept="image/*"` or an explicit list such as
+`accept="image/png,image/jpeg,image/gif,image/webp,image/bmp,image/tiff"`.
+This is a picker hint; the server must still validate uploaded files.
 
 For a separate API origin or deployment prefix, pass your app's configured base
 as `avatarBaseUrl` to both cards. The URL helpers accept it as their third argument;
