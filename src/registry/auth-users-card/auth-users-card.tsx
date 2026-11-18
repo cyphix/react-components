@@ -5,7 +5,13 @@ import {
   useAdminUsers,
   useMe,
 } from "@cyphix/auth-react";
-import { MoreHorizontal, Plus } from "lucide-react";
+import {
+  Fingerprint,
+  KeyRound,
+  MoreHorizontal,
+  Plus,
+  ShieldCheck,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { CreateUserDialog } from "./create-user-dialog";
@@ -55,20 +61,22 @@ import { adminAvatarUrl } from "@/registry/default/lib/auth-account";
 
 const ROLE_ITEMS = { user: "User", admin: "Admin" };
 
-function methodBadges(user: AuthUser) {
-  const methods: string[] = [];
-  if (user.hasPassword) methods.push("Password");
+function signInMethods(user: AuthUser) {
+  const methods = [];
+  if (user.hasPassword) methods.push({ label: "Password", icon: KeyRound });
   if (user.passkeyCount > 0)
-    methods.push(
-      `${user.passkeyCount} passkey${user.passkeyCount === 1 ? "" : "s"}`,
-    );
-  if (user.oidcLinked) methods.push("OIDC");
+    methods.push({
+      label: `${user.passkeyCount} passkey${user.passkeyCount === 1 ? "" : "s"}`,
+      icon: Fingerprint,
+    });
+  if (user.oidcLinked) methods.push({ label: "OIDC", icon: ShieldCheck });
   return methods;
 }
 
 export function UsersCard({
   adminAvatarPath,
-}: { adminAvatarPath?: (id: number) => string } = {}) {
+  avatarBaseUrl,
+}: { adminAvatarPath?: (id: number) => string; avatarBaseUrl?: string } = {}) {
   const { data: me } = useMe();
   const { data: users, isLoading, error } = useAdminUsers();
   const updateUser = useAdminUpdateUser();
@@ -90,9 +98,9 @@ export function UsersCard({
     );
 
   return (
-    <Card>
+    <Card className="@container min-w-0">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <CardTitle>Users</CardTitle>
             <CardDescription>
@@ -118,45 +126,52 @@ export function UsersCard({
         ) : error ? (
           <p className="text-destructive text-sm">{error.message}</p>
         ) : (
-          <Table>
+          <Table className="min-w-96 table-fixed">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-10" />
-                <TableHead>Username</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Methods</TableHead>
-                <TableHead className="w-10" />
+                <TableHead>Account</TableHead>
+                <TableHead className="w-26">Role</TableHead>
+                <TableHead className="hidden w-22 @xl:table-cell">Status</TableHead>
+                <TableHead className="w-22">Methods</TableHead>
+                <TableHead className="bg-card sticky right-0 w-12">
+                  <span className="sr-only">Actions</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {users?.map((user) => {
                 const isSelf = user.id === me?.id;
-                const methods = methodBadges(user);
+                const methods = signInMethods(user);
                 return (
                   <TableRow
                     className={user.disabled ? "opacity-60" : undefined}
                     key={user.id}
                   >
                     <TableCell>
-                      <Avatar className="size-8">
-                        <AvatarImage
-                          src={adminAvatarUrl(user, adminAvatarPath)}
-                        />
-                        <AvatarFallback>
-                          {user.username.slice(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      <span className="flex items-center gap-2">
-                        {user.username}
-                        {isSelf && <Badge variant="outline">you</Badge>}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {user.email ?? "—"}
+                      <div className="flex min-w-0 items-center gap-2">
+                        <Avatar className="size-8">
+                          <AvatarImage
+                            src={adminAvatarUrl(user, adminAvatarPath, avatarBaseUrl)}
+                          />
+                          <AvatarFallback>
+                            {user.username.slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1 font-medium">
+                            <span className="truncate" title={user.username}>
+                              {user.username}
+                            </span>
+                            {isSelf && <Badge variant="outline">you</Badge>}
+                          </div>
+                          <div className="text-muted-foreground truncate text-xs" title={user.email ?? undefined}>
+                            {user.email ?? "—"}
+                          </div>
+                          {user.disabled && (
+                            <span className="text-muted-foreground text-xs @xl:hidden">Disabled</span>
+                          )}
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell>
                       <Select
@@ -168,7 +183,7 @@ export function UsersCard({
                         }}
                         value={user.role}
                       >
-                        <SelectTrigger className="w-28">
+                        <SelectTrigger className="w-full" aria-label={`Role for ${user.username}`}>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -177,7 +192,7 @@ export function UsersCard({
                         </SelectContent>
                       </Select>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden @xl:table-cell">
                       {user.disabled ? (
                         <Badge variant="outline">Disabled</Badge>
                       ) : (
@@ -186,18 +201,18 @@ export function UsersCard({
                     </TableCell>
                     <TableCell>
                       {methods.length ? (
-                        <span className="flex flex-wrap gap-1">
+                        <span className="text-muted-foreground flex items-center gap-2">
                           {methods.map((method) => (
-                            <Badge key={method} variant="secondary">
-                              {method}
-                            </Badge>
+                            <span key={method.label} role="img" aria-label={method.label} title={method.label}>
+                              <method.icon className="size-4" aria-hidden="true" />
+                            </span>
                           ))}
                         </span>
                       ) : (
                         <span className="text-muted-foreground">None</span>
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="bg-card sticky right-0">
                       <DropdownMenu>
                         <DropdownMenuTrigger
                           aria-label={`Actions for ${user.username}`}
@@ -248,6 +263,7 @@ export function UsersCard({
 
       {editTarget && (
         <EditUserDialog
+          isSelf={!me || me.id === editTarget.id}
           key={editTarget.id}
           onOpenChange={(next) => {
             if (!next) setEditTarget(null);

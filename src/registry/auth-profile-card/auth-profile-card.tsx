@@ -40,13 +40,15 @@ const profileSchema = z.object({
 export function ProfileCard({
   user,
   avatarPath = "/api/me/avatar",
+  avatarBaseUrl,
 }: {
   user: AuthUser;
   avatarPath?: string;
+  avatarBaseUrl?: string;
 }) {
   const updateProfile = useUpdateProfile();
-  const uploadAvatar = useUploadAvatar(avatarPath);
-  const deleteAvatar = useDeleteAvatar(avatarPath);
+  const uploadAvatar = useUploadAvatar(avatarPath, undefined, avatarBaseUrl);
+  const deleteAvatar = useDeleteAvatar(avatarPath, undefined, avatarBaseUrl);
   const fileInput = useRef<HTMLInputElement>(null);
   const [hasAvatar, setHasAvatar] = useState(true);
 
@@ -104,7 +106,7 @@ export function ProfileCard({
               onLoadingStatusChange={(status) =>
                 setHasAvatar(status === "loaded")
               }
-              src={avatarUrl(user, avatarPath)}
+              src={avatarUrl(user, avatarPath, avatarBaseUrl)}
             />
             <AvatarFallback>
               {user.username.slice(0, 2).toUpperCase()}
@@ -112,7 +114,7 @@ export function ProfileCard({
           </Avatar>
           <div className="flex flex-col gap-2">
             <input
-              accept="image/*"
+              accept="image/png,image/jpeg,image/gif,image/webp"
               className="hidden"
               onChange={pickFile}
               ref={fileInput}

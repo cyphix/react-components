@@ -49,10 +49,12 @@ export function EditUserDialog({
   user,
   open,
   onOpenChange,
+  isSelf = false,
 }: {
   user: AuthUser;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  isSelf?: boolean;
 }) {
   const update = useAdminUpdateUser();
 
@@ -72,8 +74,7 @@ export function EditUserDialog({
           input: {
             username: value.username,
             email: value.email,
-            role: value.role,
-            disabled: value.disabled,
+            ...(!isSelf && { role: value.role, disabled: value.disabled }),
           },
         },
         {
@@ -153,6 +154,7 @@ export function EditUserDialog({
                 <Field>
                   <FieldLabel htmlFor={`${formId}-role`}>Role</FieldLabel>
                   <Select
+                    disabled={isSelf}
                     items={{ user: "User", admin: "Admin" }}
                     onValueChange={(value) => {
                       if (value == null) return;
@@ -177,6 +179,7 @@ export function EditUserDialog({
                 <Field>
                   <div className="flex items-center gap-2">
                     <Switch
+                      disabled={isSelf}
                       id={`${formId}-disabled`}
                       checked={field.state.value}
                       onCheckedChange={field.handleChange}
