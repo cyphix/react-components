@@ -4,6 +4,30 @@ import type { ComponentSummary } from '@/lib/schemas'
 
 const seedComponents: ComponentSummary[] = [
   {
+    id: 'file-dropzone',
+    name: 'File Dropzone',
+    description: 'Browse or drop files with client-side type, size, and count limits.',
+    category: 'Forms',
+    source: 'cyphix',
+    variants: ['browse', 'drop', 'rejected files', 'disabled'],
+  },
+  {
+    id: 'upload-progress',
+    name: 'Upload Progress',
+    description: 'Controlled upload progress and status with optional cancel and retry actions.',
+    category: 'Feedback',
+    source: 'cyphix',
+    variants: ['determinate', 'indeterminate', 'processing', 'complete', 'error'],
+  },
+  {
+    id: 'attachment-list',
+    name: 'Attachment List',
+    description: 'A list of file attachments with optional thumbnails, downloads, and remove actions.',
+    category: 'Data Display',
+    source: 'cyphix',
+    variants: ['thumbnails', 'read-only', 'removable', 'empty'],
+  },
+  {
     id: 'use-list-keyboard-nav',
     name: 'List Keyboard Navigation',
     description: 'Native-focus keyboard navigation between a search input and a dynamic list of focusable items.',
