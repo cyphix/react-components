@@ -25,7 +25,7 @@ import {
   avatarUrl,
   useDeleteAvatar,
   useUploadAvatar,
-} from "@/registry/lib/auth-account";
+} from "@/registry/default/lib/auth-account";
 
 const profileSchema = z.object({
   username: z

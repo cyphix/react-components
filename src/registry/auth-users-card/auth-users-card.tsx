@@ -51,7 +51,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { adminAvatarUrl } from "@/registry/lib/auth-account";
+import { adminAvatarUrl } from "@/registry/default/lib/auth-account";
 
 const ROLE_ITEMS = { user: "User", admin: "Admin" };
 
