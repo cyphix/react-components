@@ -90,6 +90,8 @@ export function LoginForm({
     defaultValues: { username: "", password: "" },
     validators: { onSubmit: loginSchema },
     onSubmit: ({ value }) => {
+      login.reset();
+      passkeyLogin.reset();
       login.mutate(value, {
         onSuccess: (user) => onSuccess?.(user),
       });
@@ -224,6 +226,8 @@ export function LoginForm({
   }
 
   const handlePasskeyLogin = () => {
+    login.reset();
+    passkeyLogin.reset();
     passkeyLogin.mutate(undefined, {
       onSuccess: (user) => onSuccess?.(user),
     });
