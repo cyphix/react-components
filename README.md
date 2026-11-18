@@ -39,6 +39,9 @@ pnpm dlx shadcn@latest add cyphix/react-components/callout#main
 | `collection-view` | Data collection that flips between a TanStack Table v9 data table and a card grid — centered top/bottom pagination with customizable page-size options, column visibility toggles (table), and grid-only infinite scroll (local or async). Type columns with the exported `CollectionViewColumnDef<T>` |
 | `creatable-combobox` | Searchable combobox with grouped options, free-form custom values, and a create-new action |
 | `sortable` | Drag-and-drop reorderable list built on dnd-kit (pointer + keyboard): `SortableList` owns sensors and calls `onReorder` with the reordered items, `SortableItem` wraps each item, and `SortableHandle` is a `Button` grip that drags its enclosing item. Pass any `@dnd-kit/sortable` strategy (default `rectSortingStrategy`) |
+| `file-dropzone` | Keyboard-accessible file picker and drop target with type, byte, and per-selection count limits |
+| `upload-progress` | Separate green upload and blue server-processing bars with optional cancel and retry actions |
+| `attachment-list` | Attachment rows with optional thumbnails, download links, and remove callbacks |
 
 Vendored shadcn/ui primitives in `src/components/ui/` are used by this app and by custom components during development. They are **not** published by this registry. When a custom component depends on a shadcn primitive, it lists a plain name in `registryDependencies` (e.g. `"button"`), which resolves to the official shadcn registry for consumers.
 
@@ -46,6 +49,27 @@ Vendored shadcn/ui primitives in `src/components/ui/` are used by this app and b
 When enabled, a **Clear search** button appears for non-empty search text. It
 clears only the query, restores the option list, and keeps the popover open with
 focus on the search input; the selected value is unchanged.
+
+### Media UI
+
+Use `FileDropzone` with `onFilesSelected` to start an upload in your app and
+`onFilesRejected` to explain which files were rejected and why. `accept` uses
+the native file input syntax (extensions, MIME types, and MIME wildcards).
+Single-file selection is the default. Set `multiple` to accept batches and
+optionally limit each batch with `maxFiles`. `maxBytes` applies to each file.
+
+Pass transfer progress as `uploadPercent` to the green bar while `uploading`.
+Once all bytes have been sent, switch to `processing`: the green bar stays at
+100% and the blue bar displays `processingPercent` when the backend reports it.
+Omit either percentage if it is unknown; the active bar is then indeterminate.
+Set `state="complete"` on success or `state="error"` with an optional
+`errorMessage` and `onRetry` on failure. The app supplies progress and owns
+any polling or event subscription; the component does not contact the backend.
+
+`AttachmentList` displays files by stable ID. Pass `thumbnailUrl` and
+`downloadUrl` where available and `onRemove` when the app allows removal.
+These components do not upload or delete files themselves. The app owns
+transport, authorization, and server-side file validation.
 
 ## Local development
 

@@ -2,6 +2,48 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "items": [
     {
+      "name": "file-dropzone",
+      "type": "registry:ui",
+      "title": "File Dropzone",
+      "description": "Browse or drop files with client-side type, size, and count limits.",
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": ["button"],
+      "files": [
+        {
+          "path": "file-dropzone/file-dropzone.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "upload-progress",
+      "type": "registry:ui",
+      "title": "Upload Progress",
+      "description": "Separate bars for file transfer and server processing with optional cancel and retry actions.",
+      "dependencies": ["cn"],
+      "registryDependencies": ["button", "progress"],
+      "files": [
+        {
+          "path": "upload-progress/upload-progress.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "attachment-list",
+      "type": "registry:ui",
+      "title": "Attachment List",
+      "description": "A list of file attachments with optional thumbnails, downloads, and remove actions.",
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": ["attachment", "button"],
+      "files": [
+        {
+          "path": "attachment-list/attachment-list.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "use-list-keyboard-nav",
       "type": "registry:hook",
       "title": "List Keyboard Navigation",
