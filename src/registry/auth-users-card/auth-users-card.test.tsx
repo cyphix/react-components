@@ -71,6 +71,20 @@ function renderCard() {
 }
 
 describe("UsersCard", () => {
+  it.each(["boss", "alice"])("guards self-edit controls when editing %s", async (username) => {
+    renderCard();
+    await userEvent.click(screen.getByRole("button", { name: `Actions for ${username}` }));
+    await userEvent.click(await screen.findByRole("menuitem", { name: "Edit" }));
+    const role = screen.getByRole("combobox", { name: "Role" });
+    const disabled = screen.getByRole("switch", { name: "Disabled" });
+    if (username === "boss") {
+      expect(role).toBeDisabled();
+      expect(disabled).toHaveAttribute("aria-disabled", "true");
+    } else {
+      expect(role).not.toBeDisabled();
+      expect(disabled).not.toHaveAttribute("aria-disabled", "true");
+    }
+  });
   it("renders an empty list", () => {
     usersResult = { data: [], isLoading: false };
     renderCard();

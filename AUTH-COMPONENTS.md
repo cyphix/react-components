@@ -14,9 +14,9 @@ SettingsNav needs a TanStack Router provider.
 | settings-layout / SettingsLayout | `title`, `description`, `nav`, `children` (ReactNode) |
 | auth-admin-guard / requireAdminBeforeLoad | `{context: {queryClient}, redirectTo?: string, client?: AuthClient}`; defaults to /settings/profile and defaultAuthClient |
 | auth-login-form / LoginForm | `appName: string`, optional `logo`, `title`, `description` (ReactNode), `onSuccess(user)`, `next` ("/"), `className` |
-| auth-profile-card / ProfileCard | `user: AuthUser`, `avatarPath?: string` (/api/me/avatar) |
+| auth-profile-card / ProfileCard | `user: AuthUser`, `avatarPath?: string` (/api/me/avatar), `avatarBaseUrl?: string` |
 | auth-passkeys-card / PasskeysCard | No props; uses AuthClientContext |
-| auth-users-card / UsersCard | Optional `adminAvatarPath: (id: number) => string`; defaults to /api/admin/users/:id/avatar |
+| auth-users-card / UsersCard | Optional `adminAvatarPath: (id: number) => string` (defaults to /api/admin/users/:id/avatar), `avatarBaseUrl?: string` |
 
 The users item includes CreateUserDialog, EditUserDialog, PasswordDialog and
 password validation. Its dialogs use the same auth client as the card.
@@ -24,6 +24,15 @@ Profile and users each include the same shared auth-account library file.
 Its avatarUrl, adminAvatarUrl, useUploadAvatar and useDeleteAvatar accept
 overridden paths; for Worldbuilder pass `id => "/admin/users/" + id + "/avatar"`
 to UsersCard's adminAvatarPath.
+
+For a separate API origin or deployment prefix, pass your app's configured base
+as `avatarBaseUrl` to both cards. The URL helpers accept it as their third argument;
+the mutation hooks accept it after `path` and `loginPath`. Absolute avatar paths
+are not prefixed. The auth client only exposes an auth `basePath`, not an API
+base, so the registry does not infer API routes or read environment variables.
+Both avatar mutations invalidate session and admin-user queries.
+EditUserDialog accepts `isSelf?: boolean`; UsersCard supplies it to prevent
+self-demotion/disable and omits those fields from self-update payloads.
 
 The development showcases use stateful Mirage endpoints. Demo password login is
 `admin / DemoPassword123!`. Passkey lists and deletion work in the mock;

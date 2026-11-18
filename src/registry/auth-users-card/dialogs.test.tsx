@@ -27,3 +27,16 @@ it("submits password changes on Enter", async () => {
  await userEvent.type(screen.getByLabelText("Confirm password"), "password123{Enter}");
  await waitFor(() => expect(onSubmit).toHaveBeenCalled());
 });
+
+it("prevents self-demotion and self-disable while allowing profile edits", async () => {
+ const client = new AuthClient();
+ const admin = {...user, role: "admin" as const};
+ const update = vi.spyOn(client, "adminUpdateUser").mockResolvedValue(admin);
+ render(<QueryClientProvider client={new QueryClient()}><AuthClientContext.Provider value={client}><EditUserDialog user={admin} isSelf open onOpenChange={vi.fn()} /></AuthClientContext.Provider></QueryClientProvider>);
+ expect(screen.getByRole("combobox", {name:"Role"})).toBeDisabled();
+ expect(screen.getByRole("switch", {name:"Disabled"})).toHaveAttribute("aria-disabled", "true");
+ const username = screen.getByLabelText("Username");
+ await userEvent.clear(username);
+ await userEvent.type(username, "alice-updated{Enter}");
+ await waitFor(() => expect(update).toHaveBeenCalledWith(user.id, {username:"alice-updated", email:""}));
+});

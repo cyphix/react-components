@@ -68,7 +68,8 @@ function methodBadges(user: AuthUser) {
 
 export function UsersCard({
   adminAvatarPath,
-}: { adminAvatarPath?: (id: number) => string } = {}) {
+  avatarBaseUrl,
+}: { adminAvatarPath?: (id: number) => string; avatarBaseUrl?: string } = {}) {
   const { data: me } = useMe();
   const { data: users, isLoading, error } = useAdminUsers();
   const updateUser = useAdminUpdateUser();
@@ -142,7 +143,7 @@ export function UsersCard({
                     <TableCell>
                       <Avatar className="size-8">
                         <AvatarImage
-                          src={adminAvatarUrl(user, adminAvatarPath)}
+                          src={adminAvatarUrl(user, adminAvatarPath, avatarBaseUrl)}
                         />
                         <AvatarFallback>
                           {user.username.slice(0, 2).toUpperCase()}
@@ -248,6 +249,7 @@ export function UsersCard({
 
       {editTarget && (
         <EditUserDialog
+          isSelf={!me || me.id === editTarget.id}
           key={editTarget.id}
           onOpenChange={(next) => {
             if (!next) setEditTarget(null);
