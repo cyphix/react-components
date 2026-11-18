@@ -109,6 +109,10 @@ function getPageItems(pageIndex: number, pageCount: number) {
   return items
 }
 
+function pageSizeLabel(option: string | number) {
+  return option === "all" ? "All" : String(option)
+}
+
 function CollectionViewPagination({
   pageIndex,
   pageCount,
@@ -144,12 +148,12 @@ function CollectionViewPagination({
             className="w-20"
             aria-label="Rows per page"
           >
-            <SelectValue />
+            <SelectValue>{pageSizeLabel(pageSizeOption)}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {pageSizeOptions.map((option) => (
               <SelectItem key={String(option)} value={String(option)}>
-                {option === "all" ? "All" : option}
+                {pageSizeLabel(option)}
               </SelectItem>
             ))}
           </SelectContent>

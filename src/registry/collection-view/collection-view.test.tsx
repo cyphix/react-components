@@ -1,5 +1,5 @@
 import { act } from 'react'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -181,7 +181,7 @@ describe('CollectionView', () => {
     expect(screen.getByText('Page 1 of 3')).toBeInTheDocument()
   })
 
-  it('shows every row when "All" is selected', async () => {
+  it('displays "All" and shows every row when selected', async () => {
     const user = userEvent.setup()
     render(
       <CollectionView data={items} columns={columns} renderCard={renderCard} />,
@@ -192,6 +192,9 @@ describe('CollectionView', () => {
     )
     await user.click(await screen.findByRole('option', { name: 'All' }))
 
+    expect(
+      within(screen.getByRole('combobox', { name: 'Rows per page' })).getByText('All'),
+    ).toBeVisible()
     expect(screen.getAllByRole('row')).toHaveLength(31)
     expect(screen.getByText('Page 1 of 1')).toBeInTheDocument()
   })
