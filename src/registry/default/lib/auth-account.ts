@@ -23,7 +23,7 @@ async function changeAvatar(path: string, method: string, body?: FormData, login
   const response = await fetch(path, {
     method,
     body,
-    credentials: "same-origin",
+    credentials: "include",
   });
   if (response.status === 401) window.location.assign(loginPath);
   if (!response.ok)

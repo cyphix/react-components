@@ -38,7 +38,7 @@ it.each(["upload", "delete"])("uses the API base and invalidates session and adm
  const {result} = renderHook(() => ({upload: useUploadAvatar(undefined, undefined, "https://api.example.test/"), remove: useDeleteAvatar(undefined, undefined, "https://api.example.test/")}), {wrapper: ({children}) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>});
  if (action === "upload") await result.current.upload.mutateAsync(new File(["image"], "avatar.png"));
  else await result.current.remove.mutateAsync();
- expect(fetch).toHaveBeenCalledWith("https://api.example.test/api/me/avatar", expect.objectContaining({ method: action === "upload" ? "PUT" : "DELETE" }));
+ expect(fetch).toHaveBeenCalledWith("https://api.example.test/api/me/avatar", expect.objectContaining({ method: action === "upload" ? "PUT" : "DELETE", credentials: "include" }));
  expect(invalidate).toHaveBeenCalledWith({queryKey: authQueryKeys.me});
  expect(invalidate).toHaveBeenCalledWith({queryKey: authQueryKeys.users});
  expect(queryClient.getQueryState(authQueryKeys.users)?.isInvalidated).toBe(true);
