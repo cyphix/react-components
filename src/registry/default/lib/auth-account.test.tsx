@@ -50,3 +50,15 @@ it("surfaces failed avatar requests", async () => {
   );
   await waitFor(() => expect(result.current.isError).toBe(true));
 });
+
+it.each(["upload", "delete"])("redirects unauthorized %s requests and still throws", async (action) => {
+ vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 401 })));
+ const { result } = renderHook(() => ({
+ upload: useUploadAvatar(), remove: useDeleteAvatar("/api/me/avatar", "/sign-in")
+ }), { wrapper });
+ const assign = vi.fn();
+ const original = window;
+ vi.stubGlobal("window", new Proxy(original, { get(target, key) { return key === "location" ? { assign } : Reflect.get(target, key); } }));
+ await expect(action === "upload" ? result.current.upload.mutateAsync(new File(["x"], "a.png")) : result.current.remove.mutateAsync()).rejects.toThrow("Avatar request failed (401)");
+ expect(assign).toHaveBeenCalledWith(action === "upload" ? "/login" : "/sign-in");
+});
