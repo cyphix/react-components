@@ -92,9 +92,10 @@ export function LoginForm({
     onSubmit: ({ value }) => {
       login.reset();
       passkeyLogin.reset();
-      login.mutate(value, {
-        onSuccess: (user) => onSuccess?.(user),
-      });
+      void login.mutateAsync(value).then(
+        (user) => onSuccess?.(user),
+        () => {},
+      );
     },
   });
 
@@ -228,9 +229,10 @@ export function LoginForm({
   const handlePasskeyLogin = () => {
     login.reset();
     passkeyLogin.reset();
-    passkeyLogin.mutate(undefined, {
-      onSuccess: (user) => onSuccess?.(user),
-    });
+    void passkeyLogin.mutateAsync().then(
+      (user) => onSuccess?.(user),
+      () => {},
+    );
   };
 
   const mutationError = login.error ?? passkeyLogin.error;
