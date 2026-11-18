@@ -160,7 +160,7 @@ export function CreateUserDialog({
             <form.Field name="role">
               {(field) => (
                 <Field>
-                  <FieldLabel>Role</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-role`}>Role</FieldLabel>
                   <Select
                     items={{ user: "User", admin: "Admin" }}
                     onValueChange={(value) => {
@@ -169,7 +169,7 @@ export function CreateUserDialog({
                     }}
                     value={field.state.value}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger id={`${formId}-role`} className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

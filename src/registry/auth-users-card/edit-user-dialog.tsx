@@ -150,7 +150,7 @@ export function EditUserDialog({
             <form.Field name="role">
               {(field) => (
                 <Field>
-                  <FieldLabel>Role</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-role`}>Role</FieldLabel>
                   <Select
                     items={{ user: "User", admin: "Admin" }}
                     onValueChange={(value) => {
@@ -159,7 +159,7 @@ export function EditUserDialog({
                     }}
                     value={field.state.value}
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger id={`${formId}-role`} className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -176,10 +176,11 @@ export function EditUserDialog({
                 <Field>
                   <div className="flex items-center gap-2">
                     <Switch
+                      id={`${formId}-disabled`}
                       checked={field.state.value}
                       onCheckedChange={field.handleChange}
                     />
-                    <FieldLabel className="mb-0">Disabled</FieldLabel>
+                    <FieldLabel htmlFor={`${formId}-disabled`} className="mb-0">Disabled</FieldLabel>
                   </div>
                 </Field>
               )}
