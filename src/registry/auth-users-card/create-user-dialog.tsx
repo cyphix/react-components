@@ -1,6 +1,6 @@
 import { useAdminCreateUser } from "@cyphix/auth-react";
 import { useForm } from "@tanstack/react-form";
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -75,6 +75,7 @@ export function CreateUserDialog({
 }) {
   const createUser = useAdminCreateUser();
 
+  const formId = useId();
   const form = useForm({
     defaultValues: {
       username: "",
@@ -117,6 +118,7 @@ export function CreateUserDialog({
           </DialogDescription>
         </DialogHeader>
         <form
+          id={formId}
           onSubmit={(event) => {
             event.preventDefault();
             form.handleSubmit();
@@ -237,7 +239,7 @@ export function CreateUserDialog({
           </Button>
           <Button
             disabled={createUser.isPending}
-            onClick={() => form.handleSubmit()}
+            type="submit" form={formId}
           >
             {createUser.isPending ? "Saving…" : "Create user"}
           </Button>

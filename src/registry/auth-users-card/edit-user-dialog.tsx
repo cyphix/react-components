@@ -1,6 +1,6 @@
 import { type AuthUser, useAdminUpdateUser } from "@cyphix/auth-react";
 import { useForm } from "@tanstack/react-form";
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -56,6 +56,7 @@ export function EditUserDialog({
 }) {
   const update = useAdminUpdateUser();
 
+  const formId = useId();
   const form = useForm({
     defaultValues: {
       username: user.username,
@@ -98,6 +99,7 @@ export function EditUserDialog({
           <DialogDescription>Update this account's details.</DialogDescription>
         </DialogHeader>
         <form
+          id={formId}
           onSubmit={(event) => {
             event.preventDefault();
             form.handleSubmit();
@@ -190,7 +192,7 @@ export function EditUserDialog({
           </Button>
           <Button
             disabled={update.isPending}
-            onClick={() => form.handleSubmit()}
+            type="submit" form={formId}
           >
             {update.isPending ? "Saving…" : "Save"}
           </Button>

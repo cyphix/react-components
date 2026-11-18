@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -50,6 +50,7 @@ export function PasswordDialog({
       : z.string(),
   });
 
+  const formId = useId();
   const form = useForm({
     defaultValues: {
       currentPassword: "",
@@ -77,6 +78,7 @@ export function PasswordDialog({
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         <form
+          id={formId}
           onSubmit={(event) => {
             event.preventDefault();
             form.handleSubmit();
@@ -158,7 +160,7 @@ export function PasswordDialog({
           <Button onClick={() => onOpenChange(false)} variant="outline">
             Cancel
           </Button>
-          <Button disabled={isPending} onClick={() => form.handleSubmit()}>
+          <Button disabled={isPending} type="submit" form={formId}>
             {isPending ? "Saving…" : submitLabel}
           </Button>
         </DialogFooter>
