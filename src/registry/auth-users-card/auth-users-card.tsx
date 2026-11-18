@@ -73,6 +73,19 @@ function signInMethods(user: AuthUser) {
   return methods;
 }
 
+function SignInMethods({ user }: { user: AuthUser }) {
+  const methods = signInMethods(user);
+  return methods.length ? (
+    <span className="text-muted-foreground flex items-center gap-2">
+      {methods.map((method) => (
+        <span key={method.label} role="img" aria-label={method.label} title={method.label}>
+          <method.icon className="size-4" aria-hidden="true" />
+        </span>
+      ))}
+    </span>
+  ) : <span className="text-muted-foreground">None</span>;
+}
+
 export function UsersCard({
   adminAvatarPath,
   avatarBaseUrl,
@@ -126,14 +139,14 @@ export function UsersCard({
         ) : error ? (
           <p className="text-destructive text-sm">{error.message}</p>
         ) : (
-          <Table className="min-w-96 table-fixed">
+          <Table className="min-w-64 table-fixed">
             <TableHeader>
               <TableRow>
                 <TableHead>Account</TableHead>
                 <TableHead className="w-26">Role</TableHead>
                 <TableHead className="hidden w-22 @xl:table-cell">Status</TableHead>
-                <TableHead className="w-22">Methods</TableHead>
-                <TableHead className="bg-card sticky right-0 w-12">
+                <TableHead className="hidden w-22 @lg:table-cell">Methods</TableHead>
+                <TableHead className="bg-card sticky right-0 z-10 w-12">
                   <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>
@@ -141,10 +154,9 @@ export function UsersCard({
             <TableBody>
               {users?.map((user) => {
                 const isSelf = user.id === me?.id;
-                const methods = signInMethods(user);
                 return (
                   <TableRow
-                    className={user.disabled ? "opacity-60" : undefined}
+                    className={user.disabled ? "text-muted-foreground" : undefined}
                     key={user.id}
                   >
                     <TableCell>
@@ -170,6 +182,9 @@ export function UsersCard({
                           {user.disabled && (
                             <span className="text-muted-foreground text-xs @xl:hidden">Disabled</span>
                           )}
+                          <div className="mt-1 @lg:hidden">
+                            <SignInMethods user={user} />
+                          </div>
                         </div>
                       </div>
                     </TableCell>
@@ -199,20 +214,10 @@ export function UsersCard({
                         <Badge>Active</Badge>
                       )}
                     </TableCell>
-                    <TableCell>
-                      {methods.length ? (
-                        <span className="text-muted-foreground flex items-center gap-2">
-                          {methods.map((method) => (
-                            <span key={method.label} role="img" aria-label={method.label} title={method.label}>
-                              <method.icon className="size-4" aria-hidden="true" />
-                            </span>
-                          ))}
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground">None</span>
-                      )}
+                    <TableCell className="hidden @lg:table-cell">
+                      <SignInMethods user={user} />
                     </TableCell>
-                    <TableCell className="bg-card sticky right-0">
+                    <TableCell className="bg-card sticky right-0 z-10">
                       <DropdownMenu>
                         <DropdownMenuTrigger
                           aria-label={`Actions for ${user.username}`}

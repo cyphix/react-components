@@ -76,8 +76,14 @@ describe("UsersCard", () => {
     expect(screen.getByRole("columnheader", {name:"Account"})).toBeInTheDocument();
     expect(screen.queryByRole("columnheader", {name:"Email"})).not.toBeInTheDocument();
     expect(screen.getByText("alice@example.com")).toHaveClass("truncate");
-    expect(screen.getByRole("img", {name:"2 passkeys"})).toHaveAttribute("title", "2 passkeys");
-    expect(screen.getByRole("button", {name:"Actions for alice"}).closest("td")).toHaveClass("sticky", "right-0");
+    const methods = screen.getAllByRole("img", {name:"2 passkeys"});
+    expect(methods).toHaveLength(2);
+    expect(methods[0]).toHaveAttribute("title", "2 passkeys");
+    expect(methods[0].closest("td")).toBe(screen.getByText("alice@example.com").closest("td"));
+    expect(methods[1].closest("td")).toHaveClass("hidden", "@lg:table-cell");
+    expect(screen.getByRole("columnheader", {name:"Methods"})).toHaveClass("hidden", "@lg:table-cell");
+    expect(screen.getByRole("table")).toHaveClass("min-w-64", "table-fixed");
+    expect(screen.getByRole("button", {name:"Actions for alice"}).closest("td")).toHaveClass("sticky", "right-0", "bg-card", "z-10");
   });
   it.each(["boss", "alice"])("guards self-edit controls when editing %s", async (username) => {
     renderCard();
