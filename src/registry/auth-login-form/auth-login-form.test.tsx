@@ -2,8 +2,10 @@ import { AuthClient, AuthClientContext, type AuthUser } from "@cyphix/auth-react
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { expect, it, vi } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
 import { LoginForm } from "./auth-login-form";
+
+afterEach(() => vi.unstubAllGlobals());
 
 function deferred<T>() {
  let resolve!: (value: T) => void;
@@ -13,6 +15,8 @@ function deferred<T>() {
 }
 
 it("replaces password errors with passkey errors and vice versa", async () => {
+ const reportError = vi.fn();
+ vi.stubGlobal("reportError", reportError);
  const client = new AuthClient();
  vi.spyOn(client, "getConfig").mockResolvedValue({ passwordLogin: true, passkeys: true, oidcMode: "disabled", oidcProviders: [], devAutoLogin: false });
  vi.spyOn(client, "login").mockRejectedValue(new Error("Password rejected"));
@@ -28,6 +32,34 @@ it("replaces password errors with passkey errors and vice versa", async () => {
  await userEvent.click(screen.getByRole("button", {name:"Sign in"}));
  expect(await screen.findByText("Password rejected")).toBeInTheDocument();
  expect(screen.queryByText("Passkey rejected")).not.toBeInTheDocument();
+ expect(reportError).not.toHaveBeenCalled();
+});
+
+it.each([
+ ["password", "throw"],
+ ["passkey", "throw"],
+ ["password", "reject"],
+ ["passkey", "reject"],
+])("reports onSuccess errors after %s sign-in (%s)", async (method, failure) => {
+ const client = new AuthClient();
+ const user: AuthUser = { id: 1, username: "alice", email: null, role: "user", disabled: false, hasPassword: true, passkeyCount: 0, oidcLinked: false, createdAt: "", updatedAt: "" };
+ vi.spyOn(client, "getConfig").mockResolvedValue({ passwordLogin: true, passkeys: true, oidcMode: "disabled", oidcProviders: [], devAutoLogin: false });
+ vi.spyOn(client, "login").mockResolvedValue(user);
+ vi.spyOn(client, "passkeyLogin").mockResolvedValue(user);
+ const error = new Error("Navigation failed");
+ const reportError = vi.fn();
+ vi.stubGlobal("reportError", reportError);
+ const onSuccess = vi.fn(() => {
+  if (failure === "throw") throw error;
+  return Promise.reject(error);
+ });
+ render(<QueryClientProvider client={new QueryClient()}><AuthClientContext.Provider value={client}><LoginForm appName="Test" onSuccess={onSuccess} /></AuthClientContext.Provider></QueryClientProvider>);
+ await userEvent.type(await screen.findByLabelText("Username or email"), "alice");
+ await userEvent.type(screen.getByLabelText("Password"), "password");
+ await userEvent.click(screen.getByRole("button", {name: method === "password" ? "Sign in" : "Sign in with a passkey"}));
+ await waitFor(() => expect(reportError).toHaveBeenCalledWith(error));
+ expect(reportError).toHaveBeenCalledTimes(1);
+ expect(onSuccess).toHaveBeenCalledWith(user);
 });
 
 it.each(["password", "passkey"])("completes a successful %s attempt after switching methods", async (first) => {

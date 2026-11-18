@@ -76,8 +76,14 @@ describe("UsersCard", () => {
     expect(screen.getByRole("columnheader", {name:"Account"})).toBeInTheDocument();
     expect(screen.queryByRole("columnheader", {name:"Email"})).not.toBeInTheDocument();
     expect(screen.getByText("alice@example.com")).toHaveClass("truncate");
-    expect(screen.getByRole("img", {name:"2 passkeys"})).toHaveAttribute("title", "2 passkeys");
-    expect(screen.getByRole("button", {name:"Actions for alice"}).closest("td")).toHaveClass("sticky", "right-0");
+    const methods = screen.getAllByRole("img", {name:"2 passkeys"});
+    expect(methods).toHaveLength(2);
+    expect(methods[0]).toHaveAttribute("title", "2 passkeys");
+    expect(methods[0].closest("td")).toBe(screen.getByText("alice@example.com").closest("td"));
+    expect(methods[1].closest("td")).toHaveClass("hidden", "@lg:table-cell");
+    expect(screen.getByRole("columnheader", {name:"Methods"})).toHaveClass("hidden", "@lg:table-cell");
+    expect(screen.getByRole("table")).toHaveClass("min-w-64", "table-fixed");
+    expect(screen.getByRole("button", {name:"Actions for alice"}).closest("td")).toHaveClass("sticky", "right-0", "bg-card", "z-10");
   });
   it.each(["boss", "alice"])("guards self-edit controls when editing %s", async (username) => {
     renderCard();
@@ -161,15 +167,29 @@ describe("UsersCard", () => {
     );
   });
 
-  it("disables delete for the signed-in user", async () => {
+  it.each(["boss", "alice"])("guards destructive menu actions for %s", async (username) => {
     renderCard();
-    await screen.findByText("boss");
+    await screen.findByText(username);
     await userEvent.click(
-      screen.getByRole("button", { name: "Actions for boss" }),
+      screen.getByRole("button", { name: `Actions for ${username}` }),
     );
     const deleteItem = await screen.findByRole("menuitem", {
       name: "Delete",
     });
-    expect(deleteItem).toHaveAttribute("aria-disabled", "true");
+    const disableItem = screen.getByRole("menuitem", { name: "Disable" });
+    expect(screen.getByRole("menuitem", { name: "Edit" })).not.toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByRole("menuitem", { name: "Reset password" })).not.toHaveAttribute("aria-disabled", "true");
+    if (username === "boss") {
+      expect(deleteItem).toHaveAttribute("aria-disabled", "true");
+      expect(disableItem).toHaveAttribute("aria-disabled", "true");
+    } else {
+      expect(deleteItem).not.toHaveAttribute("aria-disabled", "true");
+      expect(disableItem).not.toHaveAttribute("aria-disabled", "true");
+      await userEvent.click(disableItem);
+      expect(updateUser.mutate).toHaveBeenCalledWith(
+        { id: alice.id, input: { disabled: true } },
+        expect.objectContaining({ onError: expect.any(Function) }),
+      );
+    }
   });
 });

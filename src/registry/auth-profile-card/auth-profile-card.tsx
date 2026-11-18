@@ -41,10 +41,12 @@ export function ProfileCard({
   user,
   avatarPath = "/api/me/avatar",
   avatarBaseUrl,
+  accept = "image/png,image/jpeg,image/gif,image/webp",
 }: {
   user: AuthUser;
   avatarPath?: string;
   avatarBaseUrl?: string;
+  accept?: string;
 }) {
   const updateProfile = useUpdateProfile();
   const uploadAvatar = useUploadAvatar(avatarPath, undefined, avatarBaseUrl);
@@ -114,7 +116,7 @@ export function ProfileCard({
           </Avatar>
           <div className="flex flex-col gap-2">
             <input
-              accept="image/png,image/jpeg,image/gif,image/webp"
+              accept={accept}
               className="hidden"
               onChange={pickFile}
               ref={fileInput}

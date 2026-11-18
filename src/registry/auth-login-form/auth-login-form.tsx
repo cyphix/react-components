@@ -95,7 +95,7 @@ export function LoginForm({
       void login.mutateAsync(value).then(
         (user) => onSuccess?.(user),
         () => {},
-      );
+      ).catch((error) => reportError(error));
     },
   });
 
@@ -232,7 +232,7 @@ export function LoginForm({
     void passkeyLogin.mutateAsync().then(
       (user) => onSuccess?.(user),
       () => {},
-    );
+    ).catch((error) => reportError(error));
   };
 
   const mutationError = login.error ?? passkeyLogin.error;

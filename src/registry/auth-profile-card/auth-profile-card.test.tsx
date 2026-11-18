@@ -22,3 +22,15 @@ it("restricts the avatar picker to PNG, JPEG, GIF and WebP", async () => {
  expect(fetch).toHaveBeenCalledTimes(4);
  expect(fetch).toHaveBeenCalledWith("https://api.example.test/api/me/avatar", expect.objectContaining({method:"PUT"}));
 });
+
+it.each(["image/*", "image/bmp,image/tiff", ""])("accepts an app-specific avatar picker filter: %s", async accept => {
+ const fetch = vi.fn().mockResolvedValue(new Response(null, {status:204}));
+ vi.stubGlobal("fetch", fetch);
+ const {container} = render(<QueryClientProvider client={new QueryClient()}><ProfileCard user={user} accept={accept} /></QueryClientProvider>);
+ const input = container.querySelector<HTMLInputElement>('input[type="file"]')!;
+ expect(input).toHaveAttribute("accept", accept);
+ for (const type of ["image/bmp", "image/tiff"]) {
+  await userEvent.upload(input, new File(["image"], "avatar", {type}));
+ }
+ expect(fetch).toHaveBeenCalledTimes(2);
+});
