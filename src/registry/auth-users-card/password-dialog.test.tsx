@@ -52,7 +52,7 @@ describe("PasswordDialog", () => {
 			screen.getByRole("button", { name: "Save password" }),
 		);
 		expect(
-			await screen.findByText("At least 8 characters"),
+			await screen.findByText("At least 8 bytes"),
 		).toBeInTheDocument();
 		expect(onSubmit).not.toHaveBeenCalled();
 	});

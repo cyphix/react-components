@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PASSWORD_MAX, PASSWORD_MIN } from "./auth-password";
+import { newPasswordSchema, PASSWORD_MIN } from "./auth-password";
 
 const createUserSchema = z
   .object({
@@ -44,18 +44,9 @@ const createUserSchema = z
   })
   .superRefine((value, ctx) => {
     if (!value.newPassword && !value.confirmPassword) return;
-    if (value.newPassword.length < PASSWORD_MIN) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["newPassword"],
-        message: `At least ${PASSWORD_MIN} characters`,
-      });
-    } else if (value.newPassword.length > PASSWORD_MAX) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["newPassword"],
-        message: `At most ${PASSWORD_MAX} characters`,
-      });
+    const password = newPasswordSchema.safeParse(value.newPassword);
+    if (!password.success) {
+      for (const issue of password.error.issues) ctx.addIssue({ code: "custom", path: ["newPassword"], message: issue.message });
     }
     if (value.newPassword !== value.confirmPassword) {
       ctx.addIssue({

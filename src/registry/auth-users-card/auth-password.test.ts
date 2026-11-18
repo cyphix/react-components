@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { passwordPairSchema } from "./auth-password";
+import { newPasswordSchema, passwordPairSchema } from "./auth-password";
 
 describe("passwordPairSchema", () => {
 	it("rejects a short password", () => {
@@ -28,4 +28,11 @@ describe("passwordPairSchema", () => {
 		});
 		expect(result.success).toBe(true);
 	});
+});
+
+it("measures UTF-8 bytes like goauth", () => {
+ expect(newPasswordSchema.safeParse("éééé").success).toBe(true);
+ expect(newPasswordSchema.safeParse("ééé").success).toBe(false);
+ expect(newPasswordSchema.safeParse("😀".repeat(128)).success).toBe(true);
+ expect(newPasswordSchema.safeParse("😀".repeat(129)).success).toBe(false);
 });

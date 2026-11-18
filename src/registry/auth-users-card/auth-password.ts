@@ -5,8 +5,8 @@ export const PASSWORD_MAX = 512;
 
 export const newPasswordSchema = z
   .string()
-  .min(PASSWORD_MIN, `At least ${PASSWORD_MIN} characters`)
-  .max(PASSWORD_MAX);
+  .refine(value => new TextEncoder().encode(value).length >= PASSWORD_MIN, `At least ${PASSWORD_MIN} bytes`)
+  .refine(value => new TextEncoder().encode(value).length <= PASSWORD_MAX, `At most ${PASSWORD_MAX} bytes`);
 
 /** {newPassword, confirmPassword} with match refine on confirmPassword. */
 export const passwordPairSchema = z
