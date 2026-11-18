@@ -71,6 +71,14 @@ function renderCard() {
 }
 
 describe("UsersCard", () => {
+  it("stacks account details and labels compact sign-in methods", () => {
+    renderCard();
+    expect(screen.getByRole("columnheader", {name:"Account"})).toBeInTheDocument();
+    expect(screen.queryByRole("columnheader", {name:"Email"})).not.toBeInTheDocument();
+    expect(screen.getByText("alice@example.com")).toHaveClass("truncate");
+    expect(screen.getByRole("img", {name:"2 passkeys"})).toHaveAttribute("title", "2 passkeys");
+    expect(screen.getByRole("button", {name:"Actions for alice"}).closest("td")).toHaveClass("sticky", "right-0");
+  });
   it.each(["boss", "alice"])("guards self-edit controls when editing %s", async (username) => {
     renderCard();
     await userEvent.click(screen.getByRole("button", { name: `Actions for ${username}` }));
