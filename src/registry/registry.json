@@ -60,8 +60,15 @@
       "type": "registry:ui",
       "title": "Creatable Combobox",
       "description": "A searchable combobox with grouped options, free-form values, and a create-new action.",
-      "dependencies": ["cn", "lucide-react"],
-      "registryDependencies": ["button", "combobox", "input-group"],
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "combobox",
+        "input-group"
+      ],
       "files": [
         {
           "path": "creatable-combobox/creatable-combobox.tsx",
@@ -74,7 +81,11 @@
       "type": "registry:ui",
       "title": "Callout",
       "description": "An attention-drawing callout with info, success, warning, and destructive variants.",
-      "dependencies": ["class-variance-authority", "cn", "lucide-react"],
+      "dependencies": [
+        "class-variance-authority",
+        "cn",
+        "lucide-react"
+      ],
       "files": [
         {
           "path": "callout/callout.tsx",
@@ -87,8 +98,15 @@
       "type": "registry:ui",
       "title": "Infobox",
       "description": "A fandom-style infobox that renders titled sections, tabbed images, tabbed section groups, and label/value rows from a JSON data object.",
-      "dependencies": ["cn"],
-      "registryDependencies": ["card", "tabs", "aspect-ratio", "separator"],
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "card",
+        "tabs",
+        "aspect-ratio",
+        "separator"
+      ],
       "files": [
         {
           "path": "infobox/infobox.tsx",
@@ -101,8 +119,13 @@
       "type": "registry:ui",
       "title": "Side Panel",
       "description": "A viewport-stable side panel layout primitive (fixed rail + in-flow gap) that pushes main content beside it when open, with provider, inset, trigger, and icon tab.",
-      "dependencies": ["cn", "lucide-react"],
-      "registryDependencies": ["button"],
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "side-panel/side-panel.tsx",
@@ -115,7 +138,11 @@
       "type": "registry:ui",
       "title": "Collection View",
       "description": "A data collection that flips between a TanStack Table v9 data table and a card grid, with centered top/bottom pagination, customizable page-size options, column visibility toggles, and grid-only infinite scroll.",
-      "dependencies": ["@tanstack/react-table@^9.3.1", "cn", "lucide-react"],
+      "dependencies": [
+        "@tanstack/react-table@^9.3.1",
+        "cn",
+        "lucide-react"
+      ],
       "registryDependencies": [
         "button",
         "table",
@@ -137,7 +164,10 @@
       "type": "registry:ui",
       "title": "Chat Panel",
       "description": "A presentational chat shell composed on the Side Panel viewport-stable layout primitive.",
-      "dependencies": ["cn", "lucide-react"],
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
       "registryDependencies": [
         "button",
         "input",
@@ -161,11 +191,203 @@
         "cn",
         "lucide-react"
       ],
-      "registryDependencies": ["button"],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "sortable/sortable.tsx",
           "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "settings-nav",
+      "type": "registry:ui",
+      "title": "Settings Nav",
+      "description": "Shared settings nav.",
+      "dependencies": [
+        "lucide-react",
+        "@tanstack/react-router"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "settings-nav/settings-nav.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "settings-layout",
+      "type": "registry:ui",
+      "title": "Settings Layout",
+      "description": "Shared settings layout.",
+      "dependencies": [
+        "react"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "settings-layout/settings-layout.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "auth-admin-guard",
+      "type": "registry:lib",
+      "title": "Auth Admin Guard",
+      "description": "Requires @cyphix/auth-react installed by the app (file:../pkg/goauth/web/auth-react; not published on npm). Shared auth admin guard.",
+      "dependencies": [
+        "@tanstack/react-query",
+        "@tanstack/react-router"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "auth-admin-guard/auth-admin-guard.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "auth-login-form",
+      "type": "registry:ui",
+      "title": "Auth Login Form",
+      "description": "Requires @cyphix/auth-react installed by the app (file:../pkg/goauth/web/auth-react; not published on npm). Shared auth login form.",
+      "dependencies": [
+        "cn",
+        "lucide-react",
+        "react",
+        "zod",
+        "@tanstack/react-form"
+      ],
+      "registryDependencies": [
+        "alert",
+        "button",
+        "card",
+        "field",
+        "input"
+      ],
+      "files": [
+        {
+          "path": "auth-login-form/auth-login-form.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "auth-profile-card",
+      "type": "registry:ui",
+      "title": "Auth Profile Card",
+      "description": "Requires @cyphix/auth-react installed by the app (file:../pkg/goauth/web/auth-react; not published on npm). Shared auth profile card.",
+      "dependencies": [
+        "lucide-react",
+        "react",
+        "sonner",
+        "zod",
+        "@tanstack/react-form",
+        "@tanstack/react-query"
+      ],
+      "registryDependencies": [
+        "alert",
+        "avatar",
+        "button",
+        "card",
+        "field",
+        "input"
+      ],
+      "files": [
+        {
+          "path": "auth-profile-card/auth-profile-card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "default/lib/auth-account.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "auth-passkeys-card",
+      "type": "registry:ui",
+      "title": "Auth Passkeys Card",
+      "description": "Requires @cyphix/auth-react installed by the app (file:../pkg/goauth/web/auth-react; not published on npm). Shared auth passkeys card.",
+      "dependencies": [
+        "lucide-react",
+        "react",
+        "sonner",
+        "zod",
+        "@tanstack/react-form"
+      ],
+      "registryDependencies": [
+        "button",
+        "card",
+        "dialog",
+        "empty",
+        "field",
+        "input",
+        "skeleton"
+      ],
+      "files": [
+        {
+          "path": "auth-passkeys-card/auth-passkeys-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "auth-users-card",
+      "type": "registry:ui",
+      "title": "Auth Users Card",
+      "description": "Requires @cyphix/auth-react installed by the app (file:../pkg/goauth/web/auth-react; not published on npm). Shared auth users card.",
+      "dependencies": [
+        "lucide-react",
+        "react",
+        "sonner",
+        "zod",
+        "@tanstack/react-form",
+        "@tanstack/react-query"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "button",
+        "card",
+        "dialog",
+        "dropdown-menu",
+        "select",
+        "skeleton",
+        "table",
+        "field",
+        "input",
+        "switch"
+      ],
+      "files": [
+        {
+          "path": "auth-users-card/auth-users-card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "auth-users-card/create-user-dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "auth-users-card/edit-user-dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "auth-users-card/password-dialog.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "auth-users-card/auth-password.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "default/lib/auth-account.ts",
+          "type": "registry:lib"
         }
       ]
     }
