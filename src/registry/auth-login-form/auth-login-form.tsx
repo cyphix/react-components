@@ -89,13 +89,20 @@ export function LoginForm({
   const form = useForm({
     defaultValues: { username: "", password: "" },
     validators: { onSubmit: loginSchema },
-    onSubmit: ({ value }) => {
+    onSubmit: async ({ value }) => {
       login.reset();
       passkeyLogin.reset();
-      void login.mutateAsync(value).then(
-        (user) => onSuccess?.(user),
-        () => {},
-      ).catch((error) => reportError(error));
+      let user: AuthUser;
+      try {
+        user = await login.mutateAsync(value);
+      } catch {
+        return;
+      }
+      try {
+        await onSuccess?.(user);
+      } catch (error) {
+        reportError(error);
+      }
     },
   });
 
@@ -226,13 +233,20 @@ export function LoginForm({
     );
   }
 
-  const handlePasskeyLogin = () => {
+  const handlePasskeyLogin = async () => {
     login.reset();
     passkeyLogin.reset();
-    void passkeyLogin.mutateAsync().then(
-      (user) => onSuccess?.(user),
-      () => {},
-    ).catch((error) => reportError(error));
+    let user: AuthUser;
+    try {
+      user = await passkeyLogin.mutateAsync();
+    } catch {
+      return;
+    }
+    try {
+      await onSuccess?.(user);
+    } catch (error) {
+      reportError(error);
+    }
   };
 
   const mutationError = login.error ?? passkeyLogin.error;
