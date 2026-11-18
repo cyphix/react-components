@@ -14,7 +14,7 @@ const seedComponents: ComponentSummary[] = [
   {
     id: 'upload-progress',
     name: 'Upload Progress',
-    description: 'Controlled upload progress and status with optional cancel and retry actions.',
+    description: 'Separate bars for file transfer and server processing with optional cancel and retry actions.',
     category: 'Feedback',
     source: 'cyphix',
     variants: ['determinate', 'indeterminate', 'processing', 'complete', 'error'],

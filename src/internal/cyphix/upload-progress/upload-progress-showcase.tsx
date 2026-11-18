@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button'
 import { UploadProgress } from '@/registry/upload-progress/upload-progress'
 
 type DemoUpload =
-  | { state: 'idle' | 'processing' | 'complete' | 'error' }
+  | { state: 'idle' | 'complete' | 'error' }
+  | { state: 'processing'; percent?: number }
   | { state: 'uploading'; percent: number }
 
 export function UploadProgressShowcase() {
@@ -21,7 +22,11 @@ export function UploadProgressShowcase() {
     }
 
     if (upload.state === 'processing') {
-      const timer = setTimeout(() => setUpload({ state: 'complete' }), 2000)
+      const timer = setTimeout(() => {
+        setUpload(upload.percent === undefined
+          ? { state: 'processing', percent: 50 }
+          : { state: 'complete' })
+      }, 1500)
       return () => clearTimeout(timer)
     }
   }, [upload])
@@ -40,7 +45,8 @@ export function UploadProgressShowcase() {
         <UploadProgress
           fileName="photo.png"
           state={upload.state}
-          percent={upload.state === 'uploading' ? upload.percent : undefined}
+          uploadPercent={upload.state === 'uploading' ? upload.percent : undefined}
+          processingPercent={upload.state === 'processing' ? upload.percent : undefined}
           errorMessage="Upload canceled."
           onCancel={() => setUpload({ state: 'error' })}
           onRetry={start}

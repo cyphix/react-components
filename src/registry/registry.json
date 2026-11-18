@@ -19,7 +19,7 @@
       "name": "upload-progress",
       "type": "registry:ui",
       "title": "Upload Progress",
-      "description": "Controlled upload progress and status with optional cancel and retry actions.",
+      "description": "Separate bars for file transfer and server processing with optional cancel and retry actions.",
       "dependencies": ["cn"],
       "registryDependencies": ["button", "progress"],
       "files": [

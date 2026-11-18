@@ -8,7 +8,8 @@ import { Progress } from "@/components/ui/progress"
 export type UploadProgressProps = {
   fileName: string
   state: "uploading" | "processing" | "complete" | "error"
-  percent?: number
+  uploadPercent?: number
+  processingPercent?: number
   errorMessage?: string
   onCancel?: () => void
   onRetry?: () => void
@@ -22,19 +23,57 @@ const statusLabels = {
   error: "Upload failed",
 }
 
+function normalizePercent(percent: number | undefined) {
+  return percent !== undefined && Number.isFinite(percent)
+    ? Math.round(Math.max(0, Math.min(100, percent)))
+    : null
+}
+
+function ProgressMeter({
+  label,
+  fileName,
+  value,
+  active,
+  className,
+}: {
+  label: string
+  fileName: string
+  value: number | null
+  active: boolean
+  className: string
+}) {
+  return (
+    <div className="grid gap-1">
+      <div className="flex justify-between gap-2 text-xs text-muted-foreground" aria-hidden>
+        <span>{label}</span>
+        {value !== null && <span className="tabular-nums">{value}%</span>}
+      </div>
+      <Progress
+        value={value}
+        aria-label={`${label} progress for ${fileName}`}
+        className={cn(
+          className,
+          active && value === null &&
+            "[&_[data-slot=progress-indicator]]:w-full [&_[data-slot=progress-indicator]]:opacity-50 motion-safe:[&_[data-slot=progress-indicator]]:animate-pulse",
+        )}
+      />
+    </div>
+  )
+}
+
 export function UploadProgress({
   fileName,
   state,
-  percent,
+  uploadPercent,
+  processingPercent,
   errorMessage,
   onCancel,
   onRetry,
   className,
 }: UploadProgressProps) {
   const active = state === "uploading" || state === "processing"
-  const value = state === "uploading" && percent !== undefined && Number.isFinite(percent)
-    ? Math.round(Math.max(0, Math.min(100, percent)))
-    : null
+  const uploaded = state === "processing" || state === "complete" ? 100 : normalizePercent(uploadPercent)
+  const processed = state === "complete" ? 100 : state === "uploading" ? 0 : normalizePercent(processingPercent)
 
   return (
     <div data-slot="upload-progress" className={cn("grid w-full min-w-0 gap-2 rounded-lg border p-3", className)}>
@@ -56,16 +95,20 @@ export function UploadProgress({
           </Button>
         )}
       </div>
-      {active && (
-        <div className="flex items-center gap-2">
-          <Progress
-            value={value}
-            aria-label={`Upload progress for ${fileName}`}
-            className={cn("min-w-0 flex-1", value === null && "[&_[data-slot=progress-indicator]]:w-full [&_[data-slot=progress-indicator]]:opacity-50 motion-safe:[&_[data-slot=progress-indicator]]:animate-pulse")}
-          />
-          {value !== null && <span className="text-xs text-muted-foreground tabular-nums" aria-hidden>{value}%</span>}
-        </div>
-      )}
+      <ProgressMeter
+        label="Upload"
+        fileName={fileName}
+        value={uploaded}
+        active={state === "uploading"}
+        className="[&_[data-slot=progress-indicator]]:bg-green-600 dark:[&_[data-slot=progress-indicator]]:bg-green-500"
+      />
+      <ProgressMeter
+        label="Server processing"
+        fileName={fileName}
+        value={processed}
+        active={state === "processing"}
+        className="[&_[data-slot=progress-indicator]]:bg-blue-600 dark:[&_[data-slot=progress-indicator]]:bg-blue-400"
+      />
     </div>
   )
 }
