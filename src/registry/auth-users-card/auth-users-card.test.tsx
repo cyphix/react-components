@@ -161,15 +161,29 @@ describe("UsersCard", () => {
     );
   });
 
-  it("disables delete for the signed-in user", async () => {
+  it.each(["boss", "alice"])("guards destructive menu actions for %s", async (username) => {
     renderCard();
-    await screen.findByText("boss");
+    await screen.findByText(username);
     await userEvent.click(
-      screen.getByRole("button", { name: "Actions for boss" }),
+      screen.getByRole("button", { name: `Actions for ${username}` }),
     );
     const deleteItem = await screen.findByRole("menuitem", {
       name: "Delete",
     });
-    expect(deleteItem).toHaveAttribute("aria-disabled", "true");
+    const disableItem = screen.getByRole("menuitem", { name: "Disable" });
+    expect(screen.getByRole("menuitem", { name: "Edit" })).not.toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByRole("menuitem", { name: "Reset password" })).not.toHaveAttribute("aria-disabled", "true");
+    if (username === "boss") {
+      expect(deleteItem).toHaveAttribute("aria-disabled", "true");
+      expect(disableItem).toHaveAttribute("aria-disabled", "true");
+    } else {
+      expect(deleteItem).not.toHaveAttribute("aria-disabled", "true");
+      expect(disableItem).not.toHaveAttribute("aria-disabled", "true");
+      await userEvent.click(disableItem);
+      expect(updateUser.mutate).toHaveBeenCalledWith(
+        { id: alice.id, input: { disabled: true } },
+        expect.objectContaining({ onError: expect.any(Function) }),
+      );
+    }
   });
 });

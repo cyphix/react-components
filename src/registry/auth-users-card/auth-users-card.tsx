@@ -233,6 +233,7 @@ export function UsersCard({
                             Reset password
                           </DropdownMenuItem>
                           <DropdownMenuItem
+                            disabled={isSelf}
                             onClick={() =>
                               update(user.id, {
                                 disabled: !user.disabled,
