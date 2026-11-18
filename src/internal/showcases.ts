@@ -1,3 +1,10 @@
+import { AuthUsersCardShowcase } from '@/internal/cyphix/auth-users-card/auth-users-card-showcase'
+import { AuthPasskeysCardShowcase } from '@/internal/cyphix/auth-passkeys-card/auth-passkeys-card-showcase'
+import { AuthProfileCardShowcase } from '@/internal/cyphix/auth-profile-card/auth-profile-card-showcase'
+import { AuthLoginFormShowcase } from '@/internal/cyphix/auth-login-form/auth-login-form-showcase'
+import { AuthAdminGuardShowcase } from '@/internal/cyphix/auth-admin-guard/auth-admin-guard-showcase'
+import { SettingsLayoutShowcase } from '@/internal/cyphix/settings-layout/settings-layout-showcase'
+import { SettingsNavShowcase } from '@/internal/cyphix/settings-nav/settings-nav-showcase'
 import type { ReactNode } from 'react'
 import { UseListKeyboardNavShowcase } from '@/internal/cyphix/use-list-keyboard-nav/use-list-keyboard-nav-showcase'
 import { CreatableComboboxShowcase } from '@/internal/cyphix/creatable-combobox/creatable-combobox-showcase'
@@ -71,6 +78,13 @@ import { ToggleGroupShowcase } from '@/internal/shadcn/toggle-group/toggle-group
 import { TooltipShowcase } from '@/internal/shadcn/tooltip/tooltip-showcase'
 
 export const showcases: Record<string, () => ReactNode> = {
+ 'auth-users-card': AuthUsersCardShowcase,
+ 'auth-passkeys-card': AuthPasskeysCardShowcase,
+ 'auth-profile-card': AuthProfileCardShowcase,
+ 'auth-login-form': AuthLoginFormShowcase,
+ 'auth-admin-guard': AuthAdminGuardShowcase,
+ 'settings-layout': SettingsLayoutShowcase,
+ 'settings-nav': SettingsNavShowcase,
   'use-list-keyboard-nav': UseListKeyboardNavShowcase,
   'creatable-combobox': CreatableComboboxShowcase,
   callout: CalloutShowcase,
