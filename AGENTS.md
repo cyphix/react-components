@@ -11,6 +11,10 @@ Node.js frontend project — no backend, database, or external services.
 - Scripts live in `package.json` (`dev`, `build`, `lint`, `typecheck`, `preview`,
   `test`, `test:run`, `registry:build`).
 
+## Conventions
+
+- Forms: use TanStack Form when it makes sense; don't use it where it would cause more harm than good.
+
 ## Cursor Cloud specific instructions
 
 Dependencies are installed automatically by the startup update script (`pnpm install`).
