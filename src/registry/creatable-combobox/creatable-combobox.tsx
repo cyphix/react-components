@@ -75,10 +75,7 @@ export function CreatableCombobox({
   }, [filteredOptions])
 
   const trimmedQuery = query.trim()
-  const hasExactMatch = options.some(
-    (option) =>
-      option.label.toLocaleLowerCase() === trimmedQuery.toLocaleLowerCase(),
-  )
+  const hasExactMatch = options.some((option) => option.label === trimmedQuery)
   const showCustomValue = allowCustom && trimmedQuery !== "" && !hasExactMatch
   const selectedLabel =
     options.find((option) => option.value === value)?.label ?? value

@@ -140,14 +140,28 @@ describe("CreatableCombobox", () => {
     expect(onValueChange).toHaveBeenCalledWith("foo")
   })
 
-  it("does not offer a custom value for a case-insensitive exact match", async () => {
+  it("does not offer a custom value for an exact-case match", async () => {
     renderCombobox({ allowCustom: true })
     const search = await openCombobox()
-    await userEvent.type(search, "aPpLe")
+    await userEvent.type(search, "Apple")
 
+    expect(screen.getByRole("option", { name: "Apple" })).toBeVisible()
     expect(
       screen.queryByRole("option", { name: /Use/ }),
     ).not.toBeInTheDocument()
+  })
+
+  it("offers a custom value for a case-distinct match while suggesting the existing option", async () => {
+    const onValueChange = vi.fn()
+    renderCombobox({ allowCustom: true, onValueChange })
+    const search = await openCombobox()
+    await userEvent.type(search, "aPpLe")
+
+    expect(screen.getByRole("option", { name: "Apple" })).toBeVisible()
+    await userEvent.click(
+      await screen.findByRole("option", { name: 'Use "aPpLe"' }),
+    )
+    expect(onValueChange).toHaveBeenCalledWith("aPpLe")
   })
 
   it("renders create new above search and passes its query to the callback", async () => {
