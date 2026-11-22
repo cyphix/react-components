@@ -8,6 +8,7 @@ import { SettingsNavShowcase } from '@/internal/cyphix/settings-nav/settings-nav
 import type { ReactNode } from 'react'
 import { UseListKeyboardNavShowcase } from '@/internal/cyphix/use-list-keyboard-nav/use-list-keyboard-nav-showcase'
 import { CreatableComboboxShowcase } from '@/internal/cyphix/creatable-combobox/creatable-combobox-showcase'
+import { TimeInputShowcase } from '@/internal/cyphix/time-input/time-input-showcase'
 
 import { AttachmentListShowcase } from '@/internal/cyphix/attachment-list/attachment-list-showcase'
 import { CalloutShowcase } from '@/internal/cyphix/callout/callout-showcase'
@@ -93,6 +94,7 @@ export const showcases: Record<string, () => ReactNode> = {
   'settings-nav': SettingsNavShowcase,
   'use-list-keyboard-nav': UseListKeyboardNavShowcase,
   'creatable-combobox': CreatableComboboxShowcase,
+  'time-input': TimeInputShowcase,
   callout: CalloutShowcase,
   infobox: InfoboxShowcase,
   'side-panel': SidePanelShowcase,

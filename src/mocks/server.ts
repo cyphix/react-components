@@ -52,6 +52,15 @@ const seedComponents: ComponentSummary[] = [
     variants: ['basic', 'grouped options', 'free-form custom values', 'create new', 'disabled', 'empty options'],
   },
   {
+    id: 'time-input',
+    name: 'Time Input',
+    description:
+      '24-hour HH:mm(:ss) time entry plus a paired date+time field, replacing native pickers that follow the OS locale clock.',
+    category: 'Forms',
+    source: 'cyphix',
+    variants: ['time', 'seconds', 'date and time', 'disabled'],
+  },
+  {
     id: 'callout',
     name: 'Callout',
     description:

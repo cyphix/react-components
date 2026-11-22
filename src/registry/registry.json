@@ -390,6 +390,19 @@
           "type": "registry:lib"
         }
       ]
+    },
+    {
+      "name": "time-input",
+      "type": "registry:ui",
+      "title": "Time Input",
+      "description": "24-hour HH:mm(:ss) time entry plus a paired date+time field, replacing native pickers that follow the OS locale's 12-hour clock.",
+      "registryDependencies": ["input"],
+      "files": [
+        {
+          "path": "time-input/time-input.tsx",
+          "type": "registry:ui"
+        }
+      ]
     }
   ]
 }
