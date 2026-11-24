@@ -36,6 +36,10 @@ type Story = StoryObj<typeof meta>
 function TransitionDemo() {
   const [state, setState] = useState<UploadProgressProps['state']>('uploading')
   const [processingPercent, setProcessingPercent] = useState(0)
+  const restart = () => {
+    setState('uploading')
+    setProcessingPercent(0)
+  }
   return (
     <div className="grid gap-3">
       <UploadProgress
@@ -53,6 +57,9 @@ function TransitionDemo() {
             <button type="button" onClick={() => setProcessingPercent(65)}>Advance processing</button>
             <button type="button" onClick={() => { setProcessingPercent(100); setState('complete') }}>Complete upload</button>
           </>
+        ) : null}
+        {state === 'complete' ? (
+          <button type="button" onClick={restart}>Restart transition</button>
         ) : null}
       </div>
     </div>
@@ -91,6 +98,10 @@ export const Transition: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Complete upload' }))
     await expect(processing).toHaveAttribute('aria-valuenow', '100')
     await expect(canvas.getByRole('status')).toHaveTextContent('Upload complete')
+    await userEvent.click(await canvas.findByRole('button', { name: 'Restart transition' }))
+    await expect(upload).toHaveAttribute('aria-valuenow', '40')
+    await expect(processing).toHaveAttribute('aria-valuenow', '0')
+    await expect(canvas.getByRole('status')).toHaveTextContent('Uploading…')
   },
 }
 
