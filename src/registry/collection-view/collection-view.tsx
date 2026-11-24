@@ -7,9 +7,18 @@ import {
   type ColumnVisibilityState,
   columnVisibilityFeature,
   createPaginatedRowModel,
+  createSortedRowModel,
   flexRender,
+  type OnChangeFn,
   type RowData,
   rowPaginationFeature,
+  rowSelectionFeature,
+  rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_datetime,
+  sortFn_text,
+  type RowSelectionState,
+  type SortingState,
   tableFeatures,
   useTable,
 } from "@tanstack/react-table"
@@ -17,6 +26,7 @@ import {
   ChevronDownIcon,
   LayoutGridIcon,
   Table2Icon,
+  X,
 } from "lucide-react"
 
 import { cn } from "cn"
@@ -30,6 +40,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group"
 import {
   Pagination,
   PaginationContent,
@@ -66,7 +82,15 @@ type CollectionViewPageSizeOption = number | "all"
 const collectionViewFeatures = tableFeatures({
   columnVisibilityFeature,
   rowPaginationFeature,
+  rowSelectionFeature,
+  rowSortingFeature,
   paginatedRowModel: createPaginatedRowModel(),
+  sortedRowModel: createSortedRowModel(),
+  sortFns: {
+    alphanumeric: sortFn_alphanumeric,
+    datetime: sortFn_datetime,
+    text: sortFn_text,
+  },
 })
 
 type CollectionViewFeatures = typeof collectionViewFeatures
@@ -111,6 +135,46 @@ function getPageItems(pageIndex: number, pageCount: number) {
 
 function pageSizeLabel(option: string | number) {
   return option === "all" ? "All" : String(option)
+}
+
+function CollectionViewSearch({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string
+  onChange: (value: string) => void
+  placeholder: string
+}) {
+  const inputRef = React.useRef<HTMLInputElement>(null)
+
+  return (
+    <InputGroup className="w-full sm:w-64">
+      <InputGroupInput
+        ref={inputRef}
+        aria-label={placeholder}
+        autoComplete="off"
+        placeholder={placeholder}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+      {value !== "" && (
+        <InputGroupAddon align="inline-end">
+          <InputGroupButton
+            aria-label="Clear search"
+            size="icon-xs"
+            onPointerDown={(event) => event.preventDefault()}
+            onClick={() => {
+              onChange("")
+              inputRef.current?.focus()
+            }}
+          >
+            <X />
+          </InputGroupButton>
+        </InputGroupAddon>
+      )}
+    </InputGroup>
+  )
 }
 
 function CollectionViewPagination({
@@ -171,7 +235,7 @@ function CollectionViewPagination({
               )}
               onClick={(event) => {
                 event.preventDefault()
-                onPageChange(pageIndex - 1)
+                if (pageIndex > 0) onPageChange(pageIndex - 1)
               }}
             />
           </PaginationItem>
@@ -204,7 +268,7 @@ function CollectionViewPagination({
               )}
               onClick={(event) => {
                 event.preventDefault()
-                onPageChange(pageIndex + 1)
+                if (pageIndex < pageCount - 1) onPageChange(pageIndex + 1)
               }}
             />
           </PaginationItem>
@@ -231,6 +295,22 @@ function CollectionView<TData extends RowData, TValue>({
   pagination = "bottom",
   pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
   defaultPageSize,
+  manualPagination = false,
+  pageCount: totalPageCount,
+  pageIndex: controlledPageIndex,
+  pageSize: controlledPageSize,
+  onPageIndexChange,
+  onPageSizeChange,
+  manualSorting = false,
+  sorting: controlledSorting,
+  onSortingChange,
+  enableRowSelection = false,
+  rowSelection: controlledRowSelection,
+  onRowSelectionChange,
+  searchValue,
+  onSearchChange,
+  searchPlaceholder = "Search…",
+  toolbarActions,
   infiniteScroll = false,
   onLoadMore,
   hasMore = true,
@@ -259,6 +339,27 @@ function CollectionView<TData extends RowData, TValue>({
   /** Options for the "rows per page" selector. */
   pageSizeOptions?: CollectionViewPageSizeOption[]
   defaultPageSize?: number
+  /** Server-driven pagination: `data` is the current page and `pageCount` is the total page count. */
+  manualPagination?: boolean
+  pageCount?: number
+  pageIndex?: number
+  pageSize?: number
+  onPageIndexChange?: (pageIndex: number) => void
+  onPageSizeChange?: (pageSize: number) => void
+  /** Server-driven sorting. */
+  manualSorting?: boolean
+  sorting?: SortingState
+  onSortingChange?: OnChangeFn<SortingState>
+  /** Enable row selection for consumer-supplied select columns. */
+  enableRowSelection?: boolean
+  rowSelection?: RowSelectionState
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>
+  /** Controlled search input rendered in the toolbar. Filtering is left to the consumer. */
+  searchValue?: string
+  onSearchChange?: (value: string) => void
+  searchPlaceholder?: string
+  /** Extra actions rendered in the toolbar next to search/view controls. */
+  toolbarActions?: React.ReactNode
   /**
    * Grid-only: load more items as the bottom sentinel enters the viewport.
    * When `onLoadMore` is provided, loading is consumer-driven (async mode);
@@ -287,47 +388,109 @@ function CollectionView<TData extends RowData, TValue>({
     [viewProp, onViewChange]
   )
 
-  const [pageIndex, setPageIndex] = React.useState(0)
-  const [pageSizeOption, setPageSizeOption] = React.useState(() => {
-    const initial =
-      defaultPageSize ??
-      pageSizeOptions.find((option) => option !== "all") ??
-      "all"
-    return String(initial)
-  })
+  const [internalPageIndex, setInternalPageIndex] = React.useState(0)
+  const [internalPageSizeOption, setInternalPageSizeOption] =
+    React.useState(() => {
+      const initial =
+        defaultPageSize ??
+        pageSizeOptions.find((option) => option !== "all") ??
+        "all"
+      return String(initial)
+    })
+  const [internalSorting, setInternalSorting] = React.useState<SortingState>([])
+  const [internalRowSelection, setInternalRowSelection] =
+    React.useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<ColumnVisibilityState>({})
 
-  const pageSize =
-    pageSizeOption === "all" ? Math.max(data.length, 1) : Number(pageSizeOption)
+  const pageIndex = manualPagination
+    ? (controlledPageIndex ?? 0)
+    : internalPageIndex
+  const paginationPageSizeOptions = manualPagination
+    ? pageSizeOptions.filter((option) => option !== "all")
+    : pageSizeOptions
+  const pageSizeOption = manualPagination
+    ? String(
+        controlledPageSize ??
+          paginationPageSizeOptions.find((option) => typeof option === "number") ??
+          10
+      )
+    : internalPageSizeOption
+  const pageSize = manualPagination
+    ? (controlledPageSize ?? Number(pageSizeOption))
+    : pageSizeOption === "all"
+      ? Math.max(data.length, 1)
+      : Number(pageSizeOption)
   const effectivePageSize =
     pagination === "none" ? Math.max(data.length, 1) : pageSize
+  const sorting = controlledSorting ?? internalSorting
+  const rowSelection = controlledRowSelection ?? internalRowSelection
+  const isSortingControlled = controlledSorting !== undefined
+  const isRowSelectionControlled = controlledRowSelection !== undefined
+  const tableGetRowId =
+    getRowId ??
+    (manualPagination && enableRowSelection
+      ? (_item: TData, index: number) => `${pageIndex}:${index}`
+      : undefined)
+
+  const handlePageIndexChange = React.useCallback(
+    (nextPageIndex: number) => {
+      if (manualPagination) onPageIndexChange?.(nextPageIndex)
+      else setInternalPageIndex(nextPageIndex)
+    },
+    [manualPagination, onPageIndexChange]
+  )
+
+  const handlePageSizeOptionChange = React.useCallback(
+    (option: string) => {
+      if (manualPagination && option === "all") return
+      const nextPageSize =
+        option === "all" ? Math.max(data.length, 1) : Number(option)
+      if (manualPagination) {
+        onPageSizeChange?.(nextPageSize)
+        onPageIndexChange?.(0)
+      } else {
+        setInternalPageSizeOption(option)
+        setInternalPageIndex(0)
+      }
+    },
+    [data.length, manualPagination, onPageIndexChange, onPageSizeChange]
+  )
 
   const table = useTable({
     features: collectionViewFeatures,
     data,
     columns: columns as CollectionViewColumnDef<TData>[],
-    getRowId,
+    getRowId: tableGetRowId,
+    manualPagination,
+    manualSorting,
+    enableRowSelection,
+    pageCount: manualPagination ? totalPageCount : undefined,
     state: {
       pagination: { pageIndex, pageSize: effectivePageSize },
       columnVisibility,
+      sorting,
+      rowSelection,
     },
     onPaginationChange: (updater) => {
       const next =
         typeof updater === "function"
           ? updater({ pageIndex, pageSize: effectivePageSize })
           : updater
-      setPageIndex(next.pageIndex)
+      handlePageIndexChange(next.pageIndex)
+    },
+    onSortingChange: (updater) => {
+      if (!isSortingControlled) setInternalSorting(updater)
+      onSortingChange?.(updater)
+    },
+    onRowSelectionChange: (updater) => {
+      if (!isRowSelectionControlled) setInternalRowSelection(updater)
+      onRowSelectionChange?.(updater)
     },
     onColumnVisibilityChange: setColumnVisibility,
   })
 
   const pageCount = table.getPageCount()
-
-  const handlePageSizeOptionChange = React.useCallback((option: string) => {
-    setPageSizeOption(option)
-    setPageIndex(0)
-  }, [])
 
   const infiniteActive = view === "grid" && infiniteScroll
   const asyncMode = onLoadMore !== undefined
@@ -380,7 +543,7 @@ function CollectionView<TData extends RowData, TValue>({
 
   const rows = infiniteActive
     ? table
-        .getCoreRowModel()
+        .getSortedRowModel()
         .rows.slice(0, asyncMode ? undefined : visibleCount)
     : table.getRowModel().rows
 
@@ -395,32 +558,43 @@ function CollectionView<TData extends RowData, TValue>({
       className={cn("flex w-full flex-col gap-4", className)}
       {...props}
     >
-      {(showViewToggle || view === "table") && (
+      {(showViewToggle ||
+        view === "table" ||
+        onSearchChange ||
+        toolbarActions) && (
         <div
           data-slot="collection-view-toolbar"
-          className="flex items-center justify-between gap-2"
+          className="flex flex-wrap items-center justify-between gap-2"
         >
-          {showViewToggle ? (
-            <ToggleGroup
-              variant="outline"
-              size="sm"
-              value={[view]}
-              onValueChange={(value) => {
-                const next = value[0]
-                if (next) setView(next as CollectionViewMode)
-              }}
-              data-slot="collection-view-toggle"
-            >
-              <ToggleGroupItem value="table" aria-label="Table view">
-                <Table2Icon />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="grid" aria-label="Grid view">
-                <LayoutGridIcon />
-              </ToggleGroupItem>
-            </ToggleGroup>
-          ) : (
-            <span />
-          )}
+          <div className="flex flex-wrap items-center gap-2">
+            {onSearchChange ? (
+              <CollectionViewSearch
+                value={searchValue ?? ""}
+                onChange={onSearchChange}
+                placeholder={searchPlaceholder}
+              />
+            ) : null}
+            {toolbarActions}
+            {showViewToggle ? (
+              <ToggleGroup
+                variant="outline"
+                size="sm"
+                value={[view]}
+                onValueChange={(value) => {
+                  const next = value[0]
+                  if (next) setView(next as CollectionViewMode)
+                }}
+                data-slot="collection-view-toggle"
+              >
+                <ToggleGroupItem value="table" aria-label="Table view">
+                  <Table2Icon />
+                </ToggleGroupItem>
+                <ToggleGroupItem value="grid" aria-label="Grid view">
+                  <LayoutGridIcon />
+                </ToggleGroupItem>
+              </ToggleGroup>
+            ) : null}
+          </div>
 
           {view === "table" && (
             <DropdownMenu>
@@ -467,8 +641,8 @@ function CollectionView<TData extends RowData, TValue>({
           pageIndex={pageIndex}
           pageCount={pageCount}
           pageSizeOption={pageSizeOption}
-          pageSizeOptions={pageSizeOptions}
-          onPageChange={(index) => table.setPageIndex(index)}
+          pageSizeOptions={paginationPageSizeOptions}
+          onPageChange={handlePageIndexChange}
           onPageSizeOptionChange={handlePageSizeOptionChange}
         />
       )}
@@ -569,8 +743,8 @@ function CollectionView<TData extends RowData, TValue>({
           pageIndex={pageIndex}
           pageCount={pageCount}
           pageSizeOption={pageSizeOption}
-          pageSizeOptions={pageSizeOptions}
-          onPageChange={(index) => table.setPageIndex(index)}
+          pageSizeOptions={paginationPageSizeOptions}
+          onPageChange={handlePageIndexChange}
           onPageSizeOptionChange={handlePageSizeOptionChange}
         />
       )}

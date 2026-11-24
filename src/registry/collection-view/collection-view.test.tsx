@@ -28,6 +28,24 @@ const columns: CollectionViewColumnDef<Item>[] = [
   { accessorKey: 'price', header: 'Price' },
 ]
 
+const selectionColumns: CollectionViewColumnDef<Item>[] = [
+  {
+    id: 'select',
+    header: '',
+    cell: ({ row }) => (
+      <input
+        aria-label={`Select ${row.original.name}`}
+        checked={row.getIsSelected()}
+        type="checkbox"
+        onChange={() => row.toggleSelected()}
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: 'name', header: 'Name' },
+]
+
 function renderCard(item: Item) {
   return <div data-testid="item-card">{item.name}</div>
 }
@@ -302,5 +320,224 @@ describe('CollectionView', () => {
     ).not.toBeInTheDocument()
     triggerLastObserver()
     expect(onLoadMore).toHaveBeenCalledTimes(1)
+  })
+
+  it('renders a controlled search input and clears it', async () => {
+    const user = userEvent.setup()
+    const onSearchChange = vi.fn()
+    render(
+      <CollectionView
+        data={items.slice(0, 3)}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        searchValue="abc"
+        onSearchChange={onSearchChange}
+        searchPlaceholder="Search items"
+      />,
+    )
+
+    const input = screen.getByLabelText('Search items')
+    expect(input).toHaveValue('abc')
+
+    fireEvent.change(input, { target: { value: 'abcd' } })
+    expect(onSearchChange).toHaveBeenLastCalledWith('abcd')
+
+    await user.click(screen.getByRole('button', { name: 'Clear search' }))
+    expect(onSearchChange).toHaveBeenLastCalledWith('')
+  })
+
+  it('supports controlled server-side pagination', async () => {
+    const user = userEvent.setup()
+    const onPageIndexChange = vi.fn()
+    const onPageSizeChange = vi.fn()
+    render(
+      <CollectionView
+        data={items.slice(0, 20)}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pagination="both"
+        pageSizeOptions={[20, 50]}
+        manualPagination
+        pageCount={3}
+        pageIndex={1}
+        pageSize={20}
+        onPageIndexChange={onPageIndexChange}
+        onPageSizeChange={onPageSizeChange}
+      />,
+    )
+
+    expect(screen.getAllByText('Page 2 of 3')).toHaveLength(2)
+    await user.click(screen.getAllByRole('button', { name: '3' })[0])
+    expect(onPageIndexChange).toHaveBeenCalledWith(2)
+  })
+
+  it('ignores disabled previous and next page controls', () => {
+    const onPageIndexChange = vi.fn()
+    const { rerender } = render(
+      <CollectionView
+        data={items.slice(0, 20)}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pagination="both"
+        pageSizeOptions={[20]}
+        manualPagination
+        pageCount={2}
+        pageIndex={0}
+        pageSize={20}
+        onPageIndexChange={onPageIndexChange}
+      />,
+    )
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Go to previous page' })[0])
+    expect(onPageIndexChange).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Go to next page' })[0])
+    expect(onPageIndexChange).toHaveBeenCalledWith(1)
+
+    rerender(
+      <CollectionView
+        data={items.slice(0, 20)}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pagination="both"
+        pageSizeOptions={[20]}
+        manualPagination
+        pageCount={2}
+        pageIndex={1}
+        pageSize={20}
+        onPageIndexChange={onPageIndexChange}
+      />,
+    )
+    fireEvent.click(screen.getAllByRole('button', { name: 'Go to next page' })[0])
+    expect(onPageIndexChange).toHaveBeenCalledTimes(1)
+  })
+
+  it('hides the All page-size option for server pagination', async () => {
+    const user = userEvent.setup()
+    render(
+      <CollectionView
+        data={items.slice(0, 20)}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pageSizeOptions={[20, 50, 'all']}
+        manualPagination
+        pageCount={3}
+        pageIndex={0}
+        pageSize={20}
+        onPageIndexChange={vi.fn()}
+        onPageSizeChange={vi.fn()}
+      />,
+    )
+
+    await user.click(screen.getByRole('combobox', { name: 'Rows per page' }))
+    expect(await screen.findByRole('option', { name: '20' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: '50' })).toBeInTheDocument()
+    expect(screen.queryByRole('option', { name: 'All' })).not.toBeInTheDocument()
+  })
+
+  it('recomputes the page count when leaving server pagination', () => {
+    const { rerender } = render(
+      <CollectionView
+        data={items}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pageSizeOptions={[10]}
+        manualPagination
+        pageCount={10}
+        pageIndex={0}
+        pageSize={10}
+        onPageIndexChange={vi.fn()}
+        onPageSizeChange={vi.fn()}
+      />,
+    )
+    expect(screen.getByText('Page 1 of 10')).toBeInTheDocument()
+
+    rerender(
+      <CollectionView
+        data={items}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pageSizeOptions={[10]}
+      />,
+    )
+    expect(screen.getByText('Page 1 of 3')).toBeInTheDocument()
+  })
+
+  it('updates row selection when only onRowSelectionChange is provided', () => {
+    const onRowSelectionChange = vi.fn()
+    render(
+      <CollectionView
+        columns={selectionColumns}
+        data={items.slice(0, 10)}
+        enableRowSelection
+        onRowSelectionChange={onRowSelectionChange}
+        pagination="none"
+        renderCard={renderCard}
+        showViewToggle={false}
+        view="table"
+      />,
+    )
+
+    fireEvent.click(screen.getByLabelText('Select Item 1'))
+
+    expect(screen.getByLabelText('Select Item 1')).toBeChecked()
+    expect(onRowSelectionChange).toHaveBeenCalled()
+  })
+
+  it('does not carry selection across server pages without getRowId', () => {
+    const { rerender } = render(
+      <CollectionView
+        columns={selectionColumns}
+        data={items.slice(0, 10)}
+        enableRowSelection
+        manualPagination
+        onPageIndexChange={vi.fn()}
+        onPageSizeChange={vi.fn()}
+        pageCount={3}
+        pageIndex={0}
+        pageSize={10}
+        pagination="none"
+        renderCard={renderCard}
+        showViewToggle={false}
+        view="table"
+      />,
+    )
+
+    fireEvent.click(screen.getByLabelText('Select Item 1'))
+    expect(screen.getByLabelText('Select Item 1')).toBeChecked()
+
+    rerender(
+      <CollectionView
+        columns={selectionColumns}
+        data={items.slice(10, 20)}
+        enableRowSelection
+        manualPagination
+        onPageIndexChange={vi.fn()}
+        onPageSizeChange={vi.fn()}
+        pageCount={3}
+        pageIndex={1}
+        pageSize={10}
+        pagination="none"
+        renderCard={renderCard}
+        showViewToggle={false}
+        view="table"
+      />,
+    )
+
+    expect(screen.getByLabelText('Select Item 11')).not.toBeChecked()
   })
 })
