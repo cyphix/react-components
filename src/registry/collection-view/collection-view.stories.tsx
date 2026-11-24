@@ -35,6 +35,7 @@ type CollectionStoryProps = {
 
 const meta: Meta<CollectionStoryProps> = {
   title: 'Cyphix/Collection View',
+  component: CollectionView,
   tags: ['autodocs'],
   args: {
     data: products,
