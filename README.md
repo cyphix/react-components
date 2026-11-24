@@ -1,6 +1,6 @@
 # react-components
 
-A [shadcn](https://ui.shadcn.com/) **GitHub source registry** for custom Cyphix React components, plus a local showcase app for developing and previewing them.
+A [shadcn](https://ui.shadcn.com/) **GitHub source registry** for custom Cyphix React components, plus a Storybook gallery for developing and previewing them.
 
 Consumers install components with the shadcn CLI directly from this public repo — no build step or hosted registry server required.
 
@@ -76,27 +76,28 @@ transport, authorization, and server-side file validation.
 
 ```bash
 pnpm install
-pnpm dev          # http://localhost:5173/
+pnpm exec playwright install chromium  # once, for Storybook browser tests
+pnpm dev          # Storybook at http://localhost:6006/
 ```
 
 Useful scripts:
 
 | Script | Purpose |
 | --- | --- |
-| `pnpm dev` | Vite dev server |
-| `pnpm build` | Typecheck + production build |
+| `pnpm dev` / `pnpm storybook` | Storybook dev server on port 6006 |
+| `pnpm build` | Typecheck + production Storybook build |
+| `pnpm build-storybook` | Production Storybook build only |
 | `pnpm typecheck` | TypeScript project references check |
 | `pnpm lint` | oxlint |
-| `pnpm test` / `pnpm test:run` | Vitest (watch / once) |
-| `pnpm preview` | Serve the production build |
+| `pnpm test` / `pnpm test:run` | Vitest unit tests plus Storybook browser tests (watch / once) |
 
-The home page lists **Cyphix** components (this registry) and **shadcn** primitives (showcase only). Open `/components/<id>` for per-component state demos.
+Stories live next to the components under `src/internal/**/*.stories.tsx`, grouped as `Cyphix/...`, `Shadcn/...`, and `Internal/...`. The preview forces dark mode and provides TanStack Query, a memory TanStack Router, Sonner, and the MirageJS mock API.
 
-The in-browser MirageJS mock (`/api/...`) runs during `pnpm dev` and in the Docker showcase image. It will not respond to `curl` against the server URL.
+The in-browser MirageJS mock (`/api/...`) runs during `pnpm dev` and in the Docker image when `VITE_MOCK_API=true`. It will not respond to `curl` against the server URL.
 
-## Docker showcase
+## Docker image
 
-The published image serves the showcase with the mock API enabled. New GHCR packages default to private even for public repos; if `docker compose up -d` cannot pull the image, run `docker login ghcr.io` first or make the package public in its settings.
+The published image builds Storybook and serves the static gallery with the mock API enabled (`VITE_MOCK_API=true`). New GHCR packages default to private even for public repos; if `docker compose up -d` cannot pull the image, run `docker login ghcr.io` first or make the package public in its settings.
 
 ```bash
 docker compose up -d
@@ -108,29 +109,26 @@ Then open `http://localhost:5173/`. Set `SHOWCASE_TAG` to run a specific publish
 
 ```text
 registry.json                 # Root registry (includes src/registry/registry.json)
+.storybook/                   # Storybook config, theme, and test providers
 src/
   registry/                   # Published custom components
     registry.json
     <name>/<name>.tsx
   components/ui/              # Vendored shadcn primitives (not published)
   internal/
-    cyphix/<name>/            # Showcases for custom components
-    shadcn/<name>/            # Showcases for vendored primitives
-    showcases.ts              # Registry of showcase pages
-  pages/                      # App pages (home, component detail)
-  routes/                     # TanStack Router file routes
-  mocks/server.ts             # MirageJS seed data for the showcase catalog
+    cyphix/<name>/<name>.stories.tsx  # Stories for custom components
+    shadcn/<name>/<name>.stories.tsx  # Stories for vendored primitives
+  mocks/server.ts             # MirageJS mock auth and setup-test API
 ```
 
-Stack: Vite, React, TypeScript, Tailwind CSS v4, TanStack Router, TanStack Query, TanStack Table, Zustand, Zod, MirageJS, Vitest.
+Stack: Vite, React, TypeScript, Tailwind CSS v4, Storybook, TanStack Router, TanStack Query, TanStack Table, TanStack Form, Zod, MirageJS, Vitest.
 
 ## Add a custom component
 
 1. Create `src/registry/<name>/<name>.tsx`.
 2. Declare it in `src/registry/registry.json` (paths relative to that file). Use plain names in `registryDependencies` for shadcn primitives, and `cyphix/react-components/<name>` for other custom components.
-3. Add catalog metadata in `src/mocks/server.ts` with `source: 'cyphix'`.
-4. Add a showcase at `src/internal/cyphix/<name>/<name>-showcase.tsx` and register it in `src/internal/showcases.ts`.
-5. Validate:
+3. Add a Storybook story at `src/internal/cyphix/<name>/<name>.stories.tsx` (shadcn primitives live under `src/internal/shadcn/<name>/`).
+4. Validate:
 
 ```bash
 pnpm dlx shadcn@latest registry validate
