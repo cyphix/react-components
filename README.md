@@ -96,7 +96,7 @@ The in-browser MirageJS mock (`/api/...`) runs during `pnpm dev` and in the Dock
 
 ## Docker showcase
 
-The published image serves the showcase with the mock API enabled:
+The published image serves the showcase with the mock API enabled. New GHCR packages default to private even for public repos; if `docker compose up -d` cannot pull the image, run `docker login ghcr.io` first or make the package public in its settings.
 
 ```bash
 docker compose up -d

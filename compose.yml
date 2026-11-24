@@ -1,5 +1,6 @@
 # Showcase stack: the published image serves the component gallery with the
-# in-browser mock API enabled. The repo is public, so no GHCR login is needed.
+# in-browser mock API enabled. New GHCR packages default to private; if the
+# pull is unauthorized, run `docker login ghcr.io` or make the package public.
 services:
   react-components:
     container_name: react-components
