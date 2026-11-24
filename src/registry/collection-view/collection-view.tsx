@@ -12,10 +12,12 @@ import {
   type OnChangeFn,
   type RowData,
   rowPaginationFeature,
+  rowSelectionFeature,
   rowSortingFeature,
   sortFn_alphanumeric,
   sortFn_datetime,
   sortFn_text,
+  type RowSelectionState,
   type SortingState,
   tableFeatures,
   useTable,
@@ -80,6 +82,7 @@ type CollectionViewPageSizeOption = number | "all"
 const collectionViewFeatures = tableFeatures({
   columnVisibilityFeature,
   rowPaginationFeature,
+  rowSelectionFeature,
   rowSortingFeature,
   paginatedRowModel: createPaginatedRowModel(),
   sortedRowModel: createSortedRowModel(),
@@ -301,6 +304,9 @@ function CollectionView<TData extends RowData, TValue>({
   manualSorting = false,
   sorting: controlledSorting,
   onSortingChange,
+  enableRowSelection = false,
+  rowSelection: controlledRowSelection,
+  onRowSelectionChange,
   searchValue,
   onSearchChange,
   searchPlaceholder = "Search…",
@@ -344,6 +350,10 @@ function CollectionView<TData extends RowData, TValue>({
   manualSorting?: boolean
   sorting?: SortingState
   onSortingChange?: OnChangeFn<SortingState>
+  /** Enable row selection for consumer-supplied select columns. */
+  enableRowSelection?: boolean
+  rowSelection?: RowSelectionState
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>
   /** Controlled search input rendered in the toolbar. Filtering is left to the consumer. */
   searchValue?: string
   onSearchChange?: (value: string) => void
@@ -388,6 +398,8 @@ function CollectionView<TData extends RowData, TValue>({
       return String(initial)
     })
   const [internalSorting, setInternalSorting] = React.useState<SortingState>([])
+  const [internalRowSelection, setInternalRowSelection] =
+    React.useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<ColumnVisibilityState>({})
 
@@ -412,6 +424,7 @@ function CollectionView<TData extends RowData, TValue>({
   const effectivePageSize =
     pagination === "none" ? Math.max(data.length, 1) : pageSize
   const sorting = controlledSorting ?? internalSorting
+  const rowSelection = controlledRowSelection ?? internalRowSelection
 
   const handlePageIndexChange = React.useCallback(
     (nextPageIndex: number) => {
@@ -444,11 +457,13 @@ function CollectionView<TData extends RowData, TValue>({
     getRowId,
     manualPagination,
     manualSorting,
+    enableRowSelection,
     pageCount: manualPagination ? totalPageCount : undefined,
     state: {
       pagination: { pageIndex, pageSize: effectivePageSize },
       columnVisibility,
       sorting,
+      rowSelection,
     },
     onPaginationChange: (updater) => {
       const next =
@@ -460,6 +475,10 @@ function CollectionView<TData extends RowData, TValue>({
     onSortingChange: (updater) => {
       if (onSortingChange) onSortingChange(updater)
       else setInternalSorting(updater)
+    },
+    onRowSelectionChange: (updater) => {
+      if (onRowSelectionChange) onRowSelectionChange(updater)
+      else setInternalRowSelection(updater)
     },
     onColumnVisibilityChange: setColumnVisibility,
   })
