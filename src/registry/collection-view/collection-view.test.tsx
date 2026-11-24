@@ -356,4 +356,106 @@ describe('CollectionView', () => {
     await user.click(screen.getAllByRole('button', { name: '3' })[0])
     expect(onPageIndexChange).toHaveBeenCalledWith(2)
   })
+
+  it('ignores disabled previous and next page controls', () => {
+    const onPageIndexChange = vi.fn()
+    const { rerender } = render(
+      <CollectionView
+        data={items.slice(0, 20)}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pagination="both"
+        pageSizeOptions={[20]}
+        manualPagination
+        pageCount={2}
+        pageIndex={0}
+        pageSize={20}
+        onPageIndexChange={onPageIndexChange}
+      />,
+    )
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Go to previous page' })[0])
+    expect(onPageIndexChange).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Go to next page' })[0])
+    expect(onPageIndexChange).toHaveBeenCalledWith(1)
+
+    rerender(
+      <CollectionView
+        data={items.slice(0, 20)}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pagination="both"
+        pageSizeOptions={[20]}
+        manualPagination
+        pageCount={2}
+        pageIndex={1}
+        pageSize={20}
+        onPageIndexChange={onPageIndexChange}
+      />,
+    )
+    fireEvent.click(screen.getAllByRole('button', { name: 'Go to next page' })[0])
+    expect(onPageIndexChange).toHaveBeenCalledTimes(1)
+  })
+
+  it('hides the All page-size option for server pagination', async () => {
+    const user = userEvent.setup()
+    render(
+      <CollectionView
+        data={items.slice(0, 20)}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pageSizeOptions={[20, 50, 'all']}
+        manualPagination
+        pageCount={3}
+        pageIndex={0}
+        pageSize={20}
+        onPageIndexChange={vi.fn()}
+        onPageSizeChange={vi.fn()}
+      />,
+    )
+
+    await user.click(screen.getByRole('combobox', { name: 'Rows per page' }))
+    expect(await screen.findByRole('option', { name: '20' })).toBeInTheDocument()
+    expect(screen.getByRole('option', { name: '50' })).toBeInTheDocument()
+    expect(screen.queryByRole('option', { name: 'All' })).not.toBeInTheDocument()
+  })
+
+  it('recomputes the page count when leaving server pagination', () => {
+    const { rerender } = render(
+      <CollectionView
+        data={items}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pageSizeOptions={[10]}
+        manualPagination
+        pageCount={10}
+        pageIndex={0}
+        pageSize={10}
+        onPageIndexChange={vi.fn()}
+        onPageSizeChange={vi.fn()}
+      />,
+    )
+    expect(screen.getByText('Page 1 of 10')).toBeInTheDocument()
+
+    rerender(
+      <CollectionView
+        data={items}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pageSizeOptions={[10]}
+      />,
+    )
+    expect(screen.getByText('Page 1 of 3')).toBeInTheDocument()
+  })
 })

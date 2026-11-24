@@ -13,6 +13,9 @@ import {
   type RowData,
   rowPaginationFeature,
   rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_datetime,
+  sortFn_text,
   type SortingState,
   tableFeatures,
   useTable,
@@ -80,6 +83,11 @@ const collectionViewFeatures = tableFeatures({
   rowSortingFeature,
   paginatedRowModel: createPaginatedRowModel(),
   sortedRowModel: createSortedRowModel(),
+  sortFns: {
+    alphanumeric: sortFn_alphanumeric,
+    datetime: sortFn_datetime,
+    text: sortFn_text,
+  },
 })
 
 type CollectionViewFeatures = typeof collectionViewFeatures
@@ -224,7 +232,7 @@ function CollectionViewPagination({
               )}
               onClick={(event) => {
                 event.preventDefault()
-                onPageChange(pageIndex - 1)
+                if (pageIndex > 0) onPageChange(pageIndex - 1)
               }}
             />
           </PaginationItem>
@@ -257,7 +265,7 @@ function CollectionViewPagination({
               )}
               onClick={(event) => {
                 event.preventDefault()
-                onPageChange(pageIndex + 1)
+                if (pageIndex < pageCount - 1) onPageChange(pageIndex + 1)
               }}
             />
           </PaginationItem>
@@ -386,10 +394,13 @@ function CollectionView<TData extends RowData, TValue>({
   const pageIndex = manualPagination
     ? (controlledPageIndex ?? 0)
     : internalPageIndex
+  const paginationPageSizeOptions = manualPagination
+    ? pageSizeOptions.filter((option) => option !== "all")
+    : pageSizeOptions
   const pageSizeOption = manualPagination
     ? String(
         controlledPageSize ??
-          pageSizeOptions.find((option) => typeof option === "number") ??
+          paginationPageSizeOptions.find((option) => typeof option === "number") ??
           10
       )
     : internalPageSizeOption
@@ -412,6 +423,7 @@ function CollectionView<TData extends RowData, TValue>({
 
   const handlePageSizeOptionChange = React.useCallback(
     (option: string) => {
+      if (manualPagination && option === "all") return
       const nextPageSize =
         option === "all" ? Math.max(data.length, 1) : Number(option)
       if (manualPagination) {
@@ -432,7 +444,7 @@ function CollectionView<TData extends RowData, TValue>({
     getRowId,
     manualPagination,
     manualSorting,
-    ...(manualPagination ? { pageCount: totalPageCount } : {}),
+    pageCount: manualPagination ? totalPageCount : undefined,
     state: {
       pagination: { pageIndex, pageSize: effectivePageSize },
       columnVisibility,
@@ -505,7 +517,7 @@ function CollectionView<TData extends RowData, TValue>({
 
   const rows = infiniteActive
     ? table
-        .getCoreRowModel()
+        .getSortedRowModel()
         .rows.slice(0, asyncMode ? undefined : visibleCount)
     : table.getRowModel().rows
 
@@ -603,7 +615,7 @@ function CollectionView<TData extends RowData, TValue>({
           pageIndex={pageIndex}
           pageCount={pageCount}
           pageSizeOption={pageSizeOption}
-          pageSizeOptions={pageSizeOptions}
+          pageSizeOptions={paginationPageSizeOptions}
           onPageChange={handlePageIndexChange}
           onPageSizeOptionChange={handlePageSizeOptionChange}
         />
@@ -705,7 +717,7 @@ function CollectionView<TData extends RowData, TValue>({
           pageIndex={pageIndex}
           pageCount={pageCount}
           pageSizeOption={pageSizeOption}
-          pageSizeOptions={pageSizeOptions}
+          pageSizeOptions={paginationPageSizeOptions}
           onPageChange={handlePageIndexChange}
           onPageSizeOptionChange={handlePageSizeOptionChange}
         />
