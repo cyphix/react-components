@@ -93,9 +93,9 @@ const collectionViewFeatures = tableFeatures({
   },
 })
 
-type CollectionViewFeatures = typeof collectionViewFeatures
+export type CollectionViewFeatures = typeof collectionViewFeatures
 
-type CollectionViewColumnDef<TData extends RowData, TValue = unknown> =
+export type CollectionViewColumnDef<TData extends RowData, TValue = unknown> =
   ColumnDef<CollectionViewFeatures, TData, TValue>
 
 const DEFAULT_PAGE_SIZE_OPTIONS: CollectionViewPageSizeOption[] = [
