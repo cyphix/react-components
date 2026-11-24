@@ -193,9 +193,6 @@ function CollectionViewPagination({
   onPageSizeOptionChange: (option: string) => void
 }) {
   const items = getPageItems(pageIndex, pageCount)
-  const pageSizeItems = Object.fromEntries(
-    pageSizeOptions.map((option) => [String(option), pageSizeLabel(option)])
-  )
 
   return (
     <div
@@ -205,7 +202,6 @@ function CollectionViewPagination({
       <div className="flex items-center gap-2">
         <span className="text-sm text-muted-foreground">Rows per page</span>
         <Select
-          items={pageSizeItems}
           value={pageSizeOption}
           onValueChange={(value) => {
             if (value != null) onPageSizeOptionChange(value)
@@ -216,7 +212,7 @@ function CollectionViewPagination({
             className="w-20"
             aria-label="Rows per page"
           >
-            <SelectValue />
+            <SelectValue>{pageSizeLabel(pageSizeOption)}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {pageSizeOptions.map((option) => (
