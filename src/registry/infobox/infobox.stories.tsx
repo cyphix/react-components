@@ -76,6 +76,13 @@ export const AccentColor: Story = {
   args: { accentColor: '#7c3aed' },
 }
 
+export const TransparentAccent: Story = {
+  args: { accentColor: '#ffffff00' },
+  play: async ({ canvasElement }) => {
+    await expect(within(canvasElement).getByText('Aria Voss')).toBeInTheDocument()
+  },
+}
+
 export const SectionTabs: Story = {
   args: { data: sectionTabsData },
   play: async ({ canvasElement }) => {

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { fn, expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { basicComboboxOptions, comboboxOptions } from '@/storybook/cyphix-fixtures'
@@ -19,11 +19,12 @@ function Demo({
   onCreateNew?: (query: string) => void
 }) {
   const [value, setValue] = useState('')
+  const id = useId()
   return (
     <>
-      <label htmlFor="creatable-combobox" className="sr-only">Fruit</label>
+      <label htmlFor={id} className="sr-only">Fruit</label>
       <CreatableCombobox
-        id="creatable-combobox"
+        id={id}
         className="w-64"
         options={options}
         value={value}

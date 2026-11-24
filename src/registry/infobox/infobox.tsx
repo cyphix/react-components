@@ -280,7 +280,7 @@ function InfoboxSections({ sections }: { sections: InfoboxSection[] }) {
   )
 }
 
-function hexToRgb(color: string): [number, number, number] | null {
+function hexToRgba(color: string): [number, number, number, number] | null {
   const match = /^#([0-9a-f]{3,8})$/i.exec(color.trim())
   if (!match) return null
   let hex = match[1]
@@ -289,19 +289,26 @@ function hexToRgb(color: string): [number, number, number] | null {
   }
   if (hex.length !== 6 && hex.length !== 8) return null
   const value = Number.parseInt(hex.slice(0, 6), 16)
-  return [(value >> 16) & 255, (value >> 8) & 255, value & 255]
+  const alpha = hex.length === 8 ? Number.parseInt(hex.slice(6), 16) / 255 : 1
+  return [(value >> 16) & 255, (value >> 8) & 255, value & 255, alpha]
+}
+
+function isTransparent(color: string) {
+  return hexToRgba(color)?.[3] === 0
 }
 
 function accentForeground(color: string) {
-  const rgb = hexToRgb(color)
-  if (!rgb) return "#fff"
-  const [r, g, b] = rgb.map((channel) => {
+  const rgba = hexToRgba(color)
+  if (!rgba) return "#fff"
+  const [r, g, b, alpha] = rgba
+  if (alpha === 0) return "var(--foreground)"
+  const [red, green, blue] = [r, g, b].map((channel) => {
     const normalized = channel / 255
     return normalized <= 0.03928
       ? normalized / 12.92
       : ((normalized + 0.055) / 1.055) ** 2.4
   })
-  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+  const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
   const whiteContrast = 1.05 / (luminance + 0.05)
   const blackContrast = (luminance + 0.05) / 0.05
   return whiteContrast >= blackContrast ? "#fff" : "#000"
@@ -321,16 +328,17 @@ function Infobox({
   // readable light foreground) and tints the section headers. The default
   // title bar mixes a touch of foreground into muted so it stands out from
   // section headers without leaving the theme palette.
+  const accent = accentColor && !isTransparent(accentColor) ? accentColor : undefined
   const colorVars = {
     "--infobox-accent":
-      accentColor ?? "color-mix(in oklab, var(--muted) 88%, var(--foreground))",
-    "--infobox-accent-foreground": accentColor
-      ? accentForeground(accentColor)
+      accent ?? "color-mix(in oklab, var(--muted) 88%, var(--foreground))",
+    "--infobox-accent-foreground": accent
+      ? accentForeground(accent)
       : "var(--foreground)",
-    "--infobox-section": accentColor
-      ? `color-mix(in oklab, ${accentColor} 15%, transparent)`
+    "--infobox-section": accent
+      ? `color-mix(in oklab, ${accent} 15%, transparent)`
       : "var(--muted)",
-    "--infobox-section-foreground": accentColor
+    "--infobox-section-foreground": accent
       ? "var(--foreground)"
       : "var(--muted-foreground)",
   } as React.CSSProperties
@@ -348,7 +356,7 @@ function Infobox({
       >
         <h3 className="text-base leading-tight font-semibold">{data.title}</h3>
         {data.subtitle && (
-          <p className={cn("mt-0.5 text-xs", !accentColor && "opacity-80")}>
+          <p className={cn("mt-0.5 text-xs", !accent && "opacity-80")}>
             {data.subtitle}
           </p>
         )}

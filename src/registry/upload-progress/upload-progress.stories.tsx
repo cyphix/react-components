@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { useState } from 'react'
 import { fn, expect, userEvent, within } from 'storybook/test'
 
-import { UploadProgress } from './upload-progress'
+import { UploadProgress, type UploadProgressProps } from './upload-progress'
 
 const meta = {
   title: 'Cyphix/Upload Progress',
@@ -32,6 +33,32 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
+function TransitionDemo() {
+  const [state, setState] = useState<UploadProgressProps['state']>('uploading')
+  const [processingPercent, setProcessingPercent] = useState(0)
+  return (
+    <div className="grid gap-3">
+      <UploadProgress
+        fileName="photo.png"
+        state={state}
+        uploadPercent={state === 'uploading' ? 40 : 100}
+        processingPercent={processingPercent}
+      />
+      <div className="flex flex-wrap gap-2">
+        {state === 'uploading' ? (
+          <button type="button" onClick={() => setState('processing')}>Start processing</button>
+        ) : null}
+        {state === 'processing' ? (
+          <>
+            <button type="button" onClick={() => setProcessingPercent(65)}>Advance processing</button>
+            <button type="button" onClick={() => { setProcessingPercent(100); setState('complete') }}>Complete upload</button>
+          </>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
 export const Uploading: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -45,6 +72,26 @@ export const Processing: Story = {
 
 export const Complete: Story = {
   args: { state: 'complete', uploadPercent: 100, processingPercent: 100 },
+}
+
+export const Transition: Story = {
+  render: () => <TransitionDemo />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const upload = canvas.getByRole('progressbar', { name: 'Upload progress for photo.png' })
+    const processing = canvas.getByRole('progressbar', { name: 'Server processing progress for photo.png' })
+    await expect(upload).toHaveAttribute('aria-valuenow', '40')
+    await userEvent.click(canvas.getByRole('button', { name: 'Start processing' }))
+    await expect(upload).toHaveAttribute('aria-valuenow', '100')
+    await expect(processing).toHaveAttribute('aria-valuenow', '0')
+    await expect(canvas.getByRole('status')).toHaveTextContent('Processing…')
+    await userEvent.click(canvas.getByRole('button', { name: 'Advance processing' }))
+    await expect(upload).toHaveAttribute('aria-valuenow', '100')
+    await expect(processing).toHaveAttribute('aria-valuenow', '65')
+    await userEvent.click(canvas.getByRole('button', { name: 'Complete upload' }))
+    await expect(processing).toHaveAttribute('aria-valuenow', '100')
+    await expect(canvas.getByRole('status')).toHaveTextContent('Upload complete')
+  },
 }
 
 export const Error: Story = {

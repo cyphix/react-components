@@ -67,7 +67,7 @@ function Demo({
 
   return (
     <div className="relative h-[360px] w-full overflow-hidden rounded-lg border">
-      <SidePanelProvider defaultOpen={defaultOpen} side={side} width={width} className="relative h-full min-h-full">
+      <SidePanelProvider key={String(defaultOpen)} defaultOpen={defaultOpen} side={side} width={width} className="relative h-full min-h-full">
         {side === 'left' ? <>{panel}{tab}{inset}</> : <>{inset}{tab}{panel}</>}
       </SidePanelProvider>
     </div>

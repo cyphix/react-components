@@ -27,8 +27,8 @@ type Story = StoryObj<typeof meta>
 export const Admin: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await expect(canvas.getByText('Profile')).toBeInTheDocument()
-    await expect(canvas.getByText('Users')).toBeInTheDocument()
+    await expect(canvas.getByRole('link', { name: 'Profile' })).toHaveAttribute('href', '/profile')
+    await expect(canvas.getByRole('link', { name: 'Users' })).toHaveAttribute('href', '/users')
   },
 }
 
