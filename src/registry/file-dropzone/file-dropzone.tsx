@@ -74,7 +74,6 @@ export function FileDropzone({
       data-dragging={!disabled && dragging ? "" : undefined}
       className={cn(
         "flex w-full min-w-0 flex-col items-center gap-3 rounded-lg border border-dashed bg-muted/25 p-5 text-center transition-colors data-[dragging]:border-primary data-[dragging]:bg-primary/5",
-        disabled && "opacity-60",
         className,
       )}
       onDragEnter={(event) => {

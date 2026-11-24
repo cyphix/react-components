@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   createMemoryHistory,
   createRootRoute,
+  createRoute,
   createRouter,
   RouterContextProvider,
 } from '@tanstack/react-router'
@@ -22,8 +23,12 @@ export function Providers({ children }: { children: ReactNode }) {
   )
   const [router] = useState(() => {
     const rootRoute = createRootRoute()
+    const routeTree = rootRoute.addChildren([
+      createRoute({ getParentRoute: () => rootRoute, path: '/profile' }),
+      createRoute({ getParentRoute: () => rootRoute, path: '/users' }),
+    ])
     return createRouter({
-      routeTree: rootRoute,
+      routeTree,
       history: createMemoryHistory({ initialEntries: ['/'] }),
     })
   })

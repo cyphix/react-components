@@ -16,8 +16,10 @@ Node.js frontend project — no backend, database, or external services.
 ## Conventions
 
 - Forms: use TanStack Form when it makes sense; don't use it where it would cause more harm than good.
-- Stories are CSF files under `src/internal/**/*.stories.tsx`; keep showcase
-  demos out of `src/registry/**` so the shadcn registry stays untouched.
+- Stories are CSF files next to registry components under
+  `src/registry/**/*.stories.tsx`; they render the published components directly
+  with args/controls, `play` interactions, and a11y checks. Shadcn primitives and
+  internal showcase wrappers are not part of the Storybook gallery.
 - Storybook is dark-mode only: `.storybook/manager.ts` themes the manager and
   `.storybook/preview-providers.tsx` forces the `.dark` theme for components.
 
@@ -54,8 +56,9 @@ The CLI reads the root `registry.json` (which `include`s
   `registryDependencies` (e.g. `"button"`), which resolves to the official shadcn
   registry; dependencies on other custom components use the full address
   `cyphix/react-components/<name>`.
-- **Stories** (`src/internal/`): internal Storybook demos and integration
-  stories. These are **not** included in the shadcn registry manifest.
+- **Registry stories** (`src/registry/<name>/<name>.stories.tsx`): direct
+  component stories with controls, interactions, and a11y coverage. They are
+  **not** included in the shadcn registry manifest.
 - **Storybook config** (`.storybook/`): `main.ts` wires Vite/Tailwind/alias,
   `preview.tsx` loads global CSS and starts Mirage, and
   `preview-providers.tsx` supplies QueryClient, memory router, dark theme, and
@@ -67,16 +70,15 @@ The CLI reads the root `registry.json` (which `include`s
 2. Add a registry item to `src/registry/registry.json` with npm `dependencies` and
    `registryDependencies` as needed (plain names for shadcn primitives,
    `cyphix/react-components/<name>` for other custom components).
-3. Add a Storybook story under `src/internal/cyphix/<name>/<name>.stories.tsx`
-   (shadcn primitives live under `src/internal/shadcn/<name>/`).
+3. Add a Storybook story at `src/registry/<name>/<name>.stories.tsx` with
+   `component`, args/argTypes controls, and `play` interactions where useful.
 4. Validate with `pnpm dlx shadcn@latest registry validate`.
 
-## Adding an internal story or test page
+## Storybook coverage
 
-1. Create the component/story under `src/internal/<name>/`.
-2. Add MirageJS endpoints in `src/mocks/server.ts` if the story needs mocked API calls.
-3. Add Vitest tests alongside the story in `src/internal/<name>/` when appropriate.
-
-## Setup test story
-
-`Internal/Setup Test` demonstrates the full stack: shadcn Button → TanStack Query mutation → MirageJS `POST /api/setup-test/button-press` → Sonner toast.
+- Keep stories under `src/registry/**` so Storybook only shows published Cyphix
+  components; do not add shadcn primitive or internal wrapper stories.
+- Use `storybook/test` (`userEvent`, `expect`, `within`, `fn`, `waitFor`) for
+  interactions; `@storybook/addon-a11y` runs axe checks with `a11y.test: 'error'`.
+- Shared non-story fixtures belong outside `*.stories.tsx` (for example
+  `src/storybook/`).

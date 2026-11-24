@@ -5,8 +5,8 @@ export function makeServer({ environment = 'development' } = {}) {
     environment,
     routes() {
       const initialUser = { id: 1, username: 'admin', email: 'admin@example.com', role: 'admin', disabled: false, hasPassword: true, passkeyCount: 1, oidcLinked: false, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' }
-      let users = [initialUser, { ...initialUser, id: 2, username: 'alice', email: 'alice@example.com', role: 'user' }]
-      let session: typeof initialUser | null = initialUser
+      let users = [{ ...initialUser }, { ...initialUser, id: 2, username: 'alice', email: 'alice@example.com', role: 'user' }]
+      let session: typeof initialUser | null = { ...initialUser }
       let passkeys = [{ id: 1, name: 'Laptop', createdAt: initialUser.createdAt, lastUsedAt: null }]
       let nextId = 3
       const missing = () => new Response(404, {}, { message: 'User not found' })
@@ -21,7 +21,7 @@ export function makeServer({ environment = 'development' } = {}) {
         const input = JSON.parse(request.requestBody)
         const user = users.find(user => user.username === input.identifier || user.email === input.identifier)
         if (!user || input.password !== 'DemoPassword123!') return new Response(401, {}, { message: 'Use admin / DemoPassword123!' })
-        session = user
+        session = { ...user }
         return user
       })
       this.post('/auth/logout', () => { session = null; return new Response(204) })
@@ -66,12 +66,8 @@ export function makeServer({ environment = 'development' } = {}) {
       this.put('/api/me/avatar', () => { hasAvatar = true; if (session) session.updatedAt = new Date().toISOString(); return new Response(204) })
       this.delete('/api/me/avatar', () => { hasAvatar = false; if (session) session.updatedAt = new Date().toISOString(); return new Response(204) })
       this.namespace = 'api'
-      // Small delay so loading states are observable in dev pages.
+      // Small delay so loading states are observable in stories.
       this.timing = 400
-
-      this.post('/setup-test/button-press', () => {
-        return new Response(200, {}, { message: 'Button was pressed' })
-      })
     },
   })
 }
