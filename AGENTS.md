@@ -23,7 +23,8 @@ Dependencies are installed automatically by the startup update script (`pnpm ins
   `pnpm lint` (oxlint), build with `pnpm build` (`tsc -b && vite build`), type-check
   with `pnpm typecheck`, test with `pnpm test` or `pnpm test:run`.
 - The component registry API is a **MirageJS mock that runs inside the browser**,
-  started only in dev from `src/main.tsx` (guarded by `import.meta.env.DEV`).
+  started in dev from `src/main.tsx` and in the Docker showcase image (guarded by
+  `import.meta.env.DEV || import.meta.env.VITE_MOCK_API === 'true'`).
   It intercepts `fetch('/api/...')` in the page only — `curl http://localhost:5173/api/components`
   will NOT return mock data. Verify data flows by loading the app in a real browser.
 - Path alias `@/` maps to `src/` (configured in both `vite.config.ts` and
