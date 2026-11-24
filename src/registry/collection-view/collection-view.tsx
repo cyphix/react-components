@@ -93,9 +93,9 @@ const collectionViewFeatures = tableFeatures({
   },
 })
 
-export type CollectionViewFeatures = typeof collectionViewFeatures
+type CollectionViewFeatures = typeof collectionViewFeatures
 
-export type CollectionViewColumnDef<TData extends RowData, TValue = unknown> =
+type CollectionViewColumnDef<TData extends RowData, TValue = unknown> =
   ColumnDef<CollectionViewFeatures, TData, TValue>
 
 const DEFAULT_PAGE_SIZE_OPTIONS: CollectionViewPageSizeOption[] = [
@@ -425,6 +425,13 @@ function CollectionView<TData extends RowData, TValue>({
     pagination === "none" ? Math.max(data.length, 1) : pageSize
   const sorting = controlledSorting ?? internalSorting
   const rowSelection = controlledRowSelection ?? internalRowSelection
+  const isSortingControlled = controlledSorting !== undefined
+  const isRowSelectionControlled = controlledRowSelection !== undefined
+  const tableGetRowId =
+    getRowId ??
+    (manualPagination && enableRowSelection
+      ? (_item: TData, index: number) => `${pageIndex}:${index}`
+      : undefined)
 
   const handlePageIndexChange = React.useCallback(
     (nextPageIndex: number) => {
@@ -454,7 +461,7 @@ function CollectionView<TData extends RowData, TValue>({
     features: collectionViewFeatures,
     data,
     columns: columns as CollectionViewColumnDef<TData>[],
-    getRowId,
+    getRowId: tableGetRowId,
     manualPagination,
     manualSorting,
     enableRowSelection,
@@ -473,12 +480,12 @@ function CollectionView<TData extends RowData, TValue>({
       handlePageIndexChange(next.pageIndex)
     },
     onSortingChange: (updater) => {
-      if (onSortingChange) onSortingChange(updater)
-      else setInternalSorting(updater)
+      if (!isSortingControlled) setInternalSorting(updater)
+      onSortingChange?.(updater)
     },
     onRowSelectionChange: (updater) => {
-      if (onRowSelectionChange) onRowSelectionChange(updater)
-      else setInternalRowSelection(updater)
+      if (!isRowSelectionControlled) setInternalRowSelection(updater)
+      onRowSelectionChange?.(updater)
     },
     onColumnVisibilityChange: setColumnVisibility,
   })

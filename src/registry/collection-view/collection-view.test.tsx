@@ -28,6 +28,24 @@ const columns: CollectionViewColumnDef<Item>[] = [
   { accessorKey: 'price', header: 'Price' },
 ]
 
+const selectionColumns: CollectionViewColumnDef<Item>[] = [
+  {
+    id: 'select',
+    header: '',
+    cell: ({ row }) => (
+      <input
+        aria-label={`Select ${row.original.name}`}
+        checked={row.getIsSelected()}
+        type="checkbox"
+        onChange={() => row.toggleSelected()}
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: 'name', header: 'Name' },
+]
+
 function renderCard(item: Item) {
   return <div data-testid="item-card">{item.name}</div>
 }
@@ -457,5 +475,69 @@ describe('CollectionView', () => {
       />,
     )
     expect(screen.getByText('Page 1 of 3')).toBeInTheDocument()
+  })
+
+  it('updates row selection when only onRowSelectionChange is provided', () => {
+    const onRowSelectionChange = vi.fn()
+    render(
+      <CollectionView
+        columns={selectionColumns}
+        data={items.slice(0, 10)}
+        enableRowSelection
+        onRowSelectionChange={onRowSelectionChange}
+        pagination="none"
+        renderCard={renderCard}
+        showViewToggle={false}
+        view="table"
+      />,
+    )
+
+    fireEvent.click(screen.getByLabelText('Select Item 1'))
+
+    expect(screen.getByLabelText('Select Item 1')).toBeChecked()
+    expect(onRowSelectionChange).toHaveBeenCalled()
+  })
+
+  it('does not carry selection across server pages without getRowId', () => {
+    const { rerender } = render(
+      <CollectionView
+        columns={selectionColumns}
+        data={items.slice(0, 10)}
+        enableRowSelection
+        manualPagination
+        onPageIndexChange={vi.fn()}
+        onPageSizeChange={vi.fn()}
+        pageCount={3}
+        pageIndex={0}
+        pageSize={10}
+        pagination="none"
+        renderCard={renderCard}
+        showViewToggle={false}
+        view="table"
+      />,
+    )
+
+    fireEvent.click(screen.getByLabelText('Select Item 1'))
+    expect(screen.getByLabelText('Select Item 1')).toBeChecked()
+
+    rerender(
+      <CollectionView
+        columns={selectionColumns}
+        data={items.slice(10, 20)}
+        enableRowSelection
+        manualPagination
+        onPageIndexChange={vi.fn()}
+        onPageSizeChange={vi.fn()}
+        pageCount={3}
+        pageIndex={1}
+        pageSize={10}
+        pagination="none"
+        renderCard={renderCard}
+        showViewToggle={false}
+        view="table"
+      />,
+    )
+
+    expect(screen.getByLabelText('Select Item 11')).not.toBeChecked()
   })
 })
