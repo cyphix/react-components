@@ -74,6 +74,7 @@ function InputGroupShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Input Group',
 } satisfies Meta
 

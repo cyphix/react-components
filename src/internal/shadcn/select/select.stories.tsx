@@ -97,6 +97,7 @@ function SelectShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Select',
 } satisfies Meta
 

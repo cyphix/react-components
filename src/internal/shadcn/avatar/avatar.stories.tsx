@@ -79,6 +79,7 @@ function AvatarShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Avatar',
 } satisfies Meta
 

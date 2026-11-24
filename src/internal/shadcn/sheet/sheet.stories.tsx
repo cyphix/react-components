@@ -63,6 +63,7 @@ function SheetShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Sheet',
 } satisfies Meta
 

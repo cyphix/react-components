@@ -45,6 +45,7 @@ function InputShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Input',
 } satisfies Meta
 

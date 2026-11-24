@@ -60,6 +60,7 @@ function TooltipShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Tooltip',
 } satisfies Meta
 

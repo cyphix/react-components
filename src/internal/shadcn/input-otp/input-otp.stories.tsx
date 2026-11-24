@@ -77,6 +77,7 @@ function InputOtpShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Input Otp',
 } satisfies Meta
 

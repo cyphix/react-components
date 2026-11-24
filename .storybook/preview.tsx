@@ -5,7 +5,7 @@ import { makeServer } from '@/mocks/server'
 import '../src/index.css'
 import { Providers } from './preview-providers'
 
-if (import.meta.env.DEV || import.meta.env.VITE_MOCK_API === 'true') {
+if (import.meta.env.DEV || import.meta.env.VITE_MOCK_API !== 'false') {
   makeServer()
 }
 

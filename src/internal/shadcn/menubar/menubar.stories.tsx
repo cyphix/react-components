@@ -79,6 +79,7 @@ function MenubarShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Menubar',
 } satisfies Meta
 

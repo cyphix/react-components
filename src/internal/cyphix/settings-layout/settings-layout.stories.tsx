@@ -14,6 +14,7 @@ function SettingsLayoutShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Settings Layout',
 } satisfies Meta
 

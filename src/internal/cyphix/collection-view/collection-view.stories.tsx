@@ -215,6 +215,7 @@ function CollectionViewShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Collection View',
 } satisfies Meta
 

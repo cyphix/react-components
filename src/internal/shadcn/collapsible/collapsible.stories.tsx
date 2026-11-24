@@ -48,6 +48,7 @@ function CollapsibleShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Collapsible',
 } satisfies Meta
 

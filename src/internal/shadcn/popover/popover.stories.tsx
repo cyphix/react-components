@@ -92,6 +92,7 @@ function PopoverShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Popover',
 } satisfies Meta
 

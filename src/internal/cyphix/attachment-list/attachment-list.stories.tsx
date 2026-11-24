@@ -33,6 +33,7 @@ function AttachmentListShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Attachment List',
 } satisfies Meta
 

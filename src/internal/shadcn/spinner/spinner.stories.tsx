@@ -26,6 +26,7 @@ function SpinnerShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Spinner',
 } satisfies Meta
 

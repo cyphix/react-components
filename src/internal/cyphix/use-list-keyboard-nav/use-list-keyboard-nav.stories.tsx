@@ -34,6 +34,7 @@ function UseListKeyboardNavShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Use List Keyboard Nav',
 } satisfies Meta
 

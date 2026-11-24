@@ -39,6 +39,7 @@ function ButtonShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Button',
 } satisfies Meta
 

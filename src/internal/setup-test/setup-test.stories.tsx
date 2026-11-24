@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { SetupTestPage } from './setup-test-page'
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Internal/Setup Test',
 } satisfies Meta
 

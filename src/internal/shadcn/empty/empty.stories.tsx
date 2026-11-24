@@ -77,6 +77,7 @@ function EmptyShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Empty',
 } satisfies Meta
 

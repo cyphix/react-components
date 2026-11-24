@@ -61,6 +61,7 @@ function CalloutShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Callout',
 } satisfies Meta
 

@@ -28,6 +28,7 @@ function SkeletonShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Skeleton',
 } satisfies Meta
 

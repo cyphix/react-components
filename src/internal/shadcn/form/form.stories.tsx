@@ -92,6 +92,7 @@ function FormShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Form',
 } satisfies Meta
 

@@ -51,6 +51,7 @@ function AspectRatioShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Aspect Ratio',
 } satisfies Meta
 

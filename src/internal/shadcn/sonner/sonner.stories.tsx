@@ -89,6 +89,7 @@ function SonnerShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Sonner',
 } satisfies Meta
 

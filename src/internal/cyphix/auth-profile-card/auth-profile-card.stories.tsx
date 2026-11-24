@@ -8,6 +8,7 @@ function AuthProfileCardShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Auth Profile Card',
 } satisfies Meta
 

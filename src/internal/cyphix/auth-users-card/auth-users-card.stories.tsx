@@ -26,6 +26,7 @@ function AuthUsersCardShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Auth Users Card',
 } satisfies Meta
 

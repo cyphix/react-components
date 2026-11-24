@@ -11,6 +11,7 @@ function AuthLoginFormShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Auth Login Form',
 } satisfies Meta
 

@@ -29,6 +29,7 @@ function SliderShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Slider',
 } satisfies Meta
 

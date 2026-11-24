@@ -67,6 +67,7 @@ function AlertShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Alert',
 } satisfies Meta
 

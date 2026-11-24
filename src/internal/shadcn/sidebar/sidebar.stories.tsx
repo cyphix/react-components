@@ -70,6 +70,7 @@ function SidebarShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Sidebar',
 } satisfies Meta
 

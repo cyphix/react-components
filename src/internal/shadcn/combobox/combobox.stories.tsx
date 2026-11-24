@@ -54,6 +54,7 @@ function ComboboxShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Combobox',
 } satisfies Meta
 

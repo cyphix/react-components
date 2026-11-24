@@ -84,6 +84,7 @@ function MessageShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Message',
 } satisfies Meta
 

@@ -89,6 +89,7 @@ function ContextMenuShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Context Menu',
 } satisfies Meta
 

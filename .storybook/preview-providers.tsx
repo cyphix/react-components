@@ -33,7 +33,7 @@ export function Providers({ children }: { children: ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <RouterContextProvider router={router}>
           {children}
-          <Toaster />
+          <Toaster theme="dark" />
         </RouterContextProvider>
       </QueryClientProvider>
     </ThemeProvider>

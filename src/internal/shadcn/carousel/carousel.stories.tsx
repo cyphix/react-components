@@ -34,6 +34,7 @@ function CarouselShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Carousel',
 } satisfies Meta
 

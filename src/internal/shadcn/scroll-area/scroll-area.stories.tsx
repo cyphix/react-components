@@ -43,6 +43,7 @@ function ScrollAreaShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Scroll Area',
 } satisfies Meta
 

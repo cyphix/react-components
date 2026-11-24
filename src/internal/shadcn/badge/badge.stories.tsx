@@ -20,6 +20,7 @@ function BadgeShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Badge',
 } satisfies Meta
 

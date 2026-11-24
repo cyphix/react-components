@@ -32,6 +32,7 @@ function CardShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Card',
 } satisfies Meta
 

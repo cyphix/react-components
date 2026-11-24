@@ -33,6 +33,7 @@ function CheckboxShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Checkbox',
 } satisfies Meta
 

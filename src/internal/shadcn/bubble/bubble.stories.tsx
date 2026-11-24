@@ -75,6 +75,7 @@ function BubbleShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Bubble',
 } satisfies Meta
 

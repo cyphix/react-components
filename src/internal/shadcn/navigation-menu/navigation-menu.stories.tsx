@@ -81,6 +81,7 @@ function NavigationMenuShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Navigation Menu',
 } satisfies Meta
 

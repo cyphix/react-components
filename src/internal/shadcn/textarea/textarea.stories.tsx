@@ -40,6 +40,7 @@ function TextareaShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Textarea',
 } satisfies Meta
 

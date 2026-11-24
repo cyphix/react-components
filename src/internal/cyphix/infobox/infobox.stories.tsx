@@ -200,6 +200,7 @@ function InfoboxShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Infobox',
 } satisfies Meta
 

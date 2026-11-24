@@ -81,6 +81,7 @@ function BreadcrumbShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Breadcrumb',
 } satisfies Meta
 

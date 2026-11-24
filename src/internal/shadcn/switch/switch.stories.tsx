@@ -31,6 +31,7 @@ function SwitchShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Switch',
 } satisfies Meta
 

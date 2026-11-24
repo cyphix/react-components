@@ -68,6 +68,7 @@ function NativeSelectShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Native Select',
 } satisfies Meta
 

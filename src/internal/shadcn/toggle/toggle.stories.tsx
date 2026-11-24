@@ -69,6 +69,7 @@ function ToggleShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Toggle',
 } satisfies Meta
 

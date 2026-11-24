@@ -112,6 +112,7 @@ function ChatPanelShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Chat Panel',
 } satisfies Meta
 

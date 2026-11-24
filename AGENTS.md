@@ -30,10 +30,9 @@ Dependencies are installed automatically by the startup update script (`pnpm ins
 - Lint with `pnpm lint` (oxlint), build with `pnpm build` (`tsc -b && storybook build`), type-check with `pnpm typecheck`, test with `pnpm test` or `pnpm test:run`.
 - `pnpm test:run` runs the existing jsdom unit tests and the Storybook browser project from `vitest.config.ts`.
 - The component registry API is a **MirageJS mock that runs inside the browser**,
-  started by `.storybook/preview.tsx` when `import.meta.env.DEV` or
-  `VITE_MOCK_API=true`. It intercepts `fetch('/api/...')` in the page only —
-  `curl http://localhost:6006/api/...` will NOT return mock data. Verify data
-  flows by loading Storybook in a real browser.
+  started by `.storybook/preview.tsx` unless `VITE_MOCK_API=false` at build time.
+  It intercepts `fetch('/api/...')` in the page only — `curl` will NOT return mock
+  data. Verify data flows by loading Storybook in a real browser.
 - Path alias `@/` maps to `src/` (configured in `vite.config.ts`,
   `.storybook/main.ts`, and `tsconfig.app.json`). `tsconfig` uses TypeScript 6
   — avoid `baseUrl` (deprecated); `paths` works without it under

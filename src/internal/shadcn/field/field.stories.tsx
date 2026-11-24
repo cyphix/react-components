@@ -63,6 +63,7 @@ function FieldShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Field',
 } satisfies Meta
 

@@ -63,6 +63,7 @@ function RadioGroupShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Radio Group',
 } satisfies Meta
 

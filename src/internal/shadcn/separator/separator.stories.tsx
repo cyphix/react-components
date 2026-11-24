@@ -35,6 +35,7 @@ function SeparatorShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Separator',
 } satisfies Meta
 

@@ -42,6 +42,7 @@ function PaginationShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Pagination',
 } satisfies Meta
 

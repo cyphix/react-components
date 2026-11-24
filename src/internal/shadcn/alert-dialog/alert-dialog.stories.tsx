@@ -94,6 +94,7 @@ function AlertDialogShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Alert Dialog',
 } satisfies Meta
 

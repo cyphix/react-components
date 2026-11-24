@@ -58,6 +58,7 @@ function DirectionShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Direction',
 } satisfies Meta
 

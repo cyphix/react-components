@@ -33,6 +33,7 @@ function FileDropzoneShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/File Dropzone',
 } satisfies Meta
 

@@ -95,6 +95,7 @@ function ItemShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Item',
 } satisfies Meta
 

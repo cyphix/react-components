@@ -17,6 +17,7 @@ function ProgressShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Progress',
 } satisfies Meta
 

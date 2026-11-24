@@ -57,6 +57,7 @@ function ButtonGroupShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Button Group',
 } satisfies Meta
 

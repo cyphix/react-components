@@ -44,6 +44,7 @@ function TimeInputShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Time Input',
 } satisfies Meta
 

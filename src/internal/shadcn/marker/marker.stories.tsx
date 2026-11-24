@@ -58,6 +58,7 @@ function MarkerShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Marker',
 } satisfies Meta
 

@@ -113,6 +113,7 @@ function CreatableComboboxShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Creatable Combobox',
 } satisfies Meta
 

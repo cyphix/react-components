@@ -78,6 +78,7 @@ function DrawerShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Drawer',
 } satisfies Meta
 

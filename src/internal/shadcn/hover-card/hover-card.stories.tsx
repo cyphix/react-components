@@ -57,6 +57,7 @@ function HoverCardShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Hover Card',
 } satisfies Meta
 

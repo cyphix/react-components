@@ -83,6 +83,7 @@ function ToggleGroupShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Toggle Group',
 } satisfies Meta
 

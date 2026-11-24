@@ -48,6 +48,7 @@ function LabelShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Label',
 } satisfies Meta
 

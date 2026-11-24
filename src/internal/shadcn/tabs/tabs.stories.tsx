@@ -52,6 +52,7 @@ function TabsShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Tabs',
 } satisfies Meta
 

@@ -53,6 +53,7 @@ function TableShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Table',
 } satisfies Meta
 

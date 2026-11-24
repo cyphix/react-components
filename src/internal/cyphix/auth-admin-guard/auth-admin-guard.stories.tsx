@@ -27,6 +27,7 @@ function AuthAdminGuardShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Auth Admin Guard',
 } satisfies Meta
 

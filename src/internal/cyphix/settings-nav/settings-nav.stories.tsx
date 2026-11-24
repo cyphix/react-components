@@ -15,6 +15,7 @@ function SettingsNavShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Settings Nav',
 } satisfies Meta
 

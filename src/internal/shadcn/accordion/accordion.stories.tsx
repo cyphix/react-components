@@ -36,6 +36,7 @@ function AccordionShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Accordion',
 } satisfies Meta
 

@@ -42,6 +42,7 @@ function KbdShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Kbd',
 } satisfies Meta
 

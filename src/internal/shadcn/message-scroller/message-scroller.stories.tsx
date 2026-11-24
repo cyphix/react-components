@@ -84,6 +84,7 @@ function MessageScrollerShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Message Scroller',
 } satisfies Meta
 

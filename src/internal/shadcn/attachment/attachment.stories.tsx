@@ -130,6 +130,7 @@ function AttachmentShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Attachment',
 } satisfies Meta
 

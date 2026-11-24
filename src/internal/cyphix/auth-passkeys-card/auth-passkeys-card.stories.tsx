@@ -6,6 +6,7 @@ function AuthPasskeysCardShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Auth Passkeys Card',
 } satisfies Meta
 

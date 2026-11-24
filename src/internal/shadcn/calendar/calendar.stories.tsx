@@ -39,6 +39,7 @@ function CalendarShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Calendar',
 } satisfies Meta
 

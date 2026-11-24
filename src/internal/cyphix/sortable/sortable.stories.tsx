@@ -133,6 +133,7 @@ function SortableShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Sortable',
 } satisfies Meta
 

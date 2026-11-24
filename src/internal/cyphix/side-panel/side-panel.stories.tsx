@@ -213,6 +213,7 @@ function SidePanelShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Cyphix/Side Panel',
 } satisfies Meta
 

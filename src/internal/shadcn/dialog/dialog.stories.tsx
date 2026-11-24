@@ -83,6 +83,7 @@ function DialogShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Dialog',
 } satisfies Meta
 

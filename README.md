@@ -93,7 +93,7 @@ Useful scripts:
 
 Stories live next to the components under `src/internal/**/*.stories.tsx`, grouped as `Cyphix/...`, `Shadcn/...`, and `Internal/...`. The preview forces dark mode and provides TanStack Query, a memory TanStack Router, Sonner, and the MirageJS mock API.
 
-The in-browser MirageJS mock (`/api/...`) runs during `pnpm dev` and in the Docker image when `VITE_MOCK_API=true`. It will not respond to `curl` against the server URL.
+The in-browser MirageJS mock (`/api/...`) runs in Storybook by default; set `VITE_MOCK_API=false` at build time to disable it. The Docker image leaves it enabled. It will not respond to `curl` against the server URL.
 
 ## Docker image
 

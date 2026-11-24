@@ -55,6 +55,7 @@ function ChartShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Chart',
 } satisfies Meta
 

@@ -97,6 +97,7 @@ function CommandShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Command',
 } satisfies Meta
 

@@ -138,6 +138,7 @@ function DropdownMenuShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Dropdown Menu',
 } satisfies Meta
 

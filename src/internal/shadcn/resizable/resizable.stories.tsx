@@ -64,6 +64,7 @@ function ResizableShowcase() {
 }
 
 const meta = {
+  tags: ['autodocs'],
   title: 'Shadcn/Resizable',
 } satisfies Meta
 
