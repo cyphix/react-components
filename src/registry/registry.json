@@ -137,7 +137,7 @@
       "name": "collection-view",
       "type": "registry:ui",
       "title": "Collection View",
-      "description": "A data collection that flips between a TanStack Table v9 data table and a card grid, with centered top/bottom pagination, customizable page-size options, column visibility toggles, and grid-only infinite scroll.",
+      "description": "A data collection that flips between a TanStack Table v9 data table and a card grid, with centered top/bottom pagination, customizable page-size options, column visibility toggles, optional toolbar search, client or server-driven sorting/pagination, and grid-only infinite scroll.",
       "dependencies": [
         "@tanstack/react-table@^9.3.1",
         "cn",
@@ -150,7 +150,8 @@
         "dropdown-menu",
         "pagination",
         "toggle-group",
-        "spinner"
+        "spinner",
+        "input-group"
       ],
       "files": [
         {

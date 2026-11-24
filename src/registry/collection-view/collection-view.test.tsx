@@ -303,4 +303,57 @@ describe('CollectionView', () => {
     triggerLastObserver()
     expect(onLoadMore).toHaveBeenCalledTimes(1)
   })
+
+  it('renders a controlled search input and clears it', async () => {
+    const user = userEvent.setup()
+    const onSearchChange = vi.fn()
+    render(
+      <CollectionView
+        data={items.slice(0, 3)}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        searchValue="abc"
+        onSearchChange={onSearchChange}
+        searchPlaceholder="Search items"
+      />,
+    )
+
+    const input = screen.getByLabelText('Search items')
+    expect(input).toHaveValue('abc')
+
+    fireEvent.change(input, { target: { value: 'abcd' } })
+    expect(onSearchChange).toHaveBeenLastCalledWith('abcd')
+
+    await user.click(screen.getByRole('button', { name: 'Clear search' }))
+    expect(onSearchChange).toHaveBeenLastCalledWith('')
+  })
+
+  it('supports controlled server-side pagination', async () => {
+    const user = userEvent.setup()
+    const onPageIndexChange = vi.fn()
+    const onPageSizeChange = vi.fn()
+    render(
+      <CollectionView
+        data={items.slice(0, 20)}
+        columns={columns}
+        renderCard={renderCard}
+        view="table"
+        showViewToggle={false}
+        pagination="both"
+        pageSizeOptions={[20, 50]}
+        manualPagination
+        pageCount={3}
+        pageIndex={1}
+        pageSize={20}
+        onPageIndexChange={onPageIndexChange}
+        onPageSizeChange={onPageSizeChange}
+      />,
+    )
+
+    expect(screen.getAllByText('Page 2 of 3')).toHaveLength(2)
+    await user.click(screen.getAllByRole('button', { name: '3' })[0])
+    expect(onPageIndexChange).toHaveBeenCalledWith(2)
+  })
 })
