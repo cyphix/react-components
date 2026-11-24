@@ -58,9 +58,7 @@ function TransitionDemo() {
             <button type="button" onClick={() => { setProcessingPercent(100); setState('complete') }}>Complete upload</button>
           </>
         ) : null}
-        {state === 'complete' ? (
-          <button type="button" onClick={restart}>Restart transition</button>
-        ) : null}
+        <button type="button" onClick={restart}>Restart transition</button>
       </div>
     </div>
   )
@@ -99,6 +97,13 @@ export const Transition: Story = {
     await expect(processing).toHaveAttribute('aria-valuenow', '100')
     await expect(canvas.getByRole('status')).toHaveTextContent('Upload complete')
     await userEvent.click(await canvas.findByRole('button', { name: 'Restart transition' }))
+    await expect(upload).toHaveAttribute('aria-valuenow', '40')
+    await expect(processing).toHaveAttribute('aria-valuenow', '0')
+    await expect(canvas.getByRole('status')).toHaveTextContent('Uploading…')
+    await userEvent.click(canvas.getByRole('button', { name: 'Start processing' }))
+    await expect(processing).toHaveAttribute('aria-valuenow', '0')
+    await expect(canvas.getByRole('status')).toHaveTextContent('Processing…')
+    await userEvent.click(canvas.getByRole('button', { name: 'Restart transition' }))
     await expect(upload).toHaveAttribute('aria-valuenow', '40')
     await expect(processing).toHaveAttribute('aria-valuenow', '0')
     await expect(canvas.getByRole('status')).toHaveTextContent('Uploading…')
