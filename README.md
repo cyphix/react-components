@@ -92,7 +92,17 @@ Useful scripts:
 
 The home page lists **Cyphix** components (this registry) and **shadcn** primitives (showcase only). Open `/components/<id>` for per-component state demos.
 
-The in-browser MirageJS mock (`/api/...`) runs only in the page during `pnpm dev`. It will not respond to `curl` against the Vite URL.
+The in-browser MirageJS mock (`/api/...`) runs during `pnpm dev` and in the Docker showcase image. It will not respond to `curl` against the server URL.
+
+## Docker showcase
+
+The published image serves the showcase with the mock API enabled. New GHCR packages default to private even for public repos; if `docker compose up -d` cannot pull the image, run `docker login ghcr.io` first or make the package public in its settings.
+
+```bash
+docker compose up -d
+```
+
+Then open `http://localhost:5173/`. Set `SHOWCASE_TAG` to run a specific published version tag (default `latest`) and `SHOWCASE_PORT` to change the host port. The image is published to `ghcr.io/cyphix/react-components` by `.github/workflows/docker.yml` on `v*` tags.
 
 ## Project layout
 
