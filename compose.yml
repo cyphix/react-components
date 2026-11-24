@@ -1,0 +1,9 @@
+# Showcase stack: the published image serves the component gallery with the
+# in-browser mock API enabled. The repo is public, so no GHCR login is needed.
+services:
+  react-components:
+    container_name: react-components
+    image: ghcr.io/cyphix/react-components:${SHOWCASE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "${SHOWCASE_PORT:-5173}:80"
