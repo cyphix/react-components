@@ -19,6 +19,7 @@ const preview: Preview = {
   ],
   parameters: {
     layout: 'padded',
+    a11y: { test: 'error' },
     docs: {
       theme: themes.dark,
     },

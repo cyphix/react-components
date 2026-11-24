@@ -91,7 +91,7 @@ Useful scripts:
 | `pnpm lint` | oxlint |
 | `pnpm test` / `pnpm test:run` | Vitest unit tests plus Storybook browser tests (watch / once) |
 
-Stories live next to the components under `src/internal/**/*.stories.tsx`, grouped as `Cyphix/...`, `Shadcn/...`, and `Internal/...`. The preview forces dark mode and provides TanStack Query, a memory TanStack Router, Sonner, and the MirageJS mock API.
+Stories live next to the published components under `src/registry/**/*.stories.tsx`, grouped as `Cyphix/...`. They render the registry components directly with args/controls, `play` interactions, and a11y checks; shadcn primitives and internal wrappers are not shown. The preview forces dark mode and provides TanStack Query, a memory TanStack Router, Sonner, and the MirageJS mock API.
 
 The in-browser MirageJS mock (`/api/...`) runs in Storybook by default; set `VITE_MOCK_API=false` at build time to disable it. The Docker image leaves it enabled. It will not respond to `curl` against the server URL.
 
@@ -114,11 +114,10 @@ src/
   registry/                   # Published custom components
     registry.json
     <name>/<name>.tsx
+    <name>/<name>.stories.tsx  # Direct component stories
   components/ui/              # Vendored shadcn primitives (not published)
-  internal/
-    cyphix/<name>/<name>.stories.tsx  # Stories for custom components
-    shadcn/<name>/<name>.stories.tsx  # Stories for vendored primitives
-  mocks/server.ts             # MirageJS mock auth and setup-test API
+  storybook/                  # Shared story fixtures
+  mocks/server.ts             # MirageJS mock auth API
 ```
 
 Stack: Vite, React, TypeScript, Tailwind CSS v4, Storybook, TanStack Router, TanStack Query, TanStack Table, TanStack Form, Zod, MirageJS, Vitest.
@@ -127,7 +126,7 @@ Stack: Vite, React, TypeScript, Tailwind CSS v4, Storybook, TanStack Router, Tan
 
 1. Create `src/registry/<name>/<name>.tsx`.
 2. Declare it in `src/registry/registry.json` (paths relative to that file). Use plain names in `registryDependencies` for shadcn primitives, and `cyphix/react-components/<name>` for other custom components.
-3. Add a Storybook story at `src/internal/cyphix/<name>/<name>.stories.tsx` (shadcn primitives live under `src/internal/shadcn/<name>/`).
+3. Add a Storybook story at `src/registry/<name>/<name>.stories.tsx` with `component`, args/argTypes controls, and `play` interactions where useful.
 4. Validate:
 
 ```bash

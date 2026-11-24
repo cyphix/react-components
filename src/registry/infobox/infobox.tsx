@@ -280,6 +280,33 @@ function InfoboxSections({ sections }: { sections: InfoboxSection[] }) {
   )
 }
 
+function hexToRgb(color: string): [number, number, number] | null {
+  const match = /^#([0-9a-f]{3,8})$/i.exec(color.trim())
+  if (!match) return null
+  let hex = match[1]
+  if (hex.length === 3 || hex.length === 4) {
+    hex = hex.split("").map((part) => part + part).join("")
+  }
+  if (hex.length !== 6 && hex.length !== 8) return null
+  const value = Number.parseInt(hex.slice(0, 6), 16)
+  return [(value >> 16) & 255, (value >> 8) & 255, value & 255]
+}
+
+function accentForeground(color: string) {
+  const rgb = hexToRgb(color)
+  if (!rgb) return "#fff"
+  const [r, g, b] = rgb.map((channel) => {
+    const normalized = channel / 255
+    return normalized <= 0.03928
+      ? normalized / 12.92
+      : ((normalized + 0.055) / 1.055) ** 2.4
+  })
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+  const whiteContrast = 1.05 / (luminance + 0.05)
+  const blackContrast = (luminance + 0.05) / 0.05
+  return whiteContrast >= blackContrast ? "#fff" : "#000"
+}
+
 function Infobox({
   data,
   accentColor,
@@ -297,7 +324,9 @@ function Infobox({
   const colorVars = {
     "--infobox-accent":
       accentColor ?? "color-mix(in oklab, var(--muted) 88%, var(--foreground))",
-    "--infobox-accent-foreground": accentColor ? "#fff" : "var(--foreground)",
+    "--infobox-accent-foreground": accentColor
+      ? accentForeground(accentColor)
+      : "var(--foreground)",
     "--infobox-section": accentColor
       ? `color-mix(in oklab, ${accentColor} 15%, transparent)`
       : "var(--muted)",
@@ -319,7 +348,9 @@ function Infobox({
       >
         <h3 className="text-base leading-tight font-semibold">{data.title}</h3>
         {data.subtitle && (
-          <p className="mt-0.5 text-xs opacity-80">{data.subtitle}</p>
+          <p className={cn("mt-0.5 text-xs", !accentColor && "opacity-80")}>
+            {data.subtitle}
+          </p>
         )}
       </div>
       {data.images && (

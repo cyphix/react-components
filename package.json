@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@cyphix/auth-react": "github:cyphix/goauth#8d5ade564ca85e5cdbf3e220c53de19ceb226c47&path:/web/auth-react",
+    "@storybook/addon-a11y": "10.6.8",
     "@storybook/addon-docs": "10.6.8",
     "@storybook/addon-vitest": "10.6.8",
     "@storybook/react-vite": "10.6.8",

@@ -66,12 +66,8 @@ export function makeServer({ environment = 'development' } = {}) {
       this.put('/api/me/avatar', () => { hasAvatar = true; if (session) session.updatedAt = new Date().toISOString(); return new Response(204) })
       this.delete('/api/me/avatar', () => { hasAvatar = false; if (session) session.updatedAt = new Date().toISOString(); return new Response(204) })
       this.namespace = 'api'
-      // Small delay so loading states are observable in dev pages.
+      // Small delay so loading states are observable in stories.
       this.timing = 400
-
-      this.post('/setup-test/button-press', () => {
-        return new Response(200, {}, { message: 'Button was pressed' })
-      })
     },
   })
 }

@@ -121,7 +121,7 @@ export function CreatableCombobox({
           {selectedLabel || placeholder}
         </span>
       </ComboboxTrigger>
-      <ComboboxContent className="w-(--anchor-width)">
+      <ComboboxContent aria-label={searchPlaceholder} className="w-(--anchor-width)">
         {onCreateNew ? (
           <Button
             className="m-1 w-[calc(100%-0.5rem)] justify-start"
@@ -160,7 +160,7 @@ export function CreatableCombobox({
             </InputGroupAddon>
           )}
         </ComboboxInput>
-        <ComboboxList>
+        <ComboboxList aria-label={searchPlaceholder}>
           {Array.from(groupedOptions, ([group, groupOptions]) =>
             group ? (
               <ComboboxGroup key={group}>
