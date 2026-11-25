@@ -396,8 +396,9 @@
       "name": "time-input",
       "type": "registry:ui",
       "title": "Time Input",
-      "description": "24-hour HH:mm(:ss) time entry plus a paired date+time field, replacing native pickers that follow the OS locale's 12-hour clock.",
-      "registryDependencies": ["input"],
+      "description": "Validated 12-hour or 24-hour time entry with an optional popup picker, plus a paired date+time field sharing one canonical YYYY-MM-DDTHH:mm(:ss) value.",
+      "dependencies": ["cn", "lucide-react"],
+      "registryDependencies": ["button", "input", "input-group", "popover"],
       "files": [
         {
           "path": "time-input/time-input.tsx",
