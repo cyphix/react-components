@@ -62,6 +62,11 @@ function canonicalTime(hour: number, minute: number, second: number | null) {
   return `${pad2(hour)}:${pad2(minute)}${second == null ? "" : `:${pad2(second)}`}`
 }
 
+function withoutSeconds(value: string) {
+  const parts = parseCanonicalTime(value)
+  return parts ? canonicalTime(parts.hour, parts.minute, null) : value
+}
+
 function partialNumber(
   part: string,
   {
@@ -616,9 +621,15 @@ export function TimeInput({
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
     const parsed = parseTimeText(text, timeFormat, seconds)
     if (parsed.status === "valid" && parsed.value) {
-      setCanonical(parsed.value)
+      const hiddenSeconds =
+        !seconds &&
+        canonical !== parsed.value &&
+        parsed.value === withoutSeconds(canonical)
+      if (!hiddenSeconds) setCanonical(parsed.value)
       setInvalid(false)
-      setText(formatTime(parsed.value, timeFormat, seconds))
+      setText(
+        formatTime(hiddenSeconds ? canonical : parsed.value, timeFormat, seconds),
+      )
     } else if (parsed.status === "empty") {
       setCanonical("")
       setInvalid(false)

@@ -166,6 +166,45 @@ describe("TimeInput", () => {
     expect(input).toHaveValue("13:45")
   })
 
+  it("preserves hidden seconds when seconds are toggled off and blurred", () => {
+    const onChange = vi.fn()
+    const { rerender } = render(
+      <TimeInput
+        aria-label="Time"
+        defaultValue="13:45:30"
+        onChange={onChange}
+        picker={false}
+        seconds
+      />,
+    )
+    const input = screen.getByLabelText("Time")
+    expect(input).toHaveValue("13:45:30")
+
+    rerender(
+      <TimeInput
+        aria-label="Time"
+        defaultValue="13:45:30"
+        onChange={onChange}
+        picker={false}
+        seconds={false}
+      />,
+    )
+    expect(input).toHaveValue("13:45")
+    fireEvent.blur(input)
+    expect(input).toHaveValue("13:45")
+
+    rerender(
+      <TimeInput
+        aria-label="Time"
+        defaultValue="13:45:30"
+        onChange={onChange}
+        picker={false}
+        seconds
+      />,
+    )
+    expect(input).toHaveValue("13:45:30")
+  })
+
   it("disables the picker for read-only input", () => {
     render(<TimeInput aria-label="Time" defaultValue="13:45" readOnly />)
 

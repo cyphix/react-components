@@ -148,12 +148,14 @@ export const DateTime: Story = {
       timeFormat={args.timeFormat}
     />
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement)
-    const body = popup()
     const input = canvas.getByLabelText('Time')
     await expect(input).toHaveValue('1:45:00 PM')
 
+    if (args.picker === false) return
+
+    const body = popup()
     await userEvent.click(canvas.getByRole('button', { name: 'Open time picker' }))
     await userEvent.click(await body.findByRole('button', { name: 'Hour 3' }))
     await expect(input).toHaveValue('3:45:00 PM')
