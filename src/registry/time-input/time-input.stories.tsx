@@ -113,10 +113,12 @@ export const Disabled: Story = {
 
 function DateTimeDemo({
   disabled = false,
+  picker = true,
   seconds = false,
   timeFormat = '24h',
 }: {
   disabled?: boolean
+  picker?: boolean
   seconds?: boolean
   timeFormat?: TimeFormat
 }) {
@@ -126,6 +128,7 @@ function DateTimeDemo({
   return (
     <DateTimeInput
       dateProps={{ 'aria-label': 'Date', disabled }}
+      picker={picker}
       seconds={seconds}
       timeFormat={timeFormat}
       timeProps={{ 'aria-label': 'Time', disabled }}
@@ -140,6 +143,7 @@ export const DateTime: Story = {
   render: (args) => (
     <DateTimeDemo
       disabled={args.disabled}
+      picker={args.picker}
       seconds={args.seconds}
       timeFormat={args.timeFormat}
     />

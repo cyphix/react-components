@@ -171,19 +171,24 @@ function parseCanonicalTime(value: string): TimeParts | null {
   return { hour, minute, second }
 }
 
-function formatTime(value: string, timeFormat: TimeFormat) {
+function formatTime(
+  value: string,
+  timeFormat: TimeFormat,
+  seconds: boolean,
+) {
   const parts = parseCanonicalTime(value)
   if (!parts) return value
 
+  const showSeconds = seconds && parts.second != null
   const time = `${pad2(parts.hour)}:${pad2(parts.minute)}${
-    parts.second == null ? "" : `:${pad2(parts.second)}`
+    showSeconds ? `:${pad2(parts.second ?? 0)}` : ""
   }`
   if (timeFormat === "24h") return time
 
   const hour12 = parts.hour % 12 || 12
   const meridiem = parts.hour >= 12 ? "PM" : "AM"
   return `${hour12}:${pad2(parts.minute)}${
-    parts.second == null ? "" : `:${pad2(parts.second)}`
+    showSeconds ? `:${pad2(parts.second ?? 0)}` : ""
   } ${meridiem}`
 }
 
@@ -198,7 +203,7 @@ function normalizeValue(
   if (as24.status === "valid" && as24.value) {
     return {
       canonical: as24.value,
-      display: formatTime(as24.value, timeFormat),
+      display: formatTime(as24.value, timeFormat, seconds),
       invalid: false,
     }
   }
@@ -208,7 +213,7 @@ function normalizeValue(
     if (as12.status === "valid" && as12.value) {
       return {
         canonical: as12.value,
-        display: formatTime(as12.value, timeFormat),
+        display: formatTime(as12.value, timeFormat, seconds),
         invalid: false,
       }
     }
@@ -310,6 +315,31 @@ function pickerTime(
   return canonicalTime(hour, minute, seconds ? second : null)
 }
 
+function handleColumnKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+  const target = event.target as HTMLElement
+  const button = target.closest("button")
+  if (!button || !event.currentTarget.contains(button)) return
+
+  const buttons = Array.from(
+    event.currentTarget.querySelectorAll<HTMLButtonElement>("button"),
+  )
+  const index = buttons.indexOf(button)
+  if (index === -1) return
+
+  let next: number | null = null
+  if (event.key === "ArrowDown") next = (index + 1) % buttons.length
+  if (event.key === "ArrowUp") {
+    next = (index - 1 + buttons.length) % buttons.length
+  }
+  if (event.key === "Home") next = 0
+  if (event.key === "End") next = buttons.length - 1
+  if (next === null) return
+
+  event.preventDefault()
+  buttons[next]?.focus()
+  buttons[next]?.click()
+}
+
 function PickerColumn({
   label,
   children,
@@ -321,6 +351,7 @@ function PickerColumn({
     <div
       aria-label={label}
       className="flex max-h-52 w-12 flex-col gap-0.5 overflow-y-auto"
+      onKeyDown={handleColumnKeyDown}
       role="group"
     >
       {children}
@@ -490,6 +521,7 @@ export function TimeInput({
   onBlur,
   onChange,
   picker = true,
+  readOnly = false,
   ref,
   seconds = false,
   timeFormat = "24h",
@@ -503,6 +535,28 @@ export function TimeInput({
   const [canonical, setCanonical] = useState(initial.canonical)
   const [text, setText] = useState(initial.display)
   const [invalid, setInvalid] = useState(initial.invalid)
+  const canonicalRef = useRef(initial.canonical)
+  const formatKey = `${timeFormat}:${seconds}`
+  const previousFormatKey = useRef(formatKey)
+
+  useEffect(() => {
+    canonicalRef.current = canonical
+  }, [canonical])
+
+  useEffect(() => {
+    if (value !== undefined) {
+      previousFormatKey.current = formatKey
+      return
+    }
+    if (previousFormatKey.current === formatKey) return
+    previousFormatKey.current = formatKey
+    setText(
+      canonicalRef.current
+        ? formatTime(canonicalRef.current, timeFormat, seconds)
+        : "",
+    )
+    setInvalid(false)
+  }, [formatKey, seconds, timeFormat, value])
 
   useEffect(() => {
     if (value === undefined) return
@@ -521,7 +575,7 @@ export function TimeInput({
       if (next.canonical === "" && current.status === "empty") return currentText
       return next.display
     })
-  }, [seconds, timeFormat, value])
+  }, [canonical, seconds, timeFormat, value])
 
   const setRefs = useCallback(
     (node: HTMLInputElement | null) => {
@@ -564,7 +618,7 @@ export function TimeInput({
     if (parsed.status === "valid" && parsed.value) {
       setCanonical(parsed.value)
       setInvalid(false)
-      setText(formatTime(parsed.value, timeFormat))
+      setText(formatTime(parsed.value, timeFormat, seconds))
     } else if (parsed.status === "empty") {
       setCanonical("")
       setInvalid(false)
@@ -576,16 +630,17 @@ export function TimeInput({
   }
 
   const inputProps = {
-    ...props,
-    "aria-invalid": invalid ? true : props["aria-invalid"],
     autoComplete: "off",
-    disabled,
     dir: "ltr" as const,
     maxLength: inputMaxLength(timeFormat, seconds),
-    onBlur: handleBlur,
-    onChange: handleChange,
     pattern: inputPattern(timeFormat, seconds),
     placeholder: inputPlaceholder(timeFormat, seconds),
+    readOnly,
+    ...props,
+    "aria-invalid": invalid ? true : props["aria-invalid"],
+    disabled,
+    onBlur: handleBlur,
+    onChange: handleChange,
     ref: setRefs,
     type: "text" as const,
     value: text,
@@ -602,7 +657,7 @@ export function TimeInput({
         <InputGroupAddon align="inline-end">
           <PopoverTrigger
             aria-label="Open time picker"
-            disabled={disabled}
+            disabled={disabled || readOnly}
             render={<InputGroupButton size="icon-xs" variant="ghost" />}
           >
             <Clock />
@@ -611,7 +666,7 @@ export function TimeInput({
       </InputGroup>
       <TimePickerContent
         onSelect={(nextCanonical) => {
-          setText(formatTime(nextCanonical, timeFormat))
+          setText(formatTime(nextCanonical, timeFormat, seconds))
           commitCanonical(nextCanonical)
         }}
         seconds={seconds}

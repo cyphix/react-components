@@ -119,6 +119,78 @@ describe("TimeInput", () => {
 
     expect(changedValues(onChange)).toEqual(["09:45:30", "09:15:30", "09:15:05"])
   })
+
+  it("moves picker selection with arrow keys", async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    render(
+      <TimeInput
+        aria-label="Time"
+        defaultValue="13:45"
+        onChange={onChange}
+      />,
+    )
+    const body = within(document.body)
+
+    await user.click(screen.getByRole("button", { name: "Open time picker" }))
+    const hour13 = await body.findByRole("button", { name: "Hour 13" })
+    fireEvent.keyDown(hour13, { key: "ArrowDown" })
+
+    expect(changedValues(onChange)).toEqual(["14:45"])
+    expect(document.activeElement).toHaveTextContent("14")
+  })
+
+  it("keeps uncontrolled time valid when the display format changes", () => {
+    const onChange = vi.fn()
+    const { rerender } = render(
+      <TimeInput
+        aria-label="Time"
+        defaultValue="13:45"
+        onChange={onChange}
+        picker={false}
+        timeFormat="12h"
+      />,
+    )
+    const input = screen.getByLabelText("Time")
+    expect(input).toHaveValue("1:45 PM")
+
+    rerender(
+      <TimeInput
+        aria-label="Time"
+        defaultValue="13:45"
+        onChange={onChange}
+        picker={false}
+        timeFormat="24h"
+      />,
+    )
+    expect(input).toHaveValue("13:45")
+  })
+
+  it("disables the picker for read-only input", () => {
+    render(<TimeInput aria-label="Time" defaultValue="13:45" readOnly />)
+
+    expect(screen.getByLabelText("Time")).toHaveAttribute("readonly")
+    expect(
+      screen.getByRole("button", { name: "Open time picker" }),
+    ).toBeDisabled()
+  })
+
+  it("restores the controlled value when the parent rejects a valid edit", () => {
+    const onChange = vi.fn()
+    render(
+      <TimeInput
+        aria-label="Time"
+        onChange={onChange}
+        picker={false}
+        value="13:45"
+      />,
+    )
+    const input = screen.getByLabelText("Time")
+
+    fireEvent.change(input, { target: { value: "14:30" } })
+    expect(changedValues(onChange)).toEqual(["14:30"])
+    expect(input).toHaveValue("13:45")
+  })
 })
 
 describe("DateTimeInput", () => {
