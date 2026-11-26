@@ -288,6 +288,37 @@ describe("CreatableCombobox", () => {
     expect(onValueChange).toHaveBeenLastCalledWith(["pear", "dragonfruit", "apple"])
   })
 
+  describe("while server search is loading", () => {
+    it("hides the Use row until search finishes", async () => {
+      const onSearchChange = vi.fn()
+      const onValueChange = vi.fn()
+      const props = { options: [], value: "", allowCustom: true, onSearchChange, onValueChange }
+      const { rerender } = render(<CreatableCombobox {...props} loading />)
+      const search = await openCombobox()
+      await userEvent.type(search, "dragonfruit")
+      expect(screen.queryByRole("option", { name: 'Use "dragonfruit"' })).not.toBeInTheDocument()
+
+      rerender(<CreatableCombobox {...props} />)
+      await userEvent.click(screen.getByRole("option", { name: 'Use "dragonfruit"' }))
+      expect(onValueChange).toHaveBeenCalledWith("dragonfruit")
+    })
+
+    it("waits to resolve Enter to an existing option rather than saving its label", async () => {
+      const onSearchChange = vi.fn()
+      const onValueChange = vi.fn()
+      const props = { value: "", createOnEnter: true, onSearchChange, onValueChange }
+      const { rerender } = render(<CreatableCombobox {...props} options={[]} loading />)
+      const search = await openCombobox()
+      await userEvent.type(search, "Apple{Enter}")
+      expect(onValueChange).not.toHaveBeenCalled()
+      expect(search).toHaveValue("Apple")
+
+      rerender(<CreatableCombobox {...props} options={options} />)
+      await userEvent.keyboard("{Enter}")
+      expect(onValueChange.mock.calls).toEqual([["apple"]])
+    })
+  })
+
   describe("createOnEnter", () => {
     it("hides the Use option row even when allowCustom is also true", async () => {
       renderCombobox({ allowCustom: true, createOnEnter: true })

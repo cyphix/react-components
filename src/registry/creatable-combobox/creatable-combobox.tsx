@@ -92,8 +92,13 @@ export function CreatableCombobox({
 
   const trimmedQuery = query.trim()
   const exactMatch = options.find((option) => option.label === trimmedQuery)
+  const serverSearchLoading = onSearchChange !== undefined && loading
   const showCustomValue =
-    allowCustom && !createOnEnter && trimmedQuery !== "" && !exactMatch
+    allowCustom &&
+    !createOnEnter &&
+    !serverSearchLoading &&
+    trimmedQuery !== "" &&
+    !exactMatch
   function getSelectedLabel(value: string) {
     return (
       options.find((option) => option.value === value)?.label ??
@@ -148,7 +153,7 @@ export function CreatableCombobox({
     event.preventDefault()
     event.preventBaseUIHandler?.()
 
-    if (trimmedQuery === "") return
+    if (trimmedQuery === "" || (serverSearchLoading && !exactMatch)) return
 
     const nextValue = exactMatch?.value ?? trimmedQuery
     if (multiple) {
