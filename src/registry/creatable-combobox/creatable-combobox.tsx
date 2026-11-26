@@ -100,7 +100,10 @@ export function CreatableCombobox({
     },
   ) {
     if (!createOnEnter || event.key !== "Enter") return
-    if (event.nativeEvent.isComposing || event.keyCode === 229) return
+    if (event.nativeEvent.isComposing || event.keyCode === 229) {
+      event.preventBaseUIHandler?.()
+      return
+    }
     if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return
 
     const highlighted = highlightedValueRef.current

@@ -289,16 +289,22 @@ describe("CreatableCombobox", () => {
       expect(onValueChange).not.toHaveBeenCalled()
 
       const search4 = await openCombobox()
-      await userEvent.type(search4, "nihongo")
+      await userEvent.type(search4, "ap")
       fireEvent.keyDown(search4, {
         key: "Enter",
         isComposing: true,
-        keyCode: 229,
+      })
+      expect(onValueChange).not.toHaveBeenCalled()
+
+      await userEvent.keyboard("{ArrowDown}")
+      fireEvent.keyDown(search4, {
+        key: "Enter",
+        isComposing: true,
       })
       expect(onValueChange).not.toHaveBeenCalled()
     })
 
-    it("does not submit an enclosing form on Enter", async () => {
+    it("cancels Enter default action and does not submit an enclosing form", async () => {
       const onValueChange = vi.fn()
       const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault())
       const queryClient = new QueryClient({
@@ -321,26 +327,29 @@ describe("CreatableCombobox", () => {
 
       // Enter with new custom value
       const search1 = await openCombobox()
-      await userEvent.type(search1, "dragonfruit{Enter}")
+      await userEvent.type(search1, "dragonfruit")
+      expect(fireEvent.keyDown(search1, { key: "Enter" })).toBe(false)
       expect(onValueChange).toHaveBeenLastCalledWith("dragonfruit")
       expect(onSubmit).not.toHaveBeenCalled()
 
       // Enter with exact match
       const search2 = await openCombobox()
-      await userEvent.type(search2, "Apple{Enter}")
+      await userEvent.type(search2, "Apple")
+      expect(fireEvent.keyDown(search2, { key: "Enter" })).toBe(false)
       expect(onValueChange).toHaveBeenLastCalledWith("apple")
       expect(onSubmit).not.toHaveBeenCalled()
 
       // Enter with highlighted option
       const search3 = await openCombobox()
       await userEvent.type(search3, "pe")
-      await userEvent.keyboard("{ArrowDown}{Enter}")
+      await userEvent.keyboard("{ArrowDown}")
+      expect(fireEvent.keyDown(search3, { key: "Enter" })).toBe(false)
       expect(onValueChange).toHaveBeenLastCalledWith("pear")
       expect(onSubmit).not.toHaveBeenCalled()
 
       // Enter with empty query
       const search4 = await openCombobox()
-      await userEvent.type(search4, "{Enter}")
+      expect(fireEvent.keyDown(search4, { key: "Enter" })).toBe(false)
       expect(onSubmit).not.toHaveBeenCalled()
     })
   })
