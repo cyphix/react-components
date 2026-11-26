@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { cleanup, render, screen } from "@testing-library/react"
+import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import {
@@ -186,5 +186,162 @@ describe("CreatableCombobox", () => {
     expect(
       screen.queryByRole("button", { name: "Create new…" }),
     ).not.toBeInTheDocument()
+  })
+
+  describe("createOnEnter", () => {
+    it("hides the Use option row even when allowCustom is also true", async () => {
+      renderCombobox({ allowCustom: true, createOnEnter: true })
+      const search = await openCombobox()
+      await userEvent.type(search, "dragonfruit")
+
+      expect(
+        screen.queryByRole("option", { name: /Use/ }),
+      ).not.toBeInTheDocument()
+      expect(screen.getByText("No options found.")).toBeVisible()
+    })
+
+    it("creates the trimmed typed text on Enter when nothing matches", async () => {
+      const onValueChange = vi.fn()
+      renderCombobox({ createOnEnter: true, onValueChange })
+      const search = await openCombobox()
+      await userEvent.type(search, "  dragonfruit  {Enter}")
+
+      expect(onValueChange).toHaveBeenCalledTimes(1)
+      expect(onValueChange).toHaveBeenCalledWith("dragonfruit")
+      expect(
+        screen.queryByRole("combobox", { name: "Search…" }),
+      ).not.toBeInTheDocument()
+    })
+
+    it("creates partial text on Enter when no option is highlighted", async () => {
+      const onValueChange = vi.fn()
+      renderCombobox({ createOnEnter: true, onValueChange })
+      const search = await openCombobox()
+      await userEvent.type(search, "ap{Enter}")
+
+      expect(onValueChange).toHaveBeenCalledTimes(1)
+      expect(onValueChange).toHaveBeenCalledWith("ap")
+    })
+
+    it("selects the exact trimmed case-sensitive option on Enter", async () => {
+      const onValueChange = vi.fn()
+      renderCombobox({ createOnEnter: true, onValueChange })
+      const search = await openCombobox()
+      await userEvent.type(search, "  Apple  {Enter}")
+
+      expect(onValueChange).toHaveBeenCalledTimes(1)
+      expect(onValueChange).toHaveBeenCalledWith("apple")
+    })
+
+    it("creates a new value on Enter when casing differs from an existing option", async () => {
+      const onValueChange = vi.fn()
+      renderCombobox({ createOnEnter: true, onValueChange })
+      const search = await openCombobox()
+      await userEvent.type(search, "aPpLe{Enter}")
+
+      expect(onValueChange).toHaveBeenCalledTimes(1)
+      expect(onValueChange).toHaveBeenCalledWith("aPpLe")
+    })
+
+    it("picks the highlighted option on Enter when navigated with arrow keys", async () => {
+      const onValueChange = vi.fn()
+      renderCombobox({ createOnEnter: true, onValueChange })
+      const search = await openCombobox()
+      await userEvent.type(search, "ap")
+      await userEvent.keyboard("{ArrowDown}{Enter}")
+
+      expect(onValueChange).toHaveBeenCalledTimes(1)
+      expect(onValueChange).toHaveBeenCalledWith("apple")
+    })
+
+    it("does not create a value on Enter when the query is empty or whitespace", async () => {
+      const onValueChange = vi.fn()
+      renderCombobox({ createOnEnter: true, onValueChange })
+      const search = await openCombobox()
+      await userEvent.type(search, "   {Enter}")
+
+      expect(onValueChange).not.toHaveBeenCalled()
+    })
+
+    it("never creates a value on typing, pasting, blur, Tab, Escape, or IME composition", async () => {
+      const onValueChange = vi.fn()
+      renderCombobox({ createOnEnter: true, onValueChange })
+
+      const search = await openCombobox()
+      await userEvent.type(search, "que")
+      expect(onValueChange).not.toHaveBeenCalled()
+
+      await userEvent.click(document.body)
+      expect(onValueChange).not.toHaveBeenCalled()
+
+      const search2 = await openCombobox()
+      await userEvent.click(search2)
+      await userEvent.paste("pasted-tag")
+      expect(search2).toHaveValue("pasted-tag")
+      expect(onValueChange).not.toHaveBeenCalled()
+
+      await userEvent.keyboard("{Tab}")
+      expect(onValueChange).not.toHaveBeenCalled()
+
+      const search3 = await openCombobox()
+      await userEvent.type(search3, "draft")
+      await userEvent.keyboard("{Escape}")
+      expect(onValueChange).not.toHaveBeenCalled()
+
+      const search4 = await openCombobox()
+      await userEvent.type(search4, "nihongo")
+      fireEvent.keyDown(search4, {
+        key: "Enter",
+        isComposing: true,
+        keyCode: 229,
+      })
+      expect(onValueChange).not.toHaveBeenCalled()
+    })
+
+    it("does not submit an enclosing form on Enter", async () => {
+      const onValueChange = vi.fn()
+      const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault())
+      const queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      })
+      render(
+        <QueryClientProvider client={queryClient}>
+          <form onSubmit={onSubmit}>
+            <CreatableCombobox
+              createOnEnter
+              onValueChange={onValueChange}
+              options={options}
+              placeholder="Choose a fruit"
+              value=""
+            />
+            <button type="submit">Save</button>
+          </form>
+        </QueryClientProvider>,
+      )
+
+      // Enter with new custom value
+      const search1 = await openCombobox()
+      await userEvent.type(search1, "dragonfruit{Enter}")
+      expect(onValueChange).toHaveBeenLastCalledWith("dragonfruit")
+      expect(onSubmit).not.toHaveBeenCalled()
+
+      // Enter with exact match
+      const search2 = await openCombobox()
+      await userEvent.type(search2, "Apple{Enter}")
+      expect(onValueChange).toHaveBeenLastCalledWith("apple")
+      expect(onSubmit).not.toHaveBeenCalled()
+
+      // Enter with highlighted option
+      const search3 = await openCombobox()
+      await userEvent.type(search3, "pe")
+      await userEvent.keyboard("{ArrowDown}{Enter}")
+      expect(onValueChange).toHaveBeenLastCalledWith("pear")
+      expect(onSubmit).not.toHaveBeenCalled()
+
+      // Enter with empty query
+      const search4 = await openCombobox()
+      await userEvent.type(search4, "{Enter}")
+      expect(onSubmit).not.toHaveBeenCalled()
+    })
   })
 })

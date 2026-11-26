@@ -29,6 +29,7 @@ type CreatableComboboxProps = {
   searchPlaceholder?: string
   emptyText?: string
   allowCustom?: boolean
+  createOnEnter?: boolean
   onCreateNew?: (query: string) => void
   createLabel?: string
   className?: string
@@ -47,6 +48,7 @@ export function CreatableCombobox({
   searchPlaceholder = "Search…",
   emptyText = "No options found.",
   allowCustom = false,
+  createOnEnter = false,
   onCreateNew,
   createLabel = "Create new…",
   disabled = false,
@@ -56,6 +58,7 @@ export function CreatableCombobox({
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
+  const highlightedValueRef = useRef<string | undefined>(undefined)
 
   const filteredOptions = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase()
@@ -75,8 +78,9 @@ export function CreatableCombobox({
   }, [filteredOptions])
 
   const trimmedQuery = query.trim()
-  const hasExactMatch = options.some((option) => option.label === trimmedQuery)
-  const showCustomValue = allowCustom && trimmedQuery !== "" && !hasExactMatch
+  const exactMatch = options.find((option) => option.label === trimmedQuery)
+  const showCustomValue =
+    allowCustom && !createOnEnter && trimmedQuery !== "" && !exactMatch
   const selectedLabel =
     options.find((option) => option.value === value)?.label ?? value
 
@@ -90,15 +94,44 @@ export function CreatableCombobox({
     setOpen(false)
   }
 
+  function handleInputKeyDown(
+    event: React.KeyboardEvent<HTMLInputElement> & {
+      preventBaseUIHandler?: () => void
+    },
+  ) {
+    if (!createOnEnter || event.key !== "Enter") return
+    if (event.nativeEvent.isComposing || event.keyCode === 229) return
+    if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return
+
+    const highlighted = highlightedValueRef.current
+    if (
+      highlighted !== undefined &&
+      filteredOptions.some((option) => option.value === highlighted)
+    ) {
+      return
+    }
+
+    event.preventDefault()
+    event.preventBaseUIHandler?.()
+
+    if (trimmedQuery === "") return
+
+    handleValueChange(exactMatch ? exactMatch.value : trimmedQuery)
+  }
+
   return (
     <Combobox
       disabled={disabled}
       filter={null}
       inputValue={query}
       onInputValueChange={setQuery}
+      onItemHighlighted={(highlightedValue) => {
+        highlightedValueRef.current = highlightedValue
+      }}
       onOpenChange={(nextOpen) => {
         setOpen(nextOpen)
         if (nextOpen) setQuery("")
+        if (!nextOpen) highlightedValueRef.current = undefined
       }}
       onValueChange={handleValueChange}
       open={open}
@@ -138,6 +171,7 @@ export function CreatableCombobox({
         <ComboboxInput
           aria-label={searchPlaceholder}
           onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={handleInputKeyDown}
           placeholder={searchPlaceholder}
           showClear={false}
           showTrigger={false}

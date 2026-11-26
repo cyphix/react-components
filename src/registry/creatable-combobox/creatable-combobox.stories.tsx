@@ -8,12 +8,14 @@ import { CreatableCombobox, type ComboboxOption } from './creatable-combobox'
 function Demo({
   options = basicComboboxOptions,
   allowCustom = false,
+  createOnEnter = false,
   disabled = false,
   clearable = false,
   onCreateNew,
 }: {
   options?: ComboboxOption[]
   allowCustom?: boolean
+  createOnEnter?: boolean
   disabled?: boolean
   clearable?: boolean
   onCreateNew?: (query: string) => void
@@ -30,6 +32,7 @@ function Demo({
         value={value}
         onValueChange={setValue}
         allowCustom={allowCustom}
+        createOnEnter={createOnEnter}
         disabled={disabled}
         clearable={clearable}
         onCreateNew={onCreateNew}
@@ -45,6 +48,7 @@ const meta = {
   args: {
     options: basicComboboxOptions,
     allowCustom: false,
+    createOnEnter: false,
     disabled: false,
     clearable: false,
     onCreateNew: undefined,
@@ -52,6 +56,7 @@ const meta = {
   argTypes: {
     options: { control: false },
     allowCustom: { control: 'boolean' },
+    createOnEnter: { control: 'boolean' },
     disabled: { control: 'boolean' },
     clearable: { control: 'boolean' },
     onCreateNew: { control: false },
@@ -100,6 +105,22 @@ export const AllowCustom: Story = {
     await userEvent.click(trigger)
     await userEvent.type(await body.findByRole('combobox', { name: 'Search…' }), 'Dragonfruit')
     await userEvent.click(await body.findByText('Use "Dragonfruit"'))
+    await waitFor(() => expect(body.queryByRole('combobox', { name: 'Search…' })).not.toBeInTheDocument())
+    await expect(trigger).toHaveTextContent('Dragonfruit')
+  },
+}
+
+export const CreateOnEnter: Story = {
+  args: { createOnEnter: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const body = popup()
+    const trigger = canvas.getByRole('combobox', { name: 'Fruit' })
+    await userEvent.click(trigger)
+    const search = await body.findByRole('combobox', { name: 'Search…' })
+    await userEvent.type(search, 'Dragonfruit')
+    await expect(body.queryByRole('option', { name: /Use/ })).not.toBeInTheDocument()
+    await userEvent.keyboard('{Enter}')
     await waitFor(() => expect(body.queryByRole('combobox', { name: 'Search…' })).not.toBeInTheDocument())
     await expect(trigger).toHaveTextContent('Dragonfruit')
   },
