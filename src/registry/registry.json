@@ -393,6 +393,20 @@
       ]
     },
     {
+      "name": "text-input",
+      "type": "registry:ui",
+      "title": "Text Input",
+      "description": "A plain text field with an optional clear button.",
+      "dependencies": ["lucide-react"],
+      "registryDependencies": ["input-group"],
+      "files": [
+        {
+          "path": "text-input/text-input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "time-input",
       "type": "registry:ui",
       "title": "Time Input",
