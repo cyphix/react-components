@@ -57,6 +57,18 @@ highlighted option or an exact (trimmed, case-sensitive) match, and otherwise
 commits the trimmed query as a new value without submitting an enclosing form.
 Typing, pasting, blur, Tab, Escape, and IME composition never create a value.
 
+Search filters the supplied options locally by default. Pass `onSearchChange`
+to use server search: it receives the raw query and `options` is displayed
+without local filtering. Optionally pass `searchValue` to control the search
+input, and set `loading` to show a loading status instead of the empty message.
+Pass `selectedOptions` for labels of selected values that may not be in the
+current result set.
+
+Pass `multiple` to use a `string[]` for `value` and receive a `string[]` from
+`onValueChange`. Selected options appear as removable chips, and the popup
+stays open while selecting. Both modes support `onCreateNew(query)`: the host
+can open its create dialog and update the controlled selection after creation.
+
 ### Media UI
 
 Use `FileDropzone` with `onFilesSelected` to start an upload in your app and

@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import {
   type ComboboxOption,
+  type CreatableComboboxProps,
   CreatableCombobox,
 } from "@/registry/creatable-combobox/creatable-combobox"
 
@@ -15,7 +16,7 @@ const options: ComboboxOption[] = [
 ]
 
 function renderCombobox(
-  props: Partial<React.ComponentProps<typeof CreatableCombobox>> = {},
+  props: Partial<Extract<CreatableComboboxProps, { multiple?: false }>> = {},
 ) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -186,6 +187,68 @@ describe("CreatableCombobox", () => {
     expect(
       screen.queryByRole("button", { name: "Create new…" }),
     ).not.toBeInTheDocument()
+  })
+
+  it("uses remote results as supplied and notifies search changes and clearing", async () => {
+    const onSearchChange = vi.fn()
+    renderCombobox({ clearable: true, onSearchChange })
+    const search = await openCombobox()
+    await userEvent.type(search, "pome")
+
+    expect(onSearchChange.mock.calls).toEqual([["p"], ["po"], ["pom"], ["pome"]])
+    expect(screen.getByRole("option", { name: "Apple" })).toBeVisible()
+    await userEvent.click(screen.getByRole("button", { name: "Clear search" }))
+    expect(onSearchChange).toHaveBeenLastCalledWith("")
+    expect(search).toHaveValue("")
+  })
+
+  it("combines controlled search and multi-select with labels outside the result page", async () => {
+    const onValueChange = vi.fn()
+    const onSearchChange = vi.fn()
+    const props = {
+      multiple: true as const,
+      onValueChange,
+      onSearchChange,
+      value: ["pear"],
+      selectedOptions: [options[1]],
+      searchValue: "",
+    }
+    const { rerender } = render(<CreatableCombobox {...props} options={[]} loading />)
+    await openCombobox()
+    expect(screen.getByRole("status")).toHaveTextContent("Loading…")
+    expect(screen.queryByText("No options found.")).not.toBeInTheDocument()
+
+    rerender(<CreatableCombobox {...props} searchValue="pome" options={[options[0]]} />)
+    expect(screen.getByRole("combobox", { name: "Search…" })).toHaveValue("pome")
+    await userEvent.click(screen.getByRole("option", { name: "Apple" }))
+    expect(onValueChange).toHaveBeenLastCalledWith(["pear", "apple"])
+    expect(onSearchChange).toHaveBeenLastCalledWith("")
+
+    await userEvent.keyboard("{Escape}")
+    await userEvent.click(screen.getByRole("button", { name: "Remove Pear" }))
+    expect(onValueChange).toHaveBeenLastCalledWith([])
+    expect(screen.getByRole("combobox")).toHaveFocus()
+  })
+
+  it("adds custom values to the multi-select without duplicating selected values", async () => {
+    const onValueChange = vi.fn()
+    const props = {
+      multiple: true as const,
+      options,
+      value: ["pear", "dragonfruit"],
+      onValueChange,
+    }
+    const { rerender } = render(<CreatableCombobox {...props} allowCustom />)
+    const search = await openCombobox()
+    await userEvent.type(search, "  mango  ")
+    await userEvent.click(screen.getByRole("option", { name: 'Use "mango"' }))
+    expect(onValueChange).toHaveBeenLastCalledWith(["pear", "dragonfruit", "mango"])
+
+    rerender(<CreatableCombobox {...props} createOnEnter />)
+    await userEvent.type(search, "dragonfruit{Enter}")
+    expect(onValueChange).toHaveBeenCalledTimes(1)
+    await userEvent.type(search, "apple{Enter}")
+    expect(onValueChange).toHaveBeenLastCalledWith(["pear", "dragonfruit", "apple"])
   })
 
   describe("createOnEnter", () => {
