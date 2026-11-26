@@ -51,6 +51,12 @@ When enabled, a **Clear search** button appears for non-empty search text. It
 clears only the query, restores the option list, and keeps the popover open with
 focus on the search input; the selected value is unchanged.
 
+`CreatableCombobox` also accepts `createOnEnter` (default `false`), an opt-in
+Enter-to-create mode with no `Use "..."` row: pressing Enter selects the
+highlighted option or an exact (trimmed, case-sensitive) match, and otherwise
+commits the trimmed query as a new value without submitting an enclosing form.
+Typing, pasting, blur, Tab, Escape, and IME composition never create a value.
+
 ### Media UI
 
 Use `FileDropzone` with `onFilesSelected` to start an upload in your app and
