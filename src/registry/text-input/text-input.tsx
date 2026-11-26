@@ -1,5 +1,5 @@
 import { X } from "lucide-react"
-import { type ComponentPropsWithoutRef, useRef, useState } from "react"
+import { type ComponentPropsWithoutRef, useEffect, useRef, useState } from "react"
 
 import {
   InputGroup,
@@ -18,6 +18,7 @@ export function TextInput({
   clearable = false,
   defaultValue,
   disabled,
+  form: formId,
   onChange,
   onClear,
   readOnly,
@@ -25,8 +26,27 @@ export function TextInput({
   ...props
 }: TextInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const isControlled = value !== undefined
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? "")
   const hasValue = String(value ?? uncontrolledValue) !== ""
+
+  useEffect(() => {
+    const input = inputRef.current
+    const form = input?.form
+    if (isControlled || !input || !form) return
+
+    let resetTimer: ReturnType<typeof setTimeout> | undefined
+    const handleReset = () => {
+      clearTimeout(resetTimer)
+      resetTimer = setTimeout(() => setUncontrolledValue(input.value), 0)
+    }
+
+    form.addEventListener("reset", handleReset)
+    return () => {
+      form.removeEventListener("reset", handleReset)
+      clearTimeout(resetTimer)
+    }
+  }, [formId, isControlled])
 
   function clear() {
     const input = inputRef.current
@@ -47,8 +67,9 @@ export function TextInput({
         {...props}
         defaultValue={defaultValue}
         disabled={disabled}
+        form={formId}
         onChange={(event) => {
-          if (value === undefined) setUncontrolledValue(event.currentTarget.value)
+          if (!isControlled) setUncontrolledValue(event.currentTarget.value)
           onChange?.(event)
         }}
         readOnly={readOnly}
