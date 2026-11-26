@@ -4,11 +4,36 @@ import { useId, useState } from 'react'
 import { fn, expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { basicComboboxOptions, comboboxOptions } from '@/storybook/cyphix-fixtures'
-import { CreatableCombobox, type CreatableComboboxProps } from './creatable-combobox'
+import { CreatableCombobox, type ComboboxOption, type CreatableComboboxProps } from './creatable-combobox'
 
-function Demo(args: CreatableComboboxProps) {
+function Demo({
+  Combobox = CreatableCombobox,
+  simulateCreate = false,
+  ...args
+}: CreatableComboboxProps & {
+  Combobox?: typeof CreatableCombobox
+  simulateCreate?: boolean
+}) {
   const [value, setValue] = useState(args.value)
+  const [createdOptions, setCreatedOptions] = useState<ComboboxOption[]>([])
   const id = useId()
+  const options = [...args.options, ...createdOptions]
+
+  function handleCreateNew(query: string) {
+    args.onCreateNew?.(query)
+    const label = query.trim()
+    if (!label) return
+
+    const existing = options.find((option) => option.label === label)
+    const option = existing ?? { value: crypto.randomUUID(), label }
+    if (!existing) setCreatedOptions((previous) => [...previous, option])
+    setValue((previous) => {
+      if (!args.multiple) return option.value
+      const selected = Array.isArray(previous) ? previous : []
+      return selected.includes(option.value) ? selected : [...selected, option.value]
+    })
+  }
+
   const props: CreatableComboboxProps = args.multiple
     ? {
         ...args,
@@ -29,12 +54,17 @@ function Demo(args: CreatableComboboxProps) {
   return (
     <>
       <label htmlFor={id} className="sr-only">Fruit</label>
-      <CreatableCombobox {...props} id={id} />
+      <Combobox
+        {...props}
+        id={id}
+        options={options}
+        onCreateNew={simulateCreate && args.onCreateNew ? handleCreateNew : args.onCreateNew}
+      />
     </>
   )
 }
 
-function ServerSearchDemo(args: CreatableComboboxProps) {
+function ServerSearchCombobox(args: CreatableComboboxProps) {
   const [query, setQuery] = useState('')
   const { data, isFetching } = useQuery({
     queryKey: ['combobox-demo-options', args.options, query],
@@ -47,7 +77,7 @@ function ServerSearchDemo(args: CreatableComboboxProps) {
     },
   })
   return (
-    <Demo
+    <CreatableCombobox
       {...args}
       options={data ?? []}
       selectedOptions={args.options}
@@ -94,7 +124,7 @@ const meta = {
     clearable: { control: 'boolean' },
     onCreateNew: { control: false },
   },
-} satisfies Meta<typeof Demo>
+} satisfies Meta<typeof CreatableCombobox>
 
 export default meta
 
@@ -180,7 +210,7 @@ export const Disabled: Story = {
 
 export const ServerSearch: Story = {
   args: { onSearchChange: fn(), onCreateNew: fn() },
-  render: (args) => <ServerSearchDemo {...args} />,
+  render: (args) => <Demo {...args} Combobox={ServerSearchCombobox} simulateCreate />,
   play: async ({ args, canvasElement }) => {
     const body = popup()
     const trigger = within(canvasElement).getByRole('combobox', { name: 'Fruit' })
@@ -197,6 +227,7 @@ export const ServerSearch: Story = {
     await userEvent.click(body.getByRole('button', { name: 'Create new…' }))
     await expect(args.onCreateNew).toHaveBeenCalledWith('Mango')
     await waitFor(() => expect(body.queryByRole('combobox', { name: 'Search…' })).not.toBeInTheDocument())
+    await expect(trigger).toHaveTextContent('Mango')
   },
 }
 
@@ -207,6 +238,7 @@ export const Multiple: Story = {
     placeholder: 'Select fruit',
     onCreateNew: fn(),
   },
+  render: (args) => <Demo {...args} simulateCreate />,
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement)
     const body = popup()
@@ -219,6 +251,7 @@ export const Multiple: Story = {
     await userEvent.click(body.getByRole('button', { name: 'Create new…' }))
     await waitFor(() => expect(body.queryByRole('combobox', { name: 'Search…' })).not.toBeInTheDocument())
     await expect(args.onCreateNew).toHaveBeenCalledWith('Mango')
+    await expect(canvas.getByRole('button', { name: 'Remove Mango' })).toBeVisible()
     await userEvent.click(canvas.getByRole('button', { name: 'Remove Apple' }))
     await expect(canvas.queryByRole('button', { name: 'Remove Apple' })).not.toBeInTheDocument()
     await expect(canvas.getByRole('button', { name: 'Remove Pear' })).toBeVisible()
