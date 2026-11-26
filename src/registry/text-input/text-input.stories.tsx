@@ -51,7 +51,9 @@ export const Default: Story = {
 
 export const Clearable: Story = {
   args: { clearable: true },
-  render: (args) => <ControlledExample {...args} />,
+  render: (args) => (
+    <ControlledExample key={String(args.defaultValue ?? '')} {...args} />
+  ),
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement)
     const input = canvas.getByRole('textbox', { name: 'Name' })
