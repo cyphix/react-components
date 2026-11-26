@@ -257,7 +257,7 @@ export function CreatableCombobox({
           placeholder={searchPlaceholder}
           showClear={false}
           showTrigger={false}
-          value={query}
+          {...(!onSearchChange ? { value: query } : {})}
           ref={inputRef}
         >
           {clearable && query !== "" && (

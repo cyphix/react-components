@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
+import { useState } from "react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import {
   type ComboboxOption,
@@ -200,6 +201,42 @@ describe("CreatableCombobox", () => {
     await userEvent.click(screen.getByRole("button", { name: "Clear search" }))
     expect(onSearchChange).toHaveBeenLastCalledWith("")
     expect(search).toHaveValue("")
+  })
+
+  it("keeps IME draft text visible and sends only the committed server query", async () => {
+    const onSearchChange = vi.fn()
+    function ControlledSearch() {
+      const [query, setQuery] = useState("")
+      return (
+        <CreatableCombobox
+          options={options}
+          value=""
+          onValueChange={vi.fn()}
+          searchValue={query}
+          onSearchChange={(next) => {
+            onSearchChange(next)
+            setQuery(next)
+          }}
+        />
+      )
+    }
+    render(<ControlledSearch />)
+    const search = await openCombobox()
+    await userEvent.type(search, "ni")
+    onSearchChange.mockClear()
+
+    fireEvent.compositionStart(search)
+    fireEvent.input(search, {
+      inputType: "insertCompositionText",
+      isComposing: true,
+      target: { value: "に" },
+    })
+    expect(search).toHaveValue("に")
+    expect(onSearchChange).not.toHaveBeenCalled()
+
+    fireEvent.compositionEnd(search, { data: "に" })
+    expect(onSearchChange.mock.calls).toEqual([["に"]])
+    expect(search).toHaveValue("に")
   })
 
   it("combines controlled search and multi-select with labels outside the result page", async () => {
