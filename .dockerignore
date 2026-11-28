@@ -6,4 +6,5 @@ storybook-static
 .github
 .dockerignore
 Dockerfile
-compose*.yml
+docker-compose*.yaml
+docker-compose*.yml

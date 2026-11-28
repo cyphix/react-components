@@ -1,0 +1,11 @@
+# Showcase stack: builds the component gallery from this repo with the
+# in-browser mock API enabled.
+services:
+  react-components:
+    container_name: react-components
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${SHOWCASE_PORT:-5173}:80"
