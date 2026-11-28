@@ -115,7 +115,7 @@ The in-browser MirageJS mock (`/api/...`) runs in Storybook by default; set `VIT
 
 ## Docker image
 
-`docker-compose.yaml` builds Storybook from this repo and serves the static gallery with the mock API enabled (`VITE_MOCK_API=true`):
+`docker-compose.yml` builds Storybook from this repo and serves the static gallery with the mock API enabled (`VITE_MOCK_API=true`):
 
 ```bash
 docker compose up -d --build
