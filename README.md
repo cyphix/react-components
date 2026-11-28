@@ -115,13 +115,13 @@ The in-browser MirageJS mock (`/api/...`) runs in Storybook by default; set `VIT
 
 ## Docker image
 
-The published image builds Storybook and serves the static gallery with the mock API enabled (`VITE_MOCK_API=true`). New GHCR packages default to private even for public repos; if `docker compose up -d` cannot pull the image, run `docker login ghcr.io` first or make the package public in its settings.
+`docker-compose.yaml` builds Storybook from this repo and serves the static gallery with the mock API enabled (`VITE_MOCK_API=true`):
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
-Then open `http://localhost:5173/`. Set `SHOWCASE_TAG` to run a specific published version tag (default `latest`) and `SHOWCASE_PORT` to change the host port. The image is published to `ghcr.io/cyphix/react-components` by `.github/workflows/docker.yml` on `v*` tags.
+Then open `http://localhost:5173/`. Set `SHOWCASE_PORT` to change the host port. Prebuilt images are also published to `ghcr.io/cyphix/react-components` by `.github/workflows/docker.yml` on `v*` tags.
 
 ## Project layout
 
