@@ -115,7 +115,9 @@ The in-browser MirageJS mock (`/api/...`) runs in Storybook by default; set `VIT
 
 ## Docker image
 
-`docker-compose.yml` builds Storybook from this repo and serves the static gallery with the mock API enabled (`VITE_MOCK_API=true`):
+`docker-compose.yml` builds Storybook from this repo and serves the static gallery with the mock API enabled (`VITE_MOCK_API=true`).
+
+The Compose stack requires an existing Docker network named `nginx_bridge` by default. Set `PROXY_NETWORK` to use a different existing network. When Nginx Proxy Manager is attached to the same network, forward to `http://react-components:80`.
 
 ```bash
 docker compose up -d --build
